@@ -1,12 +1,15 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Gateway_Service
+namespace Event_Datepicker_Service
 {
-    public static class Program
+    public class Program
     {
         public static void Main(string[] args)
         {
@@ -18,12 +21,6 @@ namespace Gateway_Service
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    config.AddJsonFile($"ocelot{env}.json");
-                })
-                .ConfigureLogging(logging => logging.AddConsole());
+                });
     }
 }

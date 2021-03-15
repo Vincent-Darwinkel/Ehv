@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:20723",
+      "applicationUrl": "http://localhost:65480",
       "sslPort": 0
     }
   },
@@ -11,13 +11,12 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "File_Service": {
+    "Event_Datepicker_Service": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -29,10 +28,9 @@
     },
     "Docker": {
       "commandName": "Docker",
+      "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "publishAllPorts": true,
-      "httpPort": 5001,
-      "sslPort": 5002
+      "publishAllPorts": true
     }
   }
 }

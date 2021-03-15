@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Event_Datepicker_Service", "Event-Datepicker-Service\Event_Datepicker_Service.csproj", "{CE701BF6-8C8A-4A06-86DB-BBBBAA854FB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File_Service", "File_Service\File_Service.csproj", "{5653F265-3159-471D-9BE6-6276EC80B111}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway_Service", "Gateway_Service\Gateway_Service.csproj", "{942E5B78-3636-442F-897C-A16AE93FFAAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Event_Datepicker_Service", "Event_Datepicker_Service\Event_Datepicker_Service.csproj", "{43137BC5-B706-4149-86B0-5ED2EDD662A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File_Service", "File_Service\File_Service.csproj", "{5653F265-3159-471D-9BE6-6276EC80B111}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway_Service", "Gateway_Service\Gateway_Service.csproj", "{5109E7CB-BCF7-406C-8031-A6CE9A27D233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CE701BF6-8C8A-4A06-86DB-BBBBAA854FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE701BF6-8C8A-4A06-86DB-BBBBAA854FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE701BF6-8C8A-4A06-86DB-BBBBAA854FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE701BF6-8C8A-4A06-86DB-BBBBAA854FB1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{942E5B78-3636-442F-897C-A16AE93FFAAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{942E5B78-3636-442F-897C-A16AE93FFAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{942E5B78-3636-442F-897C-A16AE93FFAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{942E5B78-3636-442F-897C-A16AE93FFAAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5653F265-3159-471D-9BE6-6276EC80B111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5653F265-3159-471D-9BE6-6276EC80B111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5653F265-3159-471D-9BE6-6276EC80B111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5653F265-3159-471D-9BE6-6276EC80B111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43137BC5-B706-4149-86B0-5ED2EDD662A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43137BC5-B706-4149-86B0-5ED2EDD662A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43137BC5-B706-4149-86B0-5ED2EDD662A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43137BC5-B706-4149-86B0-5ED2EDD662A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5109E7CB-BCF7-406C-8031-A6CE9A27D233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5109E7CB-BCF7-406C-8031-A6CE9A27D233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5109E7CB-BCF7-406C-8031-A6CE9A27D233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5109E7CB-BCF7-406C-8031-A6CE9A27D233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

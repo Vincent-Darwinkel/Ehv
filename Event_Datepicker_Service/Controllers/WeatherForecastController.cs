@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gateway_Service.Controllers
+namespace Event_Datepicker_Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -1,0 +1,18 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/file",
+      "DownstreamScheme": "https",
+      "DownstreamHostandPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5001"
+        }
+      ],
+      "UpstreamPathTemplate": "/api/file",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationProviderKey": "Bearer",
+      "AllowedScopes": []
+    }
+  ]
+}
