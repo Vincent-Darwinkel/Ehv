@@ -15,7 +15,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Set selected color
-        run: echo '::ls'
+        run: echo 'ls'
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
