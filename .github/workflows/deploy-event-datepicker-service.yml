@@ -5,6 +5,8 @@ name: Dotnet CI event datepicker service
 
 on:
   push:
+    paths:
+      - "Event_Datepicker_Service/**"
     branches: [main]
 
 jobs:
@@ -14,8 +16,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Change path
-        uses: Event_Datepicker_Service
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
