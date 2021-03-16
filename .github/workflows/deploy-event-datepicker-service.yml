@@ -5,7 +5,7 @@ name: Dotnet CI event datepicker service
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
     paths:
       - .github/workflows/ci-event-datepicker-service.yml

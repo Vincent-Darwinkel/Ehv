@@ -2,7 +2,7 @@ name: .NET event datepicker service
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
 
     paths:
       - Event_Datepicker_Service/**
