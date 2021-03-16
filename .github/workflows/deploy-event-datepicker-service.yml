@@ -23,5 +23,5 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
-          path: Event_Datepicker_Service
-          dockerfile: Event_Datepicker_Service/Dockerfile
+          path: event_datepicker_service
+          dockerfile: event_datepicker_service/Dockerfile
