@@ -23,5 +23,5 @@ jobs:
           context: Event_Datepicker_Service
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/event-datepicker-api
+          repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
