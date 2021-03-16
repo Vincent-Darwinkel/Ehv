@@ -1,8 +1,12 @@
-name: .NET
+name: .NET gateway service
 
 on:
   pull_request:
     branches: [master]
+
+    paths:
+      - Gateway_Service
+      - .github/workflows/ci-gateway-service.yml
 
 jobs:
   build:

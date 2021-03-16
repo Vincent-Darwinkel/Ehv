@@ -1,8 +1,12 @@
-name: .NET
+name: .NET file service
 
 on:
   pull_request:
     branches: [master]
+
+    paths:
+      - File_Service
+      - .github/workflows/ci-file-service.yml
 
 jobs:
   build:

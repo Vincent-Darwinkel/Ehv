@@ -1,8 +1,12 @@
-name: .NET
+name: .NET event datepicker service
 
 on:
   pull_request:
     branches: [master]
+
+    paths:
+      - Event_Datepicker_Service
+      - .github/workflows/ci-event-datepicker-service.yml
 
 jobs:
   build:
