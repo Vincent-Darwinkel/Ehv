@@ -21,4 +21,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
-          workdir: Event_Datepicker_Service
+          context: Event_Datepicker_Service
