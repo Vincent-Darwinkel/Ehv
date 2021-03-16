@@ -14,11 +14,14 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+        working-directory: Event_Datepicker_Service
+        run: ls
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
+        working-directory: Event_Datepicker_Service
+        run: ls
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
-          working-directory: Event_Datepicker_Service
