@@ -5,8 +5,6 @@ name: Dotnet CI event datepicker service
 
 on:
   push:
-    paths:
-      - "Event_Datepicker_Service/**"
     branches: [main]
 
 jobs:
