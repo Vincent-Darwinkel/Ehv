@@ -4,10 +4,6 @@ on:
   pull_request:
     branches: [main]
 
-    paths:
-      - Event_Datepicker_Service/**
-      - .github/workflows/ci-event-datepicker-service.yml
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,10 +16,13 @@ jobs:
           dotnet-version: 5.0.x
       - name: Restore dependencies
         run: dotnet restore
+        working-directory: Event_Datepicker_Service
       - name: Build
         run: dotnet build --no-restore
+        working-directory: Event_Datepicker_Service
       - name: Test
         run: dotnet test --no-build --verbosity normal
+        working-directory: Event_Datepicker_Service
 
     env:
       CI: true
