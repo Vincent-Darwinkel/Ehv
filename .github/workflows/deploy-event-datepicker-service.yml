@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Setup working directory
         working-directory: Event_Datepicker_Service
+        run: ls
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Push to Docker Hub
