@@ -9,6 +9,7 @@ on:
 
     paths:
       - Event_Datepicker_Service/**
+      - .github/workflows/ci-event-datepicker-service.yml
 
 jobs:
   push_to_registry:
