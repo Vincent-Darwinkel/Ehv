@@ -7,9 +7,6 @@ on:
   push:
     branches: [main]
 
-    paths:
-      - Event_Datepicker_Service
-
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -24,3 +21,5 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
+          path: Event_Datepicker_Service
+          dockerfile: Event_Datepicker_Service/Dockerfile
