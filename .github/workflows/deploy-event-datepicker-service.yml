@@ -22,4 +22,3 @@ jobs:
           repository: vincentdarwinkel/event-datepicker-service
           tag_with_ref: true
           file: ./Event_Datepicker_Service/Dockerfile
-          run: ls
