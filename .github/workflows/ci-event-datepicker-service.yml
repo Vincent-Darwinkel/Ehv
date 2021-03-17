@@ -1,4 +1,4 @@
-name: .NET file service
+name: Deploy docker hub file service
 
 on:
   pull_request:

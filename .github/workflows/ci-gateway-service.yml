@@ -1,4 +1,4 @@
-name: .NET gateway service
+name: Deploy docker hub gateway service
 
 on:
   pull_request:

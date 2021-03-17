@@ -1,4 +1,4 @@
-name: .NET event datepicker service
+name: Deploy docker hub event datepicker service
 
 on:
   pull_request:
