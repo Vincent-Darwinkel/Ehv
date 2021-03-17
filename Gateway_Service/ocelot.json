@@ -1,18 +1,19 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/file",
-      "DownstreamScheme": "https",
-      "DownstreamHostandPorts": [
+      "DownstreamPathTemplate": "/image/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": "5001"
+          "Host": "192.168.1.31",
+          "Port": 5001
         }
       ],
-      "UpstreamPathTemplate": "/api/file",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationProviderKey": "Bearer",
-      "AllowedScopes": []
+      "UpstreamPathTemplate": "/api/file/image/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
     }
-  ]
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000"
+  }
 }

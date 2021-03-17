@@ -8,21 +8,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": ".Development"
-      }
-    },
-    "Gateway_Service": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": ".Development"
-      },
-      "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5000"
-    },
     "Docker": {
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
@@ -30,8 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": ".Development"
       },
       "publishAllPorts": true,
-      "httpPort": 5000,
-      "sslPort": 5001
+      "httpPort": 5000
     }
   }
 }
