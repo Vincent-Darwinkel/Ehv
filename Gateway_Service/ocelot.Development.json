@@ -5,8 +5,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.1.31",
-          "Port": 5001
+          "Host": "file_service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/file/image/{id}",
