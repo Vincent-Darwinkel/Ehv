@@ -1,4 +1,4 @@
-name: Deploy docker hub user service
+name: CI user service
 
 on:
   pull_request:

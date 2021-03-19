@@ -1,4 +1,4 @@
-name: Deploy docker hub datepicker service
+name: CI datepicker service
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Deploy docker hub authentication service
+name: CI authentication service
 
 on:
   pull_request:

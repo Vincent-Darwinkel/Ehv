@@ -1,4 +1,4 @@
-name: Deploy docker hub email service
+name: CI email service
 
 on:
   pull_request:
