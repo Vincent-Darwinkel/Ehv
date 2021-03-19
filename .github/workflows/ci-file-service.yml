@@ -1,4 +1,4 @@
-name: Deploy docker hub event datepicker service
+name: Deploy docker hub file service
 
 on:
   pull_request:
@@ -16,13 +16,13 @@ jobs:
           dotnet-version: 5.0.x
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: Event_Datepicker_Service
+        working-directory: File_Service
       - name: Build
         run: dotnet build --no-restore
-        working-directory: Event_Datepicker_Service
+        working-directory: File_Service
       - name: Test
         run: dotnet test --no-build --verbosity normal
-        working-directory: Event_Datepicker_Service
+        working-directory: File_Service
 
     env:
       CI: true
