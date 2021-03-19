@@ -44,7 +44,7 @@ namespace File_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SaveFilesAsync([FromForm] FileUpload data, string path)
+        public async Task<ActionResult> SaveFilesAsync([FromForm] FileUpload data)
         {
             try
             {
