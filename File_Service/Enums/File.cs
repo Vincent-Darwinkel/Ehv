@@ -1,6 +1,6 @@
 ﻿namespace File_Service.Enums
 {
-    internal enum FileType
+    public enum FileType
     {
         Image,
         Video
