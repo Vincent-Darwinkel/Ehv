@@ -19,11 +19,11 @@ namespace Email_Service.Logic
         }
 
         /// <summary>
-        /// Finds an html template by the templatePath parameter and replaces all @{} values with the value in the keyValueCollection parameter
+        /// Finds an HTML template by the templatePath parameter and replaces all @{} values with the value in the keyValueCollection parameter
         /// </summary>
         /// <param name="templatePath">The path of the template</param>
         /// <param name="keyValueCollection">The key in the template to search and the value to replace it with</param>
-        /// <returns>An string which contains html content</returns>
+        /// <returns>An string which contains HTML content</returns>
         public string GetHtmlFormattedEmail(string templatePath, List<EmailKeyWordValue> keyValueCollection)
         {
             string filePath = Environment.CurrentDirectory + templatePath;
@@ -34,10 +34,9 @@ namespace Email_Service.Logic
 
             string fileText = File.ReadAllText(filePath);
             var sb = new StringBuilder(fileText);
-            keyValueCollection.ForEach(kv =>
+            keyValueCollection.ForEach(emailKeyWordValue =>
             {
-                string textToReplace = "@{" + kv.Key + "}";
-                sb.Replace(textToReplace, kv.Value);
+                sb.Replace(emailKeyWordValue.Key, emailKeyWordValue.Value);
             });
 
             return sb.ToString();
@@ -46,11 +45,11 @@ namespace Email_Service.Logic
         /// <summary>
         /// Uses the Send method in a foreach loop, if one mail fails the return value would be false
         /// </summary>
-        /// <param name="emails"></param>
+        /// <param name="emails">The emails to send</param>
         /// <returns></returns>
         public void SendMails(List<Email> emails)
         {
-            if (emails == new List<Email>() || emails == null)
+            if (emails == null || emails.Count == 0)
             {
                 throw new ArgumentNullException(nameof(emails));
             }
