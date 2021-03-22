@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using File_Service.HelperFiles;
+using File_Service.Models.HelperFiles;
 using NUnit.Framework;
 
 namespace File_Service.UnitTests

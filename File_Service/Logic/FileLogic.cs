@@ -8,6 +8,7 @@ using File_Service.CustomExceptions;
 using File_Service.Enums;
 using File_Service.HelperFiles;
 using File_Service.Models.FromFrontend;
+using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 
 namespace File_Service.Logic
@@ -22,7 +23,7 @@ namespace File_Service.Logic
             _virusScannerLogic = virusScannerLogic;
         }
 
-        internal async Task<byte[]> GetFileAsync(Guid uuid, FileType type)
+        public async Task<byte[]> GetFileAsync(Guid uuid, FileType type)
         {
             string requestedFilePath = DirectoryHelper.GetFilePathByUuid(uuid, type);
             if (string.IsNullOrEmpty(requestedFilePath))
@@ -40,7 +41,7 @@ namespace File_Service.Logic
         /// <param name="requestingUserUuid">The uuid of the requesting user</param>
         /// <param name="type">The type of files to save</param>
         /// <returns>A list of the name of the files that are saved</returns>
-        internal async Task<List<string>> SaveFileAsync(FileUpload data, Guid requestingUserUuid, FileType type)
+        public async Task<List<string>> SaveFileAsync(FileUpload data, Guid requestingUserUuid, FileType type)
         {
             if (data.Files == null || data.Files?.Count == 0)
             {
