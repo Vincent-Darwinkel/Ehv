@@ -27,32 +27,37 @@ services:
     build:
       context: .
       dockerfile: Datepicker_Service/Dockerfile
-
+    ports:
+        - "5002:80"
 
   event_service:
     image: ${DOCKER_REGISTRY-}eventservice
     build:
       context: .
       dockerfile: Event_Service/Dockerfile
-
+    ports:
+        - "5003:80"
 
   user_service:
     image: ${DOCKER_REGISTRY-}userservice
     build:
       context: .
       dockerfile: User_Service/Dockerfile
-
+    ports:
+        - "5004:80"
 
   email_service:
     image: ${DOCKER_REGISTRY-}emailservice
     build:
       context: .
       dockerfile: Email_Service/Dockerfile
-
+    ports:
+        - "5005:80"
 
   authentication_service:
     image: ${DOCKER_REGISTRY-}authenticationservice
     build:
       context: .
       dockerfile: Authentication_Service/Dockerfile
-
+    ports:
+        - "5006:80"

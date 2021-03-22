@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using File_Service.Enums;
+using File_Service.HelperFiles;
 
-namespace File_Service.HelperFiles
+namespace File_Service.Models.HelperFiles
 {
-    internal static class DirectoryHelper
+    public static class DirectoryHelper
     {
         /// <summary>
         /// Finds the file by uuid and returns the path of the file
@@ -14,7 +15,7 @@ namespace File_Service.HelperFiles
         /// <param name="uuid">The uuid of the file to search for</param>
         /// <param name="type">The type of file to search for</param>
         /// <returns>A string with the location of the file</returns>
-        internal static string GetFilePathByUuid(Guid uuid, FileType type)
+        public static string GetFilePathByUuid(Guid uuid, FileType type)
         {
             string path = Environment.CurrentDirectory + (type == FileType.Image ? "/Media/Images/" : "/Media/Videos/");
             return Directory
@@ -28,7 +29,7 @@ namespace File_Service.HelperFiles
         /// </summary>
         /// <param name="path">The path to check</param>
         /// <returns>True if path is valid, false if not valid</returns>
-        internal static bool PathIsValid(string path)
+        public static bool PathIsValid(string path)
         {
             var allowedPaths = new List<string>();
             allowedPaths.AddRange(FilePaths.AllowedImagePaths);
