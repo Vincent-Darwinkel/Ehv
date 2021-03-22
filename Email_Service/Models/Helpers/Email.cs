@@ -1,4 +1,4 @@
-﻿namespace Email_Service.Models.FromFrontend
+﻿namespace Email_Service.Models.Helpers
 {
     public class Email
     {

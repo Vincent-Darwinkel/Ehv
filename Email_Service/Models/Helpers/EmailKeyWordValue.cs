@@ -1,4 +1,4 @@
-﻿namespace Models.Helpers
+﻿namespace Email_Service.Models.Helpers
 {
     public class EmailKeyWordValue
     {

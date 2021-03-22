@@ -5,10 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Email_Service.Models.FromFrontend;
 using Email_Service.Models.Helpers;
 using Microsoft.Extensions.Configuration;
-using Models.Helpers;
 
 namespace Email_Service.Logic
 {
@@ -48,7 +46,8 @@ namespace Email_Service.Logic
         /// <summary>
         /// Uses the Send method in a foreach loop, if one mail fails the return value would be false
         /// </summary>
-        /// <param name="emails">List of email object which contains all data</param>
+        /// <param name="emails"></param>
+        /// <returns></returns>
         public void SendMails(List<Email> emails)
         {
             if (emails == new List<Email>() || emails == null)
@@ -61,7 +60,7 @@ namespace Email_Service.Logic
         /// <summary>
         /// Send mail
         /// </summary>
-        /// <param name="email">The email object which contains all data</param>
+        /// <param name="email"></param>
         public void Send(Email email)
         {
             if (string.IsNullOrEmpty(email?.Message) || string.IsNullOrEmpty(email.EmailAddress) || string.IsNullOrEmpty(email.Subject))
@@ -70,18 +69,18 @@ namespace Email_Service.Logic
             }
 
             // client settings
-            using var client = new SmtpClient(_config[ConfigParameters.SmtpHost])
+            using var client = new SmtpClient(_config[ConfigurationParameters.SmtpHost])
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_config[ConfigParameters.EmailToSendFrom], _config[ConfigParameters.EmailPassword]),
-                Port = Convert.ToInt32(_config[ConfigParameters.SmtpPort]),
+                Credentials = new NetworkCredential(_config[ConfigurationParameters.EmailToSendFrom], _config[ConfigurationParameters.EmailPassword]),
+                Port = Convert.ToInt32(_config[ConfigurationParameters.SmtpPort]),
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 Timeout = 10000
             };
 
             // mail settings
-            using var message = new MailMessage { From = new MailAddress(_config[ConfigParameters.EmailToSendFrom]) };
+            using var message = new MailMessage { From = new MailAddress(_config[ConfigurationParameters.EmailToSendFrom]) };
             message.To.Add(email.EmailAddress);
             message.Body = email.Message;
             message.Subject = email.Subject;
