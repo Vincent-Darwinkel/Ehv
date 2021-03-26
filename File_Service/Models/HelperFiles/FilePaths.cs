@@ -1,21 +1,15 @@
 ﻿using System.Collections.Generic;
 
-namespace File_Service.HelperFiles
+namespace File_Service.Models.HelperFiles
 {
     // Path names must end with an /
+    // Below are the paths a user can upload to
     public static class FilePaths
     {
-        public const string PublicImageFolder = "/Media/Images/Public/";
-        public const string AvatarImageFolder = "/Media/Images/Avatar/";
-        public const string PublicVideoFolder = "/Media/Videos/Public/";
-        public static readonly List<string> AllowedImagePaths = new List<string>
+        public const string Gallery = "/public/gallery/";
+        public static readonly List<string> AllowedPaths = new List<string>
         {
-            PublicImageFolder,
-            AvatarImageFolder
-        };
-        public static readonly List<string> AllowedVideoPaths = new List<string>
-        {
-            PublicVideoFolder
+            Gallery
         };
     }
 }

@@ -13,15 +13,14 @@ namespace File_Service.Models.HelperFiles
         /// Finds the file by uuid and returns the path of the file
         /// </summary>
         /// <param name="uuid">The uuid of the file to search for</param>
-        /// <param name="type">The type of file to search for</param>
         /// <returns>A string with the location of the file</returns>
-        public static string GetFilePathByUuid(Guid uuid, FileType type)
+        public static string GetFilePathByUuid(Guid uuid)
         {
-            string path = Environment.CurrentDirectory + (type == FileType.Image ? "/Media/Images/" : "/Media/Videos/");
+            string path = Environment.CurrentDirectory + "/Media/";
             return Directory
-                .GetFiles(path, $"*{(type == FileType.Image ? FileExtension.Webp : FileExtension.Mp4)}",
-                    SearchOption.AllDirectories)
-                .FirstOrDefault(fileName => fileName.Contains(uuid.ToString()));
+                .GetFiles(path, "*")
+                .FirstOrDefault(fileName => fileName
+                    .Contains(uuid.ToString()));
         }
 
         /// <summary>
@@ -31,13 +30,7 @@ namespace File_Service.Models.HelperFiles
         /// <returns>True if path is valid, false if not valid</returns>
         public static bool PathIsValid(string path)
         {
-            var allowedPaths = new List<string>();
-            allowedPaths.AddRange(FilePaths.AllowedImagePaths);
-            allowedPaths.AddRange(FilePaths.AllowedVideoPaths);
-
-            return allowedPaths
-                .Exists(p => string
-                    .Equals(p, path, StringComparison.CurrentCultureIgnoreCase));
+            return FilePaths.AllowedPaths.Exists(path.Contains);
         }
     }
 }

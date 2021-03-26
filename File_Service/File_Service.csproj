@@ -8,17 +8,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Media\Videos\**" />
+	  <Content Remove="Media\Videos\**" />
+	  <EmbeddedResource Remove="Media\Videos\**" />
+	  <None Remove="Media\Videos\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
 		<PackageReference Include="nClam" Version="5.0.1" />
 		<PackageReference Include="NUnit" Version="3.13.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Media\Images\Public\" />
-	  <Folder Include="Media\Videos\Public\" />
+	  <Folder Include="Media\public\gallery\" />
+	  <Folder Include="UnitTests\" />
 	</ItemGroup>
 
 </Project>
