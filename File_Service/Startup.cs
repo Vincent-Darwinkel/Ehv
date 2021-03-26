@@ -24,6 +24,8 @@ namespace File_Service
         {
 
             services.AddControllers();
+            services.AddMemoryCache();
+
             // allow big files to be uploaded
             services.Configure<KestrelServerOptions>(options =>
             {
@@ -41,6 +43,7 @@ namespace File_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             services.AddScoped<FileLogic>();
+            services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();
         }

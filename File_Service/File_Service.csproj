@@ -8,9 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Media\public\gallery\2021\**" />
 	  <Compile Remove="Media\Videos\**" />
+	  <Content Remove="Media\public\gallery\2021\**" />
 	  <Content Remove="Media\Videos\**" />
+	  <EmbeddedResource Remove="Media\public\gallery\2021\**" />
 	  <EmbeddedResource Remove="Media\Videos\**" />
+	  <None Remove="Media\public\gallery\2021\**" />
 	  <None Remove="Media\Videos\**" />
 	</ItemGroup>
 
@@ -23,7 +27,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Media\public\gallery\" />
 	  <Folder Include="UnitTests\" />
 	</ItemGroup>
 

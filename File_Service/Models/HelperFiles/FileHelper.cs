@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using File_Service.Enums;
-using File_Service.HelperFiles;
 using File_Service.Logic;
 using Microsoft.AspNetCore.Http;
 
@@ -63,10 +63,24 @@ namespace File_Service.Models.HelperFiles
             return allowedImageTypes.Any(type => file.ContentType.ToLower() == type) ? FileType.Image : FileType.Video;
         }
 
-        public string GetFileExtensionFromFile(IFormFile file)
+        public string GetExtension(IFormFile file)
         {
             FileType type = GetFileTypeFromFile(file);
             return type == FileType.Image ? ".webp" : ".mp4";
+        }
+
+        /// <summary>
+        /// Finds the file by uuid and returns the path of the file
+        /// </summary>
+        /// <param name="uuid">The uuid of the file to search for</param>
+        /// <returns>A string with the location of the file</returns>
+        public static string GetFilePathByUuid(Guid uuid)
+        {
+            string path = Environment.CurrentDirectory + "/Media/";
+            return Directory
+                .GetFiles(path, "*", SearchOption.AllDirectories)
+                .FirstOrDefault(fileName => fileName
+                    .Contains(uuid.ToString()));
         }
     }
 }

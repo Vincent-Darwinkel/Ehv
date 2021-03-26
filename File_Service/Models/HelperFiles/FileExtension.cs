@@ -1,4 +1,4 @@
-﻿namespace File_Service.HelperFiles
+﻿namespace File_Service.Models.HelperFiles
 {
     public static class FileExtension
     {

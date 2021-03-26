@@ -14,30 +14,16 @@ namespace File_Service.Controllers
     public class FileController : ControllerBase
     {
         private readonly FileLogic _imageLogic;
+
         public FileController(FileLogic imageLogic)
         {
             _imageLogic = imageLogic;
         }
 
         [HttpGet("{uuid}")]
-        public async Task<ActionResult> GetFileByUuidAsync(Guid uuid)
+        public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            try
-            {
-                return await _imageLogic.GetFileAsync(uuid);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (FileNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return await _imageLogic.FindAsync(uuid);
         }
 
         [HttpPost]
@@ -45,9 +31,14 @@ namespace File_Service.Controllers
         {
             try
             {
-                var userUuid = Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839");
-                List<string> savedFiles = await _imageLogic.SaveFileAsync(files, path, userUuid);
-                return Ok(savedFiles);
+                var userUuid =
+                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
+                await _imageLogic.SaveFileAsync(files, path, userUuid);
+                return Ok();
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return NotFound();
             }
             catch (UnprocessableException)
             {
