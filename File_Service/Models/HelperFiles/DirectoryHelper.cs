@@ -19,11 +19,16 @@ namespace File_Service.Models.HelperFiles
         /// <returns>True if fullPath is valid</returns>
         private static bool PathStartsWithValidDirectory(string path)
         {
+            int pathLength = path.Length;
             foreach (var filePath in FilePathInfo.AvailablePaths)
             {
                 int filePathLength = filePath.Path.Length;
                 for (int i = 0; i < filePathLength; i++)
                 {
+                    if (i == pathLength)
+                    {
+                        return false;
+                    }
                     if (filePath.Path[i] != path[i])
                     {
                         break;
@@ -40,10 +45,10 @@ namespace File_Service.Models.HelperFiles
         }
 
         /// <summary>
-        /// Checks if the supplied fullPath is not null only contains alphabet and numbers and starts with the allowed paths
+        /// Checks if the supplied user path is not null only contains alphabet and numbers and starts with the allowed paths
         /// </summary>
-        /// <param name="path">The fullPath to check</param>
-        /// <returns>True if fullPath is valid, false if not valid</returns>
+        /// <param name="path">The path to check</param>
+        /// <returns>True if path is valid, false if not valid</returns>
         public static bool PathIsValid(string path)
         {
             return !string.IsNullOrEmpty(path) &&

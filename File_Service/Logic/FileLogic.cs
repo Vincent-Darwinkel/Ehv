@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Enums;
@@ -85,8 +86,8 @@ namespace File_Service.Logic
             string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
 
             List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
-            var fileNameCollection = new List<string>();
-            validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid().ToString()));
+            var fileNameCollection = new List<Guid>();
+            validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid()));
 
             var fileTasks = validFiles.Select((file, index) =>
                 _fileHelper.GetFileTypeFromFile(file) == FileType.Image
@@ -97,11 +98,19 @@ namespace File_Service.Logic
             await Task.WhenAll(fileTasks);
 
             DirectoryInfoFile directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(fullPath);
-            directoryInfoFile.FileInfo.Add(new FileContentInfo
+            FileContentInfo fileInfo = directoryInfoFile.FileInfo.Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+            if (fileInfo != null)
             {
-                FileOwnerUuid = requestingUserUuid,
-                FilesOwnedByUser = fileNameCollection
-            });
+                fileInfo.FilesOwnedByUser.AddRange(fileNameCollection);
+            }
+            else
+            {
+                directoryInfoFile.FileInfo.Add(new FileContentInfo
+                {
+                    FileOwnerUuid = requestingUserUuid,
+                    FilesOwnedByUser = fileNameCollection
+                });
+            }
 
             await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
         }
@@ -134,6 +143,43 @@ namespace File_Service.Logic
             {
                 ms.Close();
             }
+        }
+
+        /// <summary>
+        /// Removes a file by uuid if the user is owner and the file exists
+        /// </summary>
+        /// <param name="fileUuid">The uuid of the file to remove</param>
+        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
+        public async Task RemoveFile(Guid fileUuid, Guid requestingUserUuid)
+        {
+            if (fileUuid == Guid.Empty)
+            {
+                throw new UnprocessableException();
+            }
+
+            string directoryPath = FileHelper.GetDirectoryPathByFileUuid(fileUuid);
+            string fullPath = FileHelper.GetFilePathByUuid(fileUuid);
+
+            DirectoryInfoFile infoFile = await DirectoryHelper.GetInfoFileFromDirectory(directoryPath);
+            FileContentInfo fileContentInfo = infoFile.FileInfo
+                .Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+
+            bool fileIsOwnedByUser = fileContentInfo.FilesOwnedByUser
+                .Contains(fileUuid);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new UnprocessableException();
+            }
+
+            if (!fileIsOwnedByUser)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            File.Delete(fullPath);
+            fileContentInfo.FilesOwnedByUser.Remove(fileUuid);
+            await DirectoryHelper.UpdateInfoFile(directoryPath, infoFile);
         }
     }
 }

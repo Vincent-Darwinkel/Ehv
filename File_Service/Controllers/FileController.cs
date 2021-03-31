@@ -13,17 +13,17 @@ namespace File_Service.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
-        private readonly FileLogic _imageLogic;
+        private readonly FileLogic _fileLogic;
 
-        public FileController(FileLogic imageLogic)
+        public FileController(FileLogic fileLogic)
         {
-            _imageLogic = imageLogic;
+            _fileLogic = fileLogic;
         }
 
         [HttpGet("{uuid}")]
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            return await _imageLogic.FindAsync(uuid);
+            return await _fileLogic.FindAsync(uuid);
         }
 
         [HttpPost]
@@ -33,7 +33,7 @@ namespace File_Service.Controllers
             {
                 var userUuid =
                     Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _imageLogic.SaveFileAsync(files, path, userUuid);
+                await _fileLogic.SaveFileAsync(files, path, userUuid);
                 return Ok();
             }
             catch (DirectoryNotFoundException)
@@ -43,6 +43,30 @@ namespace File_Service.Controllers
             catch (UnprocessableException)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> RemoveFile(Guid uuid)
+        {
+            try
+            {
+                var userUuid =
+                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
+                await _fileLogic.RemoveFile(uuid, userUuid);
+                return Ok();
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception)
             {

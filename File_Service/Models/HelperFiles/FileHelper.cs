@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using File_Service.Enums;
 using File_Service.Logic;
@@ -73,7 +74,7 @@ namespace File_Service.Models.HelperFiles
         /// Finds the file by uuid and returns the path of the file
         /// </summary>
         /// <param name="uuid">The uuid of the file to search for</param>
-        /// <returns>A string with the location of the file</returns>
+        /// <returns>A string with the location of the file with the file uuid and extension at the end</returns>
         public static string GetFilePathByUuid(Guid uuid)
         {
             string path = Environment.CurrentDirectory + "/Media/";
@@ -81,6 +82,27 @@ namespace File_Service.Models.HelperFiles
                 .GetFiles(path, "*", SearchOption.AllDirectories)
                 .FirstOrDefault(fileName => fileName
                     .Contains(uuid.ToString()));
+        }
+
+        /// <summary>
+        /// Finds the path of the directory which contains the file
+        /// </summary>
+        /// <param name="uuid">The uuid of the file to search for</param>
+        /// <returns>A string with the path of the directory which contains the file</returns>
+        public static string GetDirectoryPathByFileUuid(Guid uuid)
+        {
+            string path = Environment.CurrentDirectory + "/Media/";
+            string filePath = Directory
+                .GetFiles(path, "*", SearchOption.AllDirectories)
+                .FirstOrDefault(fileName => fileName
+                    .Contains(uuid.ToString()));
+
+            var sb = new StringBuilder(filePath);
+            sb.Replace(uuid.ToString(), "");
+            sb.Replace(FileExtension.Mp4, "");
+            sb.Replace(FileExtension.Webp, "");
+
+            return sb.ToString();
         }
     }
 }

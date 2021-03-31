@@ -6,7 +6,7 @@ namespace File_Service.Models.HelperFiles
     public class FileContentInfo
     {
         public Guid FileOwnerUuid { get; set; }
-        public List<string> FilesOwnedByUser { get; set; } = new List<string>();
+        public List<Guid> FilesOwnedByUser { get; set; } = new List<Guid>();
     }
 
     public class DirectoryInfoFile
