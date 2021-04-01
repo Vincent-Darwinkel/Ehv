@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Logic;
+using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -63,13 +64,13 @@ namespace File_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateFolder(string path)
+        public async Task<ActionResult> CreateFolder([FromForm] FolderUpload folder)
         {
             try
             {
                 var userUuid =
                     Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _directoryLogic.CreateFolder(path, userUuid);
+                await _directoryLogic.CreateFolder(folder, userUuid);
                 return Ok();
             }
             catch (DuplicateNameException)
@@ -80,7 +81,7 @@ namespace File_Service.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }

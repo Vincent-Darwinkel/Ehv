@@ -5,23 +5,23 @@ namespace File_Service.Models.HelperFiles
     public class FilePathOptions
     {
         /// <summary>
-        /// True: only one file can be uploaded in the userSpecifiedPath by a user, the existing file will be overwritten
-        /// False: multiple files can be uploaded in the userSpecifiedPath by a user
+        /// True: multiple files can be uploaded in the parent directory by an user
+        /// False: Only one file can be uploaded in the parent directory by an user, the existing file will be overwritten
         /// default is true
         /// </summary>
         public bool AllowMultipleFilesByUser { get; set; } = true;
-
-        /// <summary>
-        /// Determines how deep in the userSpecifiedPath folders can be created. Example if set to 1 a sub folder in the userSpecifiedPath cannot contain an other sub folder
-        /// Default is -1 (no limit) to enable set to 0 or higher
-        /// </summary>
-        public short MaxAllowedSubFolders { get; set; } = -1;
 
         /// <summary>
         /// True: files can be uploaded in the root path
         /// False: files must be uploaded in a sub folder
         /// </summary>
         public bool AllowFileUploadInRoot { get; set; } = true;
+
+        /// <summary>
+        /// True: folders can be created in the directory
+        /// False: only files can be uploaded in the directory
+        /// </summary>
+        public bool AllowFolderCreation { get; set; } = true;
     }
 
     public class FilePath
@@ -68,7 +68,6 @@ namespace File_Service.Models.HelperFiles
                 Path = "/public/gallery/",
                 FilePathOptions = new FilePathOptions
                 {
-                    MaxAllowedSubFolders = 2,
                     AllowFileUploadInRoot = false
                 }
             },
@@ -78,7 +77,7 @@ namespace File_Service.Models.HelperFiles
                 FilePathOptions = new FilePathOptions
                 {
                     AllowMultipleFilesByUser = false,
-                    MaxAllowedSubFolders = 0
+                    AllowFolderCreation = false
                 }
             }
         };

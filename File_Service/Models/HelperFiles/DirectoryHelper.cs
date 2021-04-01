@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -103,48 +102,6 @@ namespace File_Service.Models.HelperFiles
         }
 
         /// <summary>
-        /// Creates a fullPath if the following conditions are met:
-        /// <list type="bullet">
-        /// <item>
-        /// <description>The fullPath does not exists</description>
-        /// </item>
-        /// <item>
-        /// <description>The max allowed sub folders for the fullPath is not reached</description>
-        /// </item>
-        /// </list>
-        /// </summary>
-        /// <param name="fullPath">The full fullPath of the folder to create</param>
-        /// <param name="userSpecifiedPath">The fullPath the user specified from the front-end</param>
-        public static async Task Create(string fullPath, string userSpecifiedPath, Guid userUuid)
-        {
-            if (Directory.Exists(fullPath))
-            {
-                throw new DuplicateNameException();
-            }
-
-            FilePath filepath = FilePathInfo.Find(userSpecifiedPath);
-            if (filepath == null)
-            {
-                throw new UnprocessableException();
-            }
-
-            string rootPath = $"{Environment.CurrentDirectory}/Media{filepath.Path}";
-            if (Directory.GetDirectories(rootPath).Length >= filepath.FilePathOptions.MaxAllowedSubFolders)
-            {
-                throw new UnprocessableException();
-            }
-
-            fullPath = FixPath(fullPath);
-            Directory.CreateDirectory(fullPath);
-            var directoryInfoFile = new DirectoryInfoFile
-            {
-                DirectoryOwnerUuid = userUuid
-            };
-
-            await UpdateInfoFile(fullPath, directoryInfoFile);
-        }
-
-        /// <summary>
         /// Gets the info file from the specified directory
         /// </summary>
         /// <param name="fullPath">The full path to search the file</param>
@@ -156,7 +113,12 @@ namespace File_Service.Models.HelperFiles
                 throw new UnprocessableException();
             }
 
-            string json = await File.ReadAllTextAsync($"{fullPath}/info.json");
+            string json = await File.ReadAllTextAsync($"{fullPath}info.json");
+            if (string.IsNullOrEmpty(json))
+            {
+                throw new UnprocessableException();
+            }
+
             var directoryInfoFile = JsonConvert.DeserializeObject<DirectoryInfoFile>(json);
             directoryInfoFile.FileInfo ??= new List<FileContentInfo>();
 
@@ -180,15 +142,73 @@ namespace File_Service.Models.HelperFiles
             await File.WriteAllTextAsync($"{fullPath}/info.json", newJson);
         }
 
-        public static bool CanUploadInDirectory(string userSpecifiedPath)
+        /// <summary>
+        /// Checks if an folder can be created in the parent path. Folders can be created if the directory does not contain files,
+        /// the parent directory allows that folders can be created
+        /// </summary>
+        /// <param name="parentPath"></param>
+        /// <returns></returns>
+        public static bool CanCreateFolderInDirectory(string parentPath)
         {
-            FilePath filePathInfo = FilePathInfo.Find(userSpecifiedPath);
-            if (filePathInfo.FilePathOptions.AllowFileUploadInRoot && userSpecifiedPath == filePathInfo.Path)
+            if (!PathIsValid(parentPath))
             {
-                return true;
+                return false;
             }
 
-            return !filePathInfo.FilePathOptions.AllowFileUploadInRoot && userSpecifiedPath != filePathInfo.Path;
+            FilePath filePathInfo = FilePathInfo.Find(parentPath);
+            if (!filePathInfo.FilePathOptions.AllowFolderCreation)
+            {
+                return false;
+            }
+
+            string fullPath = FixPath($"{Environment.CurrentDirectory}/Media{parentPath}");
+            if (GetFilesInDirectory(fullPath).Any())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if files can be uploaded in a directory. Files can be uploaded if the directory allows file upload in root,
+        /// if files can be uploaded in path and does not contain sub directories
+        /// </summary>
+        /// <param name="parentPath">The path the user wants to upload to</param>
+        /// <param name="fullPath">The full path</param>
+        /// <param name="userUuid">The uuid of the requesting user</param>
+        /// <returns>True if the above conditions are met false if not</returns>
+        public static async Task<bool> CanUploadFilesInDirectory(string parentPath, string fullPath, Guid userUuid)
+        {
+            if (!Directory.Exists(fullPath))
+            {
+                return false;
+            }
+            if (!PathIsValid(parentPath))
+            {
+                return false;
+            }
+
+            bool directoryContainsFolders = GetFoldersInDirectory(fullPath).Any();
+            if (directoryContainsFolders)
+            {
+                return false;
+            }
+
+            FilePath filePathInfo = FilePathInfo.Find(parentPath);
+            if (!filePathInfo.FilePathOptions.AllowFileUploadInRoot &&
+                parentPath == filePathInfo.Path)
+            {
+                return false;
+            }
+
+            var directoryInfoFile = await GetInfoFileFromDirectory($"{Environment.CurrentDirectory}/Media{filePathInfo.Path}");
+            if (!filePathInfo.FilePathOptions.AllowMultipleFilesByUser && directoryInfoFile.FileInfo.Exists(fi => fi.FileOwnerUuid == userUuid))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

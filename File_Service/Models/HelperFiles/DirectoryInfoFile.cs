@@ -12,7 +12,8 @@ namespace File_Service.Models.HelperFiles
     public class DirectoryInfoFile
     {
         public Guid DirectoryOwnerUuid { get; set; }
-        public List<FileContentInfo> FileInfo { get; set; }
+        public List<FileContentInfo> FileInfo { get; set; } = new List<FileContentInfo>();
+        public List<string> DirectoriesOwnedByUser { get; set; } = new List<string>();
 
     }
 }

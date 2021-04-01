@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
+using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace File_Service.Logic
 {
@@ -65,18 +69,46 @@ namespace File_Service.Logic
         }
 
         /// <summary>
-        /// Creates an new folder if path is valid
+        /// Creates a directory if the following conditions are met:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>The full path does not exists</description>
+        /// </item>
+        /// <item>
+        /// <description>The max allowed sub folders for the full path is not reached</description>
+        /// </item>
+        /// </list>
         /// </summary>
-        /// <param name="userSpecifiedPath">The path ending with the folder to create</param>
-        /// <param name="userUuid">The uuid of the requesting user</param>
-        public async Task CreateFolder(string userSpecifiedPath, Guid userUuid)
+        /// <param name="folder">The form the user send</param>
+        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
+        public async Task CreateFolder(FolderUpload folder, Guid requestingUserUuid)
         {
-            if (!DirectoryHelper.PathIsValid(userSpecifiedPath))
+            if (!Directory.Exists($"{Environment.CurrentDirectory}/Media{folder.ParentPath}") ||
+                !DirectoryHelper.CanCreateFolderInDirectory(folder.ParentPath))
             {
                 throw new UnprocessableException();
             }
-            string fullPath = $"{Environment.CurrentDirectory}/Media{DirectoryHelper.FixPath(userSpecifiedPath)}";
-            await DirectoryHelper.Create(fullPath, userSpecifiedPath, userUuid);
+
+            string fullPath = $"{Environment.CurrentDirectory}/Media{folder.ParentPath}{folder.Name}";
+            if (Directory.Exists(fullPath))
+            {
+                throw new DuplicateNameException();
+            }
+
+            FilePath filepathInfo = FilePathInfo.Find(folder.ParentPath);
+            string rootPath = $"{Environment.CurrentDirectory}/Media{filepathInfo?.Path}";
+
+            var rootDirectoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(rootPath);
+            rootDirectoryInfoFile.DirectoriesOwnedByUser.Add(folder.Name);
+
+            Directory.CreateDirectory(fullPath);
+            var directoryInfoFile = new DirectoryInfoFile
+            {
+                DirectoryOwnerUuid = requestingUserUuid
+            };
+
+            await DirectoryHelper.UpdateInfoFile(rootPath, rootDirectoryInfoFile);
+            await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
         }
     }
 }

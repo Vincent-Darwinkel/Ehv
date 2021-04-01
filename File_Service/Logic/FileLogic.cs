@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Enums;
@@ -72,18 +71,13 @@ namespace File_Service.Logic
         public async Task SaveFileAsync(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
         {
             userSpecifiedPath = FixPath(userSpecifiedPath);
+            string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
+
             if (files?.Count == 0 ||
-                !DirectoryHelper.PathIsValid(userSpecifiedPath) ||
-                !DirectoryHelper.CanUploadInDirectory(userSpecifiedPath))
+                !await DirectoryHelper.CanUploadFilesInDirectory(userSpecifiedPath, fullPath, requestingUserUuid))
             {
                 throw new UnprocessableException();
             }
-            if (!Directory.Exists($"{Environment.CurrentDirectory}/Media/{userSpecifiedPath}"))
-            {
-                throw new DirectoryNotFoundException();
-            }
-
-            string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
 
             List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
             var fileNameCollection = new List<Guid>();
@@ -96,7 +90,12 @@ namespace File_Service.Logic
                     : SaveVideoAsync($"{fullPath}/{fileNameCollection[index]}{_fileHelper.GetExtension(file)}", file));
 
             await Task.WhenAll(fileTasks);
+            await UpdateInfoFileAfterFileUpload(requestingUserUuid, fullPath, fileNameCollection);
+        }
 
+        private static async Task UpdateInfoFileAfterFileUpload(Guid requestingUserUuid, string fullPath,
+            List<Guid> fileNameCollection)
+        {
             DirectoryInfoFile directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(fullPath);
             FileContentInfo fileInfo = directoryInfoFile.FileInfo.Find(fi => fi.FileOwnerUuid == requestingUserUuid);
             if (fileInfo != null)
