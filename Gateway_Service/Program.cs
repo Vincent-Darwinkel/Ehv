@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Ocelot.DependencyInjection;
 
 namespace Gateway_Service
 {
@@ -18,10 +17,9 @@ namespace Gateway_Service
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureAppConfiguration(config =>
-                        config.AddJsonFile($"ocelot{env}.json"));
+                        config.AddJsonFile($"ocelot.Development.json")); // TODO remove .Development in production builds
 
                 })
                 .ConfigureLogging((hostingContext, logging) =>

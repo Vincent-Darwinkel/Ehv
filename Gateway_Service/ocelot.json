@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/image/{id}",
+      "DownstreamPathTemplate": "/directory",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,11 +9,23 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/file/image/{id}",
+      "UpstreamPathTemplate": "/api/file/directory",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/directory/info",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "file_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/file/directory/info",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/image/",
+      "DownstreamPathTemplate": "/file",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -21,8 +33,8 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/file/image/",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamPathTemplate": "/api/file/file",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ]
     }
   ],
   "GlobalConfiguration": {
