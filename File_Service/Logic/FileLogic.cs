@@ -1,94 +1,184 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Enums;
-using File_Service.HelperFiles;
-using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace File_Service.Logic
 {
     public class FileLogic
     {
-        private readonly VirusScannerLogic _virusScannerLogic;
-        private readonly ConcurrentBag<string> _savedFiles = new ConcurrentBag<string>();
+        private readonly FileHelper _fileHelper;
 
-        public FileLogic(VirusScannerLogic virusScannerLogic)
+        public FileLogic(FileHelper fileHelper)
         {
-            _virusScannerLogic = virusScannerLogic;
+            _fileHelper = fileHelper;
         }
 
-        public async Task<byte[]> GetFileAsync(Guid uuid, FileType type)
+        /// <summary>
+        /// Finds the file by uuid
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <returns>A FileContentResult which contains the file</returns>
+        public async Task<FileContentResult> FindAsync(Guid uuid)
         {
-            string requestedFilePath = DirectoryHelper.GetFilePathByUuid(uuid, type);
-            if (string.IsNullOrEmpty(requestedFilePath))
+            string foundFilePath = FileHelper.GetFilePathByUuid(uuid);
+            if (string.IsNullOrEmpty(foundFilePath))
             {
                 throw new FileNotFoundException();
             }
 
-            return await File.ReadAllBytesAsync(requestedFilePath);
+            var fileInfo = new FileInfo(foundFilePath);
+            byte[] fileBytes = await File.ReadAllBytesAsync(foundFilePath);
+            return new FileContentResult(fileBytes, fileInfo.Extension == ".webp" ? "image/webp" : "video/mp4");
         }
 
         /// <summary>
-        /// Saves the file on the file system if the provided path is valid, the file is an webp image or mp4 video and the file does not contain viruses
+        /// Adds / to the start and or end of the userSpecifiedPath if it does not exists
         /// </summary>
-        /// <param name="data">The data from the front-end</param>
-        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
-        /// <param name="type">The type of files to save</param>
-        /// <returns>A list of the name of the files that are saved</returns>
-        public async Task<List<string>> SaveFileAsync(FileUpload data, Guid requestingUserUuid, FileType type)
+        /// <param name="path">The userSpecifiedPath to check and fix</param>
+        /// <returns>A userSpecifiedPath with / at beginning and end</returns>
+        private string FixPath(string path)
         {
-            if (data.Files == null || data.Files?.Count == 0)
+            if (string.IsNullOrEmpty(path))
             {
-                throw new UnprocessableException();
+                return path;
+            }
+            if (!path.EndsWith("/"))
+            {
+                path += "/";
+            }
+            if (!path.StartsWith("/"))
+            {
+                path = "/" + path;
             }
 
-            string userPath = $"/Media{(type == FileType.Image ? "/Images" : "/Videos")}{data.Path}";
-            if (!DirectoryHelper.PathIsValid(userPath) || !FileHelper.FilesValid(data.Files))
-            {
-                throw new UnprocessableException();
-            }
-
-            string userDirectory = $"{Environment.CurrentDirectory}{userPath}{requestingUserUuid}/";
-            if (!Directory.Exists(userDirectory))
-            {
-                Directory.CreateDirectory(userDirectory);
-            }
-
-            var fileTasks = data.Files.Select(file => SaveIFormFileAsync(userDirectory, file));
-            await Task.WhenAll(fileTasks);
-            return _savedFiles.ToList();
+            return path;
         }
 
         /// <summary>
-        /// Saves the file to the specified path, before saving the file is scanned for viruses.
-        /// If it contains a virus the file is not saved and the user directory is removed if it is empty
+        /// Saves the file on the file system if the provided userSpecifiedPath is valid, the file is an webp image or mp4 video and the file does not contain viruses
         /// </summary>
-        /// <param name="userDirectory">The directory of the user folder</param>
-        /// <param name="file">The file to save and scan for viruses</param>
-        private async Task SaveIFormFileAsync(string userDirectory, IFormFile file)
+        /// <param name="files">The files to save</param>
+        /// <param name="userSpecifiedPath">The userSpecifiedPath to save the files in</param>
+        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
+        /// <returns>A list of the name of the files that are saved</returns>
+        public async Task SaveFileAsync(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
+        {
+            userSpecifiedPath = FixPath(userSpecifiedPath);
+            string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
+
+            if (files?.Count == 0 ||
+                !await DirectoryHelper.CanUploadFilesInDirectory(userSpecifiedPath, fullPath, requestingUserUuid))
+            {
+                throw new UnprocessableException();
+            }
+
+            List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
+            var fileNameCollection = new List<Guid>();
+            validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid()));
+
+            var fileTasks = validFiles.Select((file, index) =>
+                _fileHelper.GetFileTypeFromFile(file) == FileType.Image
+                    ? SaveImageAsync($"{fullPath}/{fileNameCollection[index]}{_fileHelper.GetExtension(file)}", file)
+
+                    : SaveVideoAsync($"{fullPath}/{fileNameCollection[index]}{_fileHelper.GetExtension(file)}", file));
+
+            await Task.WhenAll(fileTasks);
+            await UpdateInfoFileAfterFileUpload(requestingUserUuid, fullPath, fileNameCollection);
+        }
+
+        private static async Task UpdateInfoFileAfterFileUpload(Guid requestingUserUuid, string fullPath,
+            List<Guid> fileNameCollection)
+        {
+            DirectoryInfoFile directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(fullPath);
+            FileContentInfo fileInfo = directoryInfoFile.FileInfo.Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+            if (fileInfo != null)
+            {
+                fileInfo.FilesOwnedByUser.AddRange(fileNameCollection);
+            }
+            else
+            {
+                directoryInfoFile.FileInfo.Add(new FileContentInfo
+                {
+                    FileOwnerUuid = requestingUserUuid,
+                    FilesOwnedByUser = fileNameCollection
+                });
+            }
+
+            await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
+        }
+
+        private async Task SaveVideoAsync(string fullPath, IFormFile video)
         {
             await using var ms = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(ms);
-            byte[] fileBytes = ms.ToArray();
-            bool fileContainsVirus = await _virusScannerLogic.FileContainsVirus(fileBytes);
-            if (!fileContainsVirus)
+            try
             {
-                string filePath = userDirectory + Guid.NewGuid() + FileHelper.GetFileExtension(file);
-                await File.WriteAllBytesAsync(filePath, fileBytes);
-                _savedFiles.Add(file.FileName);
-                return;
+                await video.OpenReadStream().CopyToAsync(ms);
+                byte[] fileBytes = ms.ToArray();
+                await File.WriteAllBytesAsync(fullPath, fileBytes);
+            }
+            finally
+            {
+                ms.Close();
+            }
+        }
+
+        private async Task SaveImageAsync(string fullPath, IFormFile image)
+        {
+            await using var ms = new MemoryStream();
+            try
+            {
+                await image.OpenReadStream().CopyToAsync(ms);
+                byte[] fileBytes = ms.ToArray();
+                await File.WriteAllBytesAsync(fullPath, fileBytes);
+            }
+            finally
+            {
+                ms.Close();
+            }
+        }
+
+        /// <summary>
+        /// Removes a file by uuid if the user is owner and the file exists
+        /// </summary>
+        /// <param name="fileUuid">The uuid of the file to remove</param>
+        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
+        public async Task RemoveFile(Guid fileUuid, Guid requestingUserUuid)
+        {
+            if (fileUuid == Guid.Empty)
+            {
+                throw new UnprocessableException();
             }
 
-            if (Directory.GetFiles(userDirectory).Length == 0) // Remove user directory if file contains virus and the user directory is empty
+            string directoryPath = FileHelper.GetDirectoryPathByFileUuid(fileUuid);
+            string fullPath = FileHelper.GetFilePathByUuid(fileUuid);
+
+            DirectoryInfoFile infoFile = await DirectoryHelper.GetInfoFileFromDirectory(directoryPath);
+            FileContentInfo fileContentInfo = infoFile.FileInfo
+                .Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+
+            bool fileIsOwnedByUser = fileContentInfo.FilesOwnedByUser
+                .Contains(fileUuid);
+
+            if (!File.Exists(fullPath))
             {
-                Directory.Delete(userDirectory);
+                throw new UnprocessableException();
             }
+
+            if (!fileIsOwnedByUser)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            File.Delete(fullPath);
+            fileContentInfo.FilesOwnedByUser.Remove(fileUuid);
+            await DirectoryHelper.UpdateInfoFile(directoryPath, infoFile);
         }
     }
 }

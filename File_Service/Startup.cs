@@ -1,10 +1,12 @@
 using File_Service.Logic;
+using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace File_Service
 {
@@ -22,17 +24,28 @@ namespace File_Service
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddMemoryCache();
+
+            // allow big files to be uploaded
+            services.Configure<KestrelServerOptions>(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "File_Service", Version = "v1" });
+                options.Limits.MaxRequestBodySize = int.MaxValue;
             });
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = 26214400; // max allowed size for clamav
+                x.MultipartBodyLengthLimit = 26214400;
+            });
+
             AddDependencies(ref services);
         }
 
         public void AddDependencies(ref IServiceCollection services)
         {
             services.AddScoped<FileLogic>();
+            services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
+            services.AddScoped<FileHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,12 +54,15 @@ namespace File_Service
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "File_Service v1"));
             }
 
             app.UseRouting();
-
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -5,7 +5,8 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>5734b784-9a1d-4bc9-a445-cd8969bf3d8b</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <DockerServiceUrl>
+    </DockerServiceUrl>
     <DockerServiceName>event_service</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

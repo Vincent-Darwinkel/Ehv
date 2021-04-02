@@ -10,6 +10,11 @@
 *.userosscache
 *.sln.docstates
 *.Development.json
+/Media/public/gallery/*
+/Media/public/avatar/*
+!/Media/public/gallery/.gitkeep
+!/Media/public/avatar/.gitkeep
+info.json
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
