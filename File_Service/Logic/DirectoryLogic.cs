@@ -58,6 +58,7 @@ namespace File_Service.Logic
 
             DirectoryInfoFile info = await DirectoryHelper.GetInfoFileFromDirectory(fullPath);
             info.FileInfo.RemoveAll(fi => fi.FileOwnerUuid != userUuid);
+            info.DirectoryContentInfo.RemoveAll(dci => dci.OwnerUuid != userUuid);
             if (info.DirectoryOwnerUuid != userUuid)
             {
                 info.DirectoryOwnerUuid = Guid.Empty;
@@ -97,7 +98,24 @@ namespace File_Service.Logic
             string rootPath = $"{Environment.CurrentDirectory}/Media{filepathInfo?.Path}";
 
             var rootDirectoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(rootPath);
-            rootDirectoryInfoFile.DirectoriesOwnedByUser.Add(folder.Name);
+            DirectoryContentInfo directoryContentInfo = rootDirectoryInfoFile.DirectoryContentInfo
+                .Find(dci => dci.OwnerUuid == requestingUserUuid);
+
+            if (directoryContentInfo == null || directoryContentInfo == new DirectoryContentInfo())
+            {
+                rootDirectoryInfoFile.DirectoryContentInfo.Add(new DirectoryContentInfo
+                {
+                    DirectoriesOwnedByUser = new List<string>
+                    {
+                        folder.Name
+                    },
+                    OwnerUuid = requestingUserUuid
+                });
+            }
+            else
+            {
+                directoryContentInfo.DirectoriesOwnedByUser.Add(folder.Name);
+            }
 
             Directory.CreateDirectory(fullPath);
             var directoryInfoFile = new DirectoryInfoFile
@@ -122,13 +140,18 @@ namespace File_Service.Logic
             string parentFolder = path.Replace($"{folderName}", "");
 
             var directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory($"{Environment.CurrentDirectory}/Media{parentFolder}");
-            if (directoryInfoFile.DirectoryOwnerUuid != userUuid)
+            if (!directoryInfoFile.DirectoryContentInfo // check if user is owner of the directory to remove
+                .Find(dci => dci.OwnerUuid == userUuid).DirectoriesOwnedByUser
+                .Contains(folderName))
             {
                 throw new UnauthorizedAccessException();
             }
 
             Directory.Delete(fullPath, true);
-            directoryInfoFile.DirectoriesOwnedByUser.RemoveAll(d => d == folderName);
+            directoryInfoFile.DirectoryContentInfo
+                .RemoveAll(d => d.DirectoriesOwnedByUser
+                    .Contains(folderName));
+
             await DirectoryHelper.UpdateInfoFile($"{Environment.CurrentDirectory}/Media{parentFolder}", directoryInfoFile);
         }
     }
