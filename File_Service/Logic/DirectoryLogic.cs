@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace File_Service.Logic
 {
@@ -109,6 +107,29 @@ namespace File_Service.Logic
 
             await DirectoryHelper.UpdateInfoFile(rootPath, rootDirectoryInfoFile);
             await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
+        }
+
+        public async Task RemoveDirectory(string path, Guid userUuid)
+        {
+            string fullPath = $"{Environment.CurrentDirectory}/Media{path}";
+            if (!DirectoryHelper.PathIsValid(path) || !Directory.Exists(fullPath))
+            {
+                throw new UnprocessableException();
+            }
+
+            string[] folders = path.Split("/");
+            string folderName = folders[^1];
+            string parentFolder = path.Replace($"{folderName}", "");
+
+            var directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory($"{Environment.CurrentDirectory}/Media{parentFolder}");
+            if (directoryInfoFile.DirectoryOwnerUuid != userUuid)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            Directory.Delete(fullPath, true);
+            directoryInfoFile.DirectoriesOwnedByUser.RemoveAll(d => d == folderName);
+            await DirectoryHelper.UpdateInfoFile($"{Environment.CurrentDirectory}/Media{parentFolder}", directoryInfoFile);
         }
     }
 }
