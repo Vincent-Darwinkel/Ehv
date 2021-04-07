@@ -20,7 +20,6 @@ namespace File_Service.Controllers
             _fileLogic = fileLogic;
         }
 
-        [HttpGet("{uuid}")]
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
             return await _fileLogic.FindAsync(uuid);
