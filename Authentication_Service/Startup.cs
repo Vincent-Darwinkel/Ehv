@@ -1,3 +1,4 @@
+using Authentication_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Authentication_Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -19,7 +19,7 @@ namespace Gateway_Service
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureAppConfiguration(config =>
-                        config.AddJsonFile($"ocelot.Development.json")); // TODO remove .Development in production builds
+                        config.AddJsonFile("ocelot.Development.json")); // TODO remove .Development in production builds
 
                 })
                 .ConfigureLogging((hostingContext, logging) =>
