@@ -1,5 +1,5 @@
 ﻿using Authentication_Service.Dal.Interface;
-using Authentication_Service.Models.Dto;
+using Authentication_Service.UnitTests.TestModels;
 using Moq;
 
 namespace Authentication_Service.UnitTests.MockDals
@@ -10,9 +10,9 @@ namespace Authentication_Service.UnitTests.MockDals
 
         public UserDalMock()
         {
-            var testUser = new TestUserDto();
+            var testUser = new TestUserDto().User;
             var mock = new Mock<IUserDal>();
-            mock.Setup(m => m.Find(testUser.Username)).ReturnsAsync(new UserDto());
+            mock.Setup(m => m.Find(testUser.Username)).ReturnsAsync(testUser);
 
             Mock = mock.Object;
         }

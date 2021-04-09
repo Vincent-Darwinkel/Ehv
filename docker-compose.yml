@@ -22,6 +22,24 @@ services:
     image: mkodockx/docker-clamav:buster-slim
     ports:
         - "3310:3310"
+    
+  mariadb:
+    image: mariadb:10.2
+          environment:
+            MYSQL_ROOT_PASSWORD: changeme
+            MYSQL_DATABASE: mybb
+            MYSQL_USER: mybb
+            MYSQL_PASSWORD: changeme
+          logging:
+            driver: syslog
+            options:
+              tag: "{{.DaemonName}}(image={{.ImageName}};name={{.Name}};id={{.ID}})"
+          networks:
+            - backend
+          restart: on-failure
+          volumes:
+           - ${PWD}/mariadb:/var/lib/mysql
+  
   datepicker_service:
     image: ${DOCKER_REGISTRY-}datepickerservice
     build:

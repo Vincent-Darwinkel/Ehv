@@ -1,3 +1,4 @@
+using System;
 using Authentication_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
