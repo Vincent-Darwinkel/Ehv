@@ -13,13 +13,11 @@ namespace User_Service.Logic
 {
     public class UserLogic
     {
-        private readonly SecurityLogic _securityLogic;
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
 
-        public UserLogic(SecurityLogic securityLogic, IUserDal userDal, IMapper mapper)
+        public UserLogic(IUserDal userDal, IMapper mapper)
         {
-            _securityLogic = securityLogic;
             _userDal = userDal;
             _mapper = mapper;
         }
@@ -36,13 +34,8 @@ namespace User_Service.Logic
                 throw new DuplicateNameException();
             }
 
-            user.Password = _securityLogic.HashPassword(user.Password);
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.DisabledUser = new DisabledUserDto
-            {
-                Reason = DisableReason.EmailVerificationRequired,
-                UserUuid = userDto.Uuid
-            };
+            // TODO add rabbitmq connection to auth service to disable user because email verification is required
 
             await _userDal.Add(userDto);
         }
@@ -61,6 +54,16 @@ namespace User_Service.Logic
         public async Task<List<UserDto>> Find(List<Guid> uuidCollection)
         {
             return await _userDal.Find(uuidCollection);
+        }
+
+        /// <summary>
+        /// Finds the user by uuid
+        /// </summary>
+        /// <param name="uuid">The uuid to search for</param>
+        /// <returns>The found user, null if nothing is found</returns>
+        public async Task<UserDto> Find(Guid uuid)
+        {
+            return await _userDal.Find(uuid);
         }
 
         /// <summary>
@@ -96,12 +99,7 @@ namespace User_Service.Logic
 
             if (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.NewPassword))
             {
-                if (!_securityLogic.VerifyPassword(user.Password, dbUser.Password))
-                {
-                    throw new UnauthorizedAccessException();
-                }
-
-                dbUser.Password = _securityLogic.HashPassword(user.NewPassword);
+                // TODO add rabbitmq connection to auth service update user password
             }
 
             if (user.Email != dbUser.Email && await _userDal.Exists(null, user.Email))
@@ -132,6 +130,8 @@ namespace User_Service.Logic
             {
                 await _userDal.Delete(userUuidToDeleteUuid);
             }
+
+            // TODO add rabbitmq connection to auth service to delete user
 
             if (requestingUser.AccountRole == AccountRole.Admin && dbUserToDelete.AccountRole == AccountRole.User)
             {

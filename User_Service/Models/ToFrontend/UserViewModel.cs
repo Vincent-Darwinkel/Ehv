@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using User_Service.Enums;
 using User_Service.Models.FromFrontend;
 
-namespace User_Service.Models
+namespace User_Service.Models.ToFrontend
 {
-    public class UserDto
+    public class UserViewModel
     {
-        public Guid Uuid { get; set; } = Guid.NewGuid();
+        public Guid Uuid { get; set; }
         public string Username { get; set; }
         public string About { get; set; }
         public string Email { get; set; }

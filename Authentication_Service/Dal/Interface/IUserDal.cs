@@ -14,6 +14,12 @@ namespace Authentication_Service.Dal.Interface
         Task<UserDto> Find(string username);
 
         /// <summary>
+        /// Updates the user in the database
+        /// </summary>
+        /// <param name="user">The updated user object</param>
+        Task Update(UserDto user);
+
+        /// <summary>
         /// Deletes the user by uuid
         /// </summary>
         /// <param name="uuid">The uuid of the user to remove</param>
