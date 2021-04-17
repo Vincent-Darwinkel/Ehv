@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using User_Service.Models;
 
-namespace User_Service.Dal
+namespace User_Service.Dal.Interfaces
 {
     public interface IHobbyDal
     {

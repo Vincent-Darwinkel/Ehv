@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace User_Service.Models
+namespace Authentication_Service.Models.Dto
 {
-    public class ActivationDto
+    public class PasswordResetDto
     {
         public Guid Uuid { get; set; }
         public Guid UserUuid { get; set; }

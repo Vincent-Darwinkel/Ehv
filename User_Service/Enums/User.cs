@@ -10,8 +10,9 @@
 
     public enum Gender
     {
-        Female,
-        Male
+        Undefined = 0,
+        Female = 1,
+        Male = 2
     }
 
     public enum DisableReason

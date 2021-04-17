@@ -8,6 +8,9 @@ using User_Service.Dal;
 using User_Service.Enums;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
+using User_Service.Models.HelperFiles;
+using User_Service.Models.RabbitMq;
+using User_Service.RabbitMq.Publishers;
 
 namespace User_Service.Logic
 {
@@ -15,11 +18,22 @@ namespace User_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
+        private readonly UserProducer _producer;
 
-        public UserLogic(IUserDal userDal, IMapper mapper)
+        public UserLogic(IUserDal userDal, IMapper mapper, UserProducer producer)
         {
             _userDal = userDal;
             _mapper = mapper;
+            _producer = producer;
+        }
+
+        private bool UserModelValid(User user)
+        {
+            return !string.IsNullOrEmpty(user.Username) &&
+                   user.AccountRole != AccountRole.Undefined &&
+                   !string.IsNullOrEmpty(user.Email) &&
+                   !string.IsNullOrEmpty(user.About) &&
+                   user.Gender != Gender.Undefined;
         }
 
         /// <summary>
@@ -28,16 +42,24 @@ namespace User_Service.Logic
         /// <param name="user">The form data the user send</param>
         public async Task Register(User user)
         {
-            UserDto dbUser = await _userDal.Find(user.Username, user.Email);
+            if (!UserModelValid(user))
+            {
+                throw new UnprocessableException();
+            }
+
+            /*UserDto dbUser = await _userDal.Find(user.Username, user.Email);
             if (dbUser != null)
             {
                 throw new DuplicateNameException();
-            }
+            }*/
 
             var userDto = _mapper.Map<UserDto>(user);
-            // TODO add rabbitmq connection to auth service to disable user because email verification is required
+            userDto.AccountRole = AccountRole.User;
+            var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+            userRabbitMq.Uuid = userDto.Uuid;
 
-            await _userDal.Add(userDto);
+            _producer.Publish(Newtonsoft.Json.JsonConvert.SerializeObject(userRabbitMq), RabbitMqRouting.AddUser);
+            //await _userDal.Add(userDto);
         }
 
         /// <returns>All users in the database</returns>

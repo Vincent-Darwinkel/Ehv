@@ -29,7 +29,7 @@ namespace User_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Register([FromForm] User user)
+        public async Task<ActionResult> Register([FromBody] User user)
         {
             try
             {

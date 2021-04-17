@@ -1,5 +1,8 @@
+using System;
+using Authentication_Service.RabbitMq.Consumers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
 
 namespace Authentication_Service
 {

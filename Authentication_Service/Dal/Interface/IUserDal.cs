@@ -7,6 +7,12 @@ namespace Authentication_Service.Dal.Interface
     public interface IUserDal
     {
         /// <summary>
+        /// Adds the user to the database
+        /// </summary>
+        /// <param name="user">The user to add</param>
+        Task Add(UserDto user);
+
+        /// <summary>
         /// Finds the user by username
         /// </summary>
         /// <param name="username">The username to search for</param>

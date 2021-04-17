@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using User_Service.Models;
+using Authentication_Service.Models.Dto;
 
-namespace User_Service.Dal
+namespace Authentication_Service.Dal.Interface
 {
     interface IPasswordResetDal
     {

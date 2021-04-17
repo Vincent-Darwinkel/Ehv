@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using User_Service.Models;
+using Authentication_Service.Models.Dto;
 
-namespace User_Service.Dal
+namespace Authentication_Service.Dal.Interface
 {
-    interface IDisabledUser
+    interface IDisabledUserDal
     {
         /// <summary>
         /// Adds the disabled user object to the database

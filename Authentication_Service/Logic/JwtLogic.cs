@@ -56,7 +56,7 @@ namespace Authentication_Service.Logic
         {
             return new List<Claim>
             {
-                new Claim("UserUuid", user.UserUuid.ToString()),
+                new Claim("Uuid", user.Uuid.ToString()),
                 new Claim("Username", user.Username),
                 new Claim("AccountRole", user.AccountRole.ToString())
             };
@@ -136,7 +136,7 @@ namespace Authentication_Service.Logic
         /// <returns>An jwt and refresh token object</returns>
         public async Task<LoginResultViewmodel> CreateJwt(UserDto user, RefreshTokenDto oldRefreshToken = null)
         {
-            if (user?.UserUuid == Guid.Empty || user?.AccountRole == AccountRole.Undefined || string.IsNullOrEmpty(user?.Username))
+            if (user?.Uuid == Guid.Empty || user?.AccountRole == AccountRole.Undefined || string.IsNullOrEmpty(user?.Username))
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -152,7 +152,7 @@ namespace Authentication_Service.Logic
             var refreshTokenDto = new RefreshTokenDto
             {
                 RefreshToken = GenerateRefreshToken(),
-                UserUuid = user.UserUuid
+                UserUuid = user.Uuid
             };
 
             await _refreshTokenDal.Add(refreshTokenDto);
@@ -181,7 +181,7 @@ namespace Authentication_Service.Logic
             RefreshTokenDto savedRefreshToken = _refreshTokenDal.Find(new RefreshTokenDto
             {
                 RefreshToken = refreshToken,
-                UserUuid = requestingUser.UserUuid
+                UserUuid = requestingUser.Uuid
             }).Result;
 
             if (refreshToken == null || savedRefreshToken?.RefreshToken != refreshToken)

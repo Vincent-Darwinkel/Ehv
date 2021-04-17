@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using User_Service.Models;
 
-namespace User_Service.Dal
+namespace User_Service.Dal.Interfaces
 {
     interface IArtistDal
     {
@@ -15,12 +15,6 @@ namespace User_Service.Dal
 
         /// <returns>All artists in the database</returns>
         Task<List<FavoriteArtistDto>> All();
-
-        /// <summary>
-        /// Updates the artist
-        /// </summary>
-        /// <param name="artist">The artist object to update</param>
-        Task Update(FavoriteArtistDto artist);
 
         /// <summary>
         /// Deletes the artist by uuid

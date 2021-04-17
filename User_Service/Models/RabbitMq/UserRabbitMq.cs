@@ -1,9 +1,9 @@
 ﻿using System;
-using Authentication_Service.Enums;
+using User_Service.Enums;
 
-namespace Authentication_Service.Models.Dto
+namespace User_Service.Models.RabbitMq
 {
-    public class UserDto
+    public class UserRabbitMq
     {
         public Guid Uuid { get; set; }
         public string Username { get; set; }

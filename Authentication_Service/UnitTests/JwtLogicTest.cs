@@ -43,12 +43,12 @@ namespace Authentication_Service.UnitTests
             }));
             Assert.ThrowsAsync<ArgumentNullException>(async () => await _jwtLogic.CreateJwt(new UserDto
             {
-                UserUuid = Guid.NewGuid(),
+                Uuid = Guid.NewGuid(),
                 Username = "Test"
             }));
             Assert.ThrowsAsync<ArgumentNullException>(async () => await _jwtLogic.CreateJwt(new UserDto
             {
-                UserUuid = Guid.NewGuid(),
+                Uuid = Guid.NewGuid(),
                 AccountRole = AccountRole.User
             }));
         }

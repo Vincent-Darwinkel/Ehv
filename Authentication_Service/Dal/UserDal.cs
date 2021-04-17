@@ -15,6 +15,12 @@ namespace Authentication_Service.Dal
             _context = context;
         }
 
+        public async Task Add(UserDto user)
+        {
+            await _context.User.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<UserDto> Find(string username)
         {
             return await _context.User
@@ -30,7 +36,7 @@ namespace Authentication_Service.Dal
         public async Task Delete(Guid uuid)
         {
             UserDto userToRemove = await _context.User
-                .FirstOrDefaultAsync(u => u.UserUuid == uuid);
+                .FirstOrDefaultAsync(u => u.Uuid == uuid);
             _context.User.Remove(userToRemove);
             await _context.SaveChangesAsync();
         }

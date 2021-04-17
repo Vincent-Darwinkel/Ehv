@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models;
-using RequestHeaders = User_Service.Models.HelperFiles.RequestHeaders;
+using User_Service.Models.HelperFiles;
 
 namespace User_Service
 {
