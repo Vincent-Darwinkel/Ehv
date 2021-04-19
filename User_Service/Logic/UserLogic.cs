@@ -8,20 +8,32 @@ using User_Service.Dal;
 using User_Service.Enums;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
+using User_Service.Models.HelperFiles;
+using User_Service.Models.RabbitMq;
+using User_Service.RabbitMq.Publishers;
 
 namespace User_Service.Logic
 {
     public class UserLogic
     {
-        private readonly SecurityLogic _securityLogic;
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
+        private readonly UserProducer _producer;
 
-        public UserLogic(SecurityLogic securityLogic, IUserDal userDal, IMapper mapper)
+        public UserLogic(IUserDal userDal, IMapper mapper, UserProducer producer)
         {
-            _securityLogic = securityLogic;
             _userDal = userDal;
             _mapper = mapper;
+            _producer = producer;
+        }
+
+        private bool UserModelValid(User user)
+        {
+            return !string.IsNullOrEmpty(user.Username) &&
+                   user.AccountRole != AccountRole.Undefined &&
+                   !string.IsNullOrEmpty(user.Email) &&
+                   !string.IsNullOrEmpty(user.About) &&
+                   user.Gender != Gender.Undefined;
         }
 
         /// <summary>
@@ -30,21 +42,24 @@ namespace User_Service.Logic
         /// <param name="user">The form data the user send</param>
         public async Task Register(User user)
         {
-            UserDto dbUser = await _userDal.Find(user.Username, user.Email);
+            if (!UserModelValid(user))
+            {
+                throw new UnprocessableException();
+            }
+
+            /*UserDto dbUser = await _userDal.Find(user.Username, user.Email);
             if (dbUser != null)
             {
                 throw new DuplicateNameException();
-            }
+            }*/
 
-            user.Password = _securityLogic.HashPassword(user.Password);
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.DisabledUser = new DisabledUserDto
-            {
-                Reason = DisableReason.EmailVerificationRequired,
-                UserUuid = userDto.Uuid
-            };
+            userDto.AccountRole = AccountRole.User;
+            var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+            userRabbitMq.Uuid = userDto.Uuid;
 
-            await _userDal.Add(userDto);
+            _producer.Publish(Newtonsoft.Json.JsonConvert.SerializeObject(userRabbitMq), RabbitMqRouting.AddUser);
+            //await _userDal.Add(userDto);
         }
 
         /// <returns>All users in the database</returns>
@@ -64,6 +79,16 @@ namespace User_Service.Logic
         }
 
         /// <summary>
+        /// Finds the user by uuid
+        /// </summary>
+        /// <param name="uuid">The uuid to search for</param>
+        /// <returns>The found user, null if nothing is found</returns>
+        public async Task<UserDto> Find(Guid uuid)
+        {
+            return await _userDal.Find(uuid);
+        }
+
+        /// <summary>
         /// Updates the user
         /// </summary>
         /// <param name="user">The new user data</param>
@@ -76,8 +101,13 @@ namespace User_Service.Logic
             dbUser.Username = user.Username;
             dbUser.Email = user.Email;
             dbUser.About = user.About;
-            dbUser.Hobbies = user.Hobbies;
-            dbUser.FavoriteArtists = user.FavoriteArtists;
+            dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
+            dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
+
+            if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Email != user.Email)
+            {
+                // TODO add rabbitmq connection to auth service update user
+            }
 
             await _userDal.Update(dbUser);
         }
@@ -94,24 +124,13 @@ namespace User_Service.Logic
                 throw new UnprocessableException();
             }
 
-            if (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.NewPassword))
+            if (user.Email != dbUser.Email || user.Username != dbUser.Username)
             {
-                if (!_securityLogic.VerifyPassword(user.Password, dbUser.Password))
+                bool userExists = await _userDal.Exists(user.Username, user.Email);
+                if (userExists)
                 {
-                    throw new UnauthorizedAccessException();
+                    throw new DuplicateNameException();
                 }
-
-                dbUser.Password = _securityLogic.HashPassword(user.NewPassword);
-            }
-
-            if (user.Email != dbUser.Email && await _userDal.Exists(null, user.Email))
-            {
-                throw new DuplicateNameException();
-            }
-
-            if (user.Username != dbUser.Username && await _userDal.Exists(user.Username, null))
-            {
-                throw new DuplicateNameException();
             }
         }
 
@@ -132,6 +151,8 @@ namespace User_Service.Logic
             {
                 await _userDal.Delete(userUuidToDeleteUuid);
             }
+
+            // TODO add rabbitmq connection to auth service to delete user
 
             if (requestingUser.AccountRole == AccountRole.Admin && dbUserToDelete.AccountRole == AccountRole.User)
             {

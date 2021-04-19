@@ -1,8 +1,15 @@
+using Authentication_Service.Dal;
+using Authentication_Service.Dal.Interface;
+using Authentication_Service.Logic;
+using Authentication_Service.Models.HelperFiles;
+using Authentication_Service.RabbitMq;
+using Authentication_Service.RabbitMq.Consumers;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Authentication_Service
 {
@@ -18,21 +25,39 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            }, ServiceLifetime.Transient);
+
             services.AddControllers();
+            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
+            AddDependencyInjection(ref services);
+        }
+
+        private void AddDependencyInjection(ref IServiceCollection services)
+        {
+            services.AddScoped<UserLogic>();
+            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddSingleton<AddUserConsumer>();
+
+            services.AddSingleton(service => AutoMapperConfig.Config);
+
+            services.AddScoped<IUserDal, UserDal>();
+            services.AddScoped<IRefreshTokenDal, RefreshTokenDal>();
+            services.AddScoped<IPasswordResetDal, PasswordResetDal>();
+            services.AddScoped<IDisabledUserDal, DisabledUserDal>();
+            services.AddScoped<IActivationDal, ActivationDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            AddUserConsumer consumer = app.ApplicationServices.GetService<AddUserConsumer>();
+            consumer.Consume();
 
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

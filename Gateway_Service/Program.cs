@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +18,7 @@ namespace Gateway_Service
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureAppConfiguration(config =>
-                        config.AddJsonFile($"ocelot.Development.json")); // TODO remove .Development in production builds
+                        config.AddJsonFile("ocelot.Development.json")); // TODO remove .Development in production builds
 
                 })
                 .ConfigureLogging((hostingContext, logging) =>
