@@ -10,7 +10,7 @@ namespace Authentication_Service.UnitTests.MockedLogics
 
         public MockedJwtLogic()
         {
-            var mockedRefreshTokenDal = new RefreshTokenDalMock();
+            var mockedRefreshTokenDal = new MockedRefreshTokenDal();
             var mockedConfiguration = new MockOptions();
             JwtLogic = new JwtLogic(mockedRefreshTokenDal.Mock, mockedConfiguration.JwtConfig);
         }

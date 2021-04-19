@@ -21,8 +21,7 @@ namespace User_Service
             string jwt = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
             return new UserDto
             {
-                Uuid = _jwtLogic.GetClaim<Guid>(jwt, JwtClaim.UserUuid),
-                Username = _jwtLogic.GetClaim<string>(jwt, JwtClaim.Username),
+                Uuid = _jwtLogic.GetClaim<Guid>(jwt, JwtClaim.Uuid),
                 AccountRole = _jwtLogic.GetClaim<AccountRole>(jwt, JwtClaim.AccountRole)
             };
         }

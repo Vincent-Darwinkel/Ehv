@@ -57,7 +57,6 @@ namespace Authentication_Service.Logic
             return new List<Claim>
             {
                 new Claim("Uuid", user.Uuid.ToString()),
-                new Claim("Username", user.Username),
                 new Claim("AccountRole", user.AccountRole.ToString())
             };
         }
@@ -97,7 +96,7 @@ namespace Authentication_Service.Logic
                 return (T)Convert.ChangeType(Enum.Parse<AccountRole>(foundClaim), typeof(T), CultureInfo.InvariantCulture);
             }
 
-            return (T)Convert.ChangeType(foundClaim, typeof(T), CultureInfo.InvariantCulture);
+            return default;
         }
 
         /// <summary>

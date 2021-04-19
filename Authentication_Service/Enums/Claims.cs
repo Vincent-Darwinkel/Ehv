@@ -3,7 +3,7 @@
     public enum JwtClaim
     {
         Username,
-        UserUuid,
+        Uuid,
         AccountRole
     }
 }

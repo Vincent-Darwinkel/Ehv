@@ -1,9 +1,7 @@
 using Authentication_Service.Dal;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Logic;
-using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
-using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.RabbitMq;
 using Authentication_Service.RabbitMq.Consumers;
 using AutoMapper;
@@ -43,22 +41,13 @@ namespace Authentication_Service
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<AddUserConsumer>();
 
-            services.AddSingleton(service => AutoMapperConfiguration());
+            services.AddSingleton(service => AutoMapperConfig.Config);
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IRefreshTokenDal, RefreshTokenDal>();
             services.AddScoped<IPasswordResetDal, PasswordResetDal>();
             services.AddScoped<IDisabledUserDal, DisabledUserDal>();
             services.AddScoped<IActivationDal, ActivationDal>();
-        }
-
-        private IMapper AutoMapperConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-            });
-
-            return config.CreateMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

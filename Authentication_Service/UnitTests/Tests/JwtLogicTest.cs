@@ -57,7 +57,7 @@ namespace Authentication_Service.UnitTests
         public async Task GetClaimGuidTest()
         {
             LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
-            Guid userUuid = _jwtLogic.GetClaim<Guid>(result.Jwt, JwtClaim.UserUuid);
+            Guid userUuid = _jwtLogic.GetClaim<Guid>(result.Jwt, JwtClaim.Uuid);
             Assert.AreNotEqual(userUuid, Guid.Empty);
         }
 
@@ -66,21 +66,13 @@ namespace Authentication_Service.UnitTests
         {
             LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
             AccountRole accountRole = _jwtLogic.GetClaim<AccountRole>(result.Jwt, JwtClaim.AccountRole);
-            Assert.Equals(accountRole, AccountRole.User);
-        }
-
-        [Test]
-        public async Task GetClaimUsernameTest()
-        {
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
-            string username = _jwtLogic.GetClaim<string>(result.Jwt, JwtClaim.Username);
-            Assert.NotNull(username);
+            Assert.IsTrue(accountRole == AccountRole.User);
         }
 
         [Test]
         public void GetClaimUnprocessableExceptionTest()
         {
-            Assert.Throws<UnprocessableException>(() => _jwtLogic.GetClaim<Guid>(null, JwtClaim.UserUuid));
+            Assert.Throws<UnprocessableException>(() => _jwtLogic.GetClaim<Guid>(null, JwtClaim.Uuid));
         }
 
         [Test]

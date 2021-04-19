@@ -10,6 +10,7 @@ using User_Service.Dal.Interfaces;
 using User_Service.Logic;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
+using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
 using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
@@ -44,7 +45,7 @@ namespace User_Service
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<UserProducer>();
 
-            services.AddSingleton(service => AutoMapperConfiguration());
+            services.AddSingleton(service => AutoMapperConfig.Config);
 
             services.AddScoped<UserLogic>();
             services.AddScoped<JwtLogic>();
@@ -52,17 +53,6 @@ namespace User_Service
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IHobbyDal, HobbyDal>();
             services.AddScoped<IArtistDal, ArtistDal>();
-        }
-
-        private IMapper AutoMapperConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<User, UserDto>();
-                cfg.CreateMap<User, UserRabbitMq>();
-            });
-
-            return config.CreateMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

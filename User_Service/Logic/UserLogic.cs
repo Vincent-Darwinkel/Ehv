@@ -101,8 +101,13 @@ namespace User_Service.Logic
             dbUser.Username = user.Username;
             dbUser.Email = user.Email;
             dbUser.About = user.About;
-            dbUser.Hobbies = user.Hobbies;
-            dbUser.FavoriteArtists = user.FavoriteArtists;
+            dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
+            dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
+
+            if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Email != user.Email)
+            {
+                // TODO add rabbitmq connection to auth service update user
+            }
 
             await _userDal.Update(dbUser);
         }
@@ -119,19 +124,13 @@ namespace User_Service.Logic
                 throw new UnprocessableException();
             }
 
-            if (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(user.NewPassword))
+            if (user.Email != dbUser.Email || user.Username != dbUser.Username)
             {
-                // TODO add rabbitmq connection to auth service update user password
-            }
-
-            if (user.Email != dbUser.Email && await _userDal.Exists(null, user.Email))
-            {
-                throw new DuplicateNameException();
-            }
-
-            if (user.Username != dbUser.Username && await _userDal.Exists(user.Username, null))
-            {
-                throw new DuplicateNameException();
+                bool userExists = await _userDal.Exists(user.Username, user.Email);
+                if (userExists)
+                {
+                    throw new DuplicateNameException();
+                }
             }
         }
 

@@ -3,7 +3,6 @@ using System.Text;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

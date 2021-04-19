@@ -9,7 +9,7 @@ namespace Authentication_Service.UnitTests.MockedLogics
 
         public MockedAuthenticationLogic()
         {
-            var iUserDalMock = new UserDalMock();
+            var iUserDalMock = new MockedUserDal();
             AuthenticationLogic = new AuthenticationLogic(iUserDalMock.Mock, new SecurityLogic(), new MockedJwtLogic().JwtLogic);
         }
     }

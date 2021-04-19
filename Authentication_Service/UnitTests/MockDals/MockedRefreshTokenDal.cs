@@ -4,11 +4,11 @@ using Moq;
 
 namespace Authentication_Service.UnitTests.MockDals
 {
-    public class RefreshTokenDalMock
+    public class MockedRefreshTokenDal
     {
         public readonly IRefreshTokenDal Mock;
 
-        public RefreshTokenDalMock()
+        public MockedRefreshTokenDal()
         {
             var mock = new Mock<IRefreshTokenDal>();
             mock.Setup(m => m.Find(new TestRefreshTokenDto().RefreshTokenDto)).ReturnsAsync(new TestRefreshTokenDto().RefreshTokenDto);

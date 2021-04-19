@@ -33,7 +33,7 @@ namespace User_Service.Logic
                 return (T)Convert.ChangeType(Enum.Parse<AccountRole>(foundClaim), typeof(T), CultureInfo.InvariantCulture);
             }
 
-            return (T)Convert.ChangeType(foundClaim, typeof(T), CultureInfo.InvariantCulture);
+            return default;
         }
     }
 }

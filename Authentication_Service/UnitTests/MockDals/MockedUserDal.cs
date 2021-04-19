@@ -4,11 +4,11 @@ using Moq;
 
 namespace Authentication_Service.UnitTests.MockDals
 {
-    public class UserDalMock
+    public class MockedUserDal
     {
         public readonly IUserDal Mock;
 
-        public UserDalMock()
+        public MockedUserDal()
         {
             var testUser = new TestUserDto().User;
             var mock = new Mock<IUserDal>();
