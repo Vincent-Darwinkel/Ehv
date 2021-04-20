@@ -41,7 +41,7 @@ namespace Authentication_Service
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<AddUserConsumer>();
 
-            services.AddSingleton(service => AutoMapperConfig.Config);
+            services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IRefreshTokenDal, RefreshTokenDal>();

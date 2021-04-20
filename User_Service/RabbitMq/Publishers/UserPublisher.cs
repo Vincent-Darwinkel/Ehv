@@ -4,16 +4,16 @@ using RabbitMQ.Client;
 
 namespace User_Service.RabbitMq.Publishers
 {
-    public class UserProducer
+    public class UserPublisher : IPublisher
     {
         private readonly IModel _channel;
 
-        public UserProducer(IModel channel)
+        public UserPublisher(IModel channel)
         {
             _channel = channel;
         }
 
-        public void Publish(string message, string routingKey)
+        public void Publish(object objectToSend, string routingKey)
         {
             var ttl = new Dictionary<string, object>
                 {
@@ -22,6 +22,7 @@ namespace User_Service.RabbitMq.Publishers
 
             _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct, arguments: ttl);
 
+            string message = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
             byte[] body = Encoding.UTF8.GetBytes(message);
             _channel.BasicPublish("user_exchange",
                 routingKey,

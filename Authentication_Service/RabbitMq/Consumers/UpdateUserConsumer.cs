@@ -9,12 +9,12 @@ using RabbitMQ.Client.Events;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {
-    public class AddUserConsumer : IConsumer
+    public class UpdateUserConsumer : IConsumer
     {
         private readonly IModel _channel;
         private readonly UserLogic _userLogic;
 
-        public AddUserConsumer(IServiceProvider serviceProvider, IModel channel)
+        public UpdateUserConsumer(IServiceProvider serviceProvider, IModel channel)
         {
             _channel = channel;
             using var scope = serviceProvider.CreateScope();
@@ -24,8 +24,8 @@ namespace Authentication_Service.RabbitMq.Consumers
         public void Consume()
         {
             _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct);
-            _channel.QueueDeclare(RabbitMqQueues.AddUserQueue, true, false, false, null);
-            _channel.QueueBind(RabbitMqQueues.AddUserQueue, "user_exchange", RabbitMqRouting.AddUser);
+            _channel.QueueDeclare(RabbitMqQueues.UpdateUserQueue, true, false, false, null);
+            _channel.QueueBind(RabbitMqQueues.UpdateUserQueue, "user_exchange", RabbitMqRouting.UpdateUser);
             _channel.BasicQos(0, 10, false);
 
             var consumer = new EventingBasicConsumer(_channel);
@@ -37,7 +37,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                     string json = Encoding.UTF8.GetString(body);
                     var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(json);
 
-                    await _userLogic.Add(user);
+                    await _userLogic.Update(user);
                 }
                 catch (Exception exception)
                 {
@@ -45,7 +45,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 }
             };
 
-            _channel.BasicConsume(RabbitMqQueues.AddUserQueue, true, consumer);
+            _channel.BasicConsume(RabbitMqQueues.UpdateUserQueue, true, consumer);
         }
     }
 }

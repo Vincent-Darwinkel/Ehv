@@ -18,9 +18,9 @@ namespace User_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
-        private readonly UserProducer _producer;
+        private readonly UserPublisher _producer;
 
-        public UserLogic(IUserDal userDal, IMapper mapper, UserProducer producer)
+        public UserLogic(IUserDal userDal, IMapper mapper, UserPublisher producer)
         {
             _userDal = userDal;
             _mapper = mapper;
@@ -58,7 +58,7 @@ namespace User_Service.Logic
             var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
             userRabbitMq.Uuid = userDto.Uuid;
 
-            _producer.Publish(Newtonsoft.Json.JsonConvert.SerializeObject(userRabbitMq), RabbitMqRouting.AddUser);
+            _producer.Publish(userRabbitMq, RabbitMqRouting.AddUser);
             //await _userDal.Add(userDto);
         }
 
@@ -106,7 +106,8 @@ namespace User_Service.Logic
 
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Email != user.Email)
             {
-                // TODO add rabbitmq connection to auth service update user
+                var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+                _producer.Publish(userRabbitMq, RabbitMqRouting.UpdateUser);
             }
 
             await _userDal.Update(dbUser);
@@ -147,21 +148,24 @@ namespace User_Service.Logic
                 throw new KeyNotFoundException();
             }
 
-            if (requestingUser.AccountRole == AccountRole.SiteAdmin)
+            switch (requestingUser.AccountRole)
             {
-                await _userDal.Delete(userUuidToDeleteUuid);
-            }
-
-            // TODO add rabbitmq connection to auth service to delete user
-
-            if (requestingUser.AccountRole == AccountRole.Admin && dbUserToDelete.AccountRole == AccountRole.User)
-            {
-                await _userDal.Delete(userUuidToDeleteUuid);
-            }
-
-            if (requestingUser.AccountRole == AccountRole.User && requestingUser.Uuid == userUuidToDeleteUuid)
-            {
-                await _userDal.Delete(userUuidToDeleteUuid);
+                case AccountRole.SiteAdmin:
+                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    await _userDal.Delete(userUuidToDeleteUuid);
+                    break;
+                case AccountRole.Admin when dbUserToDelete.AccountRole == AccountRole.User:
+                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    await _userDal.Delete(userUuidToDeleteUuid);
+                    break;
+                case AccountRole.User when requestingUser.Uuid == userUuidToDeleteUuid:
+                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    await _userDal.Delete(userUuidToDeleteUuid);
+                    break;
+                case AccountRole.Undefined:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             throw new UnauthorizedAccessException();

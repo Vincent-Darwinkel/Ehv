@@ -3,7 +3,7 @@ using User_Service.Models;
 
 namespace User_Service.UnitTests.TestModels
 {
-    public class TestfavoriteArtist
+    public class TestFavoriteArtistDto
     {
         public readonly FavoriteArtistDto FavoriteArtist = new FavoriteArtistDto
         {

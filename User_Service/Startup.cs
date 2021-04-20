@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +7,7 @@ using Microsoft.Extensions.Hosting;
 using User_Service.Dal;
 using User_Service.Dal.Interfaces;
 using User_Service.Logic;
-using User_Service.Models;
-using User_Service.Models.FromFrontend;
 using User_Service.Models.HelperFiles;
-using User_Service.Models.RabbitMq;
 using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
 
@@ -43,9 +39,9 @@ namespace User_Service
             services.AddScoped<ControllerHelper>();
 
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
-            services.AddSingleton<UserProducer>();
+            services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
-            services.AddSingleton(service => AutoMapperConfig.Config);
+            services.AddSingleton<UserPublisher, UserPublisher>();
 
             services.AddScoped<UserLogic>();
             services.AddScoped<JwtLogic>();

@@ -96,6 +96,14 @@ namespace Authentication_Service.UnitTests
             Assert.False(validationResult.IsValid);
         }
 
+        /*  [Test]
+          public async Task RefreshJwtTest()
+          {
+              var testUser = new TestUserDto().User;
+              LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+              Assert.DoesNotThrowAsync(async () => await _jwtLogic.RefreshJwt(result.Jwt, new TestRefreshTokenDto().RefreshTokenDtoWithoutExpirationDate.RefreshToken, testUser));
+          }*/
+
         [Test]
         public void RefreshJwtUnauthorizedAccessExceptionTest()
         {
