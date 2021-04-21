@@ -90,7 +90,7 @@ namespace User_Service.UnitTests.Tests
         {
             UserDto testUser = new TestUserDto().User;
             UserDto testSiteAdmin = new TestUserDto().SiteAdmin;
-            Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
         }
 
         [Test]
@@ -98,14 +98,14 @@ namespace User_Service.UnitTests.Tests
         {
             UserDto testUser = new TestUserDto().User;
             UserDto testSiteAdmin = new TestUserDto().Admin;
-            Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
         }
 
         [Test]
         public void DeleteUserTest()
         {
             UserDto testUser = new TestUserDto().User;
-            Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userLogic.Delete(testUser, testUser.Uuid));
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testUser, testUser.Uuid));
         }
 
         [Test]

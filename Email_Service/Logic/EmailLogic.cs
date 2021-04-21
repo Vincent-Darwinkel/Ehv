@@ -62,7 +62,9 @@ namespace Email_Service.Logic
         /// <param name="email"></param>
         public void Send(Email email)
         {
-            if (string.IsNullOrEmpty(email?.Message) || string.IsNullOrEmpty(email.EmailAddress) || string.IsNullOrEmpty(email.Subject))
+            if (string.IsNullOrEmpty(email?.Message) ||
+                string.IsNullOrEmpty(email.EmailAddress) ||
+                string.IsNullOrEmpty(email.Subject))
             {
                 throw new NoNullAllowedException(nameof(email));
             }

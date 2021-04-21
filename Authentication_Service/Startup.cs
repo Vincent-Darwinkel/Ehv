@@ -40,6 +40,8 @@ namespace Authentication_Service
             services.AddScoped<UserLogic>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<AddUserConsumer>();
+            services.AddSingleton<UpdateUserConsumer>();
+            services.AddSingleton<DeleteUserConsumer>();
 
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 

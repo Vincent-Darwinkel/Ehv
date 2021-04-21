@@ -6,7 +6,7 @@ using Email_Service.Logic;
 using Email_Service.Models.Helpers;
 using NUnit.Framework;
 
-namespace Email_Service.Tests
+namespace Email_Service.UnitTests
 {
     [TestFixture]
     public class EmailLogicTest

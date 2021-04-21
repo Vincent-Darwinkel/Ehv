@@ -18,9 +18,9 @@ namespace User_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
-        private readonly UserPublisher _producer;
+        private readonly IUserPublisher _producer;
 
-        public UserLogic(IUserDal userDal, IMapper mapper, UserPublisher producer)
+        public UserLogic(IUserDal userDal, IMapper mapper, IUserPublisher producer)
         {
             _userDal = userDal;
             _mapper = mapper;
@@ -165,10 +165,8 @@ namespace User_Service.Logic
                 case AccountRole.Undefined:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new UnauthorizedAccessException();
             }
-
-            throw new UnauthorizedAccessException();
         }
     }
 }

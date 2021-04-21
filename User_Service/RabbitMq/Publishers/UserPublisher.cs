@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace User_Service.RabbitMq.Publishers
 {
-    public class UserPublisher : IPublisher
+    public class UserPublisher : IUserPublisher
     {
         private readonly IModel _channel;
 

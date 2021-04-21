@@ -41,7 +41,7 @@ namespace User_Service
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
-            services.AddSingleton<UserPublisher, UserPublisher>();
+            services.AddSingleton<IUserPublisher, UserPublisher>();
 
             services.AddScoped<UserLogic>();
             services.AddScoped<JwtLogic>();
