@@ -6,6 +6,7 @@ using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models;
 using Datepicker_Service.Models.FromFrontend;
+using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@ namespace Datepicker_Service.Controllers
     {
         private readonly DatepickerLogic _datepickerlogic;
         private readonly IMapper _mapper;
+        private readonly ControllerHelper _controllerHelper;
 
-        public DatepickerController(DatepickerLogic datepickerlogic, IMapper mapper)
+        public DatepickerController(DatepickerLogic datepickerlogic, IMapper mapper, ControllerHelper controllerHelper)
         {
             _datepickerlogic = datepickerlogic;
             _mapper = mapper;
+            _controllerHelper = controllerHelper;
         }
 
         [HttpPost]
@@ -31,7 +34,7 @@ namespace Datepicker_Service.Controllers
             try
             {
                 var datepickerDto = _mapper.Map<DatepickerDto>(datepicker);
-                await _datepickerlogic.Add(datepickerDto);
+                await _datepickerlogic.Add(datepickerDto, _controllerHelper.GetRequestingUser(this));
                 return Ok();
             }
             catch (Exception)

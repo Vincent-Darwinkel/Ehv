@@ -9,6 +9,7 @@ using User_Service.Models;
 using User_Service.Models.FromFrontend;
 using User_Service.UnitTests.MockedLogics;
 using User_Service.UnitTests.TestModels;
+using User_Service.UnitTests.TestModels.FromFrontend;
 
 namespace User_Service.UnitTests.Tests
 {
@@ -20,6 +21,12 @@ namespace User_Service.UnitTests.Tests
         public UserLogicTest()
         {
             _userLogic = new MockedUserLogic().UserLogic;
+        }
+
+        [Test]
+        public void RegisterTest()
+        {
+            Assert.DoesNotThrowAsync(() => _userLogic.Register(new TestUser().User));
         }
 
         [Test]
@@ -76,6 +83,29 @@ namespace User_Service.UnitTests.Tests
         {
             UserDto testUser = new TestUserDto().User;
             Assert.ThrowsAsync<KeyNotFoundException>(() => _userLogic.Delete(testUser, Guid.Empty));
+        }
+
+        [Test]
+        public void DeleteSiteAdminTest()
+        {
+            UserDto testUser = new TestUserDto().User;
+            UserDto testSiteAdmin = new TestUserDto().SiteAdmin;
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
+        }
+
+        [Test]
+        public void DeleteAdminTest()
+        {
+            UserDto testUser = new TestUserDto().User;
+            UserDto testSiteAdmin = new TestUserDto().Admin;
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testSiteAdmin, testUser.Uuid));
+        }
+
+        [Test]
+        public void DeleteUserTest()
+        {
+            UserDto testUser = new TestUserDto().User;
+            Assert.DoesNotThrowAsync(() => _userLogic.Delete(testUser, testUser.Uuid));
         }
 
         [Test]

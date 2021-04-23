@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using User_Service.Enums;
 using User_Service.Models;
-using User_Service.Models.FromFrontend;
 
 namespace User_Service.UnitTests.TestModels
 {
@@ -18,7 +17,18 @@ namespace User_Service.UnitTests.TestModels
             AccountRole = AccountRole.User,
             BirthDate = new DateTime(2021, 05, 21),
             Hobbies = new List<UserHobbyDto> { new TestUserHobbyDto().UserHobby },
-            FavoriteArtists = new List<FavoriteArtistDto> { new TestfavoriteArtist().FavoriteArtist }
+            FavoriteArtists = new List<FavoriteArtistDto> { new TestFavoriteArtistDto().FavoriteArtist }
+        };
+
+        public UserDto Admin = new UserDto
+        {
+            Uuid = Guid.Parse("e3f1f1d4-a2f9-4e24-b7ef-5c0fa7b039a8"),
+            Username = "Test Admin",
+            About = "Test About Admin",
+            Email = "Test email Admin",
+            Gender = Gender.Male,
+            AccountRole = AccountRole.Admin,
+            BirthDate = new DateTime(2009, 04, 10),
         };
 
         public UserDto SiteAdmin = new UserDto
@@ -28,7 +38,7 @@ namespace User_Service.UnitTests.TestModels
             About = "Test About SiteAdmin",
             Email = "Test email SiteAdmin",
             Gender = Gender.Male,
-            AccountRole = AccountRole.User,
+            AccountRole = AccountRole.SiteAdmin,
             BirthDate = new DateTime(2011, 07, 1),
         };
     }

@@ -6,6 +6,6 @@ namespace User_Service.Models.FromFrontend
     {
         public Guid Uuid { get; set; } = Guid.NewGuid();
         public Guid UserUuid { get; set; }
-        public Guid ArtistUuid { get; set; }
+        public string Artist { get; set; }
     }
 }

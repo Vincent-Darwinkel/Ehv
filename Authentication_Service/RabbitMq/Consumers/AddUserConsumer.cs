@@ -9,7 +9,7 @@ using RabbitMQ.Client.Events;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {
-    public class AddUserConsumer
+    public class AddUserConsumer : IConsumer
     {
         private readonly IModel _channel;
         private readonly UserLogic _userLogic;
@@ -24,8 +24,8 @@ namespace Authentication_Service.RabbitMq.Consumers
         public void Consume()
         {
             _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct);
-            _channel.QueueDeclare("add_user_queue", true, false, false, null);
-            _channel.QueueBind("add_user_queue", "user_exchange", RabbitMqRouting.AddUser);
+            _channel.QueueDeclare(RabbitMqQueues.AddUserQueue, true, false, false, null);
+            _channel.QueueBind(RabbitMqQueues.AddUserQueue, "user_exchange", RabbitMqRouting.AddUser);
             _channel.BasicQos(0, 10, false);
 
             var consumer = new EventingBasicConsumer(_channel);
@@ -45,7 +45,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 }
             };
 
-            _channel.BasicConsume("add_user_queue", true, consumer);
+            _channel.BasicConsume(RabbitMqQueues.AddUserQueue, true, consumer);
         }
     }
 }

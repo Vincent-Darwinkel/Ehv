@@ -61,8 +61,10 @@ namespace Email_Service.Logic
         /// </summary>
         /// <param name="email"></param>
         public void Send(Email email)
-        {
-            if (string.IsNullOrEmpty(email?.Message) || string.IsNullOrEmpty(email.EmailAddress) || string.IsNullOrEmpty(email.Subject))
+        { // TODO add email template support
+            if (string.IsNullOrEmpty(email?.Message) ||
+                string.IsNullOrEmpty(email.EmailAddress) ||
+                string.IsNullOrEmpty(email.Subject))
             {
                 throw new NoNullAllowedException(nameof(email));
             }

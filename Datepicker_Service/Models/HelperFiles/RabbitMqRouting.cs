@@ -1,0 +1,9 @@
+﻿namespace Datepicker_Service.Models.HelperFiles
+{
+    public static class RabbitMqRouting
+    {
+        public static readonly string EventExists = "exists.event";
+        public static readonly string FindUser = "find.user";
+        public static readonly string SendMail = "send.mail";
+    }
+}

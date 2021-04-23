@@ -20,6 +20,13 @@ namespace Datepicker_Service.Dal.Interfaces
         Task<DatepickerDto> Find(Guid uuid);
 
         /// <summary>
+        /// Checks if the datepicker exists
+        /// </summary>
+        /// <param name="title">The title to search for</param>
+        /// <returns>True if datepicker with title exists, false if does not exists</returns>
+        Task<bool> Exists(string title);
+
+        /// <summary>
         /// Updates the datepicker
         /// </summary>
         /// <param name="datepicker">The updated datepicker</param>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using User_Service.Enums;
-using User_Service.Models.FromFrontend;
 
 namespace User_Service.Models
 {

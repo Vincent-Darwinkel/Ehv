@@ -5,7 +5,6 @@ namespace Authentication_Service.UnitTests.TestModels
 {
     public class TestRefreshTokenDto
     {
-        public RefreshTokenDto EmptyRefreshToken = new RefreshTokenDto();
         public RefreshTokenDto RefreshTokenDtoWithoutExpirationDate = new RefreshTokenDto
         {
             UserUuid = new TestUserDto().User.Uuid,
@@ -17,7 +16,6 @@ namespace Authentication_Service.UnitTests.TestModels
             ExpirationDate = DateTime.Now.AddDays(2),
             RefreshToken = "12eds4y545egg44qw5g45g"
         };
-
         public RefreshTokenDto ExpiredToken = new RefreshTokenDto
         {
             UserUuid = new TestUserDto().User.Uuid,
