@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Text;
-using Datepicker_Service.Models.HelperFiles;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
