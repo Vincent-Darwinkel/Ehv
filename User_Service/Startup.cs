@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,17 @@ namespace User_Service
             {
                 endpoints.MapControllers();
             });
+
+            DataContext context = app.ApplicationServices.GetService<DataContext>();
+            ApplyMigrations(context);
+        }
+
+        public void ApplyMigrations(DataContext context)
+        {
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }

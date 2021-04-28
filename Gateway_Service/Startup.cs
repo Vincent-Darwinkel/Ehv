@@ -1,4 +1,5 @@
 using System.Text;
+using Gateway_Service.Middlewares;
 using Gateway_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -66,6 +67,7 @@ namespace Gateway_Service
             }
 
             app.UseRouting();
+            app.UseAntiXssMiddleware();
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
             app.UseOcelot();

@@ -1,10 +1,10 @@
+using System.Linq;
 using Authentication_Service.Dal;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.RabbitMq;
 using Authentication_Service.RabbitMq.Consumers;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +64,17 @@ namespace Authentication_Service
             {
                 endpoints.MapControllers();
             });
+
+            DataContext context = app.ApplicationServices.GetService<DataContext>();
+            ApplyMigrations(context);
+        }
+
+        public void ApplyMigrations(DataContext context)
+        {
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }

@@ -11,6 +11,9 @@
   "profiles": {
     "Docker": {
       "commandName": "Docker",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": ".Development"
+      },
       "publishAllPorts": true
     }
   }
