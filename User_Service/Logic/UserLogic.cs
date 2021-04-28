@@ -47,11 +47,11 @@ namespace User_Service.Logic
                 throw new UnprocessableException();
             }
 
-            /*UserDto dbUser = await _userDal.Find(user.Username, user.Email);
+            UserDto dbUser = await _userDal.Find(user.Username, user.Email);
             if (dbUser != null)
             {
                 throw new DuplicateNameException();
-            }*/
+            }
 
             var userDto = _mapper.Map<UserDto>(user);
             userDto.AccountRole = AccountRole.User;
@@ -59,7 +59,7 @@ namespace User_Service.Logic
             userRabbitMq.Uuid = userDto.Uuid;
 
             _producer.Publish(userRabbitMq, RabbitMqRouting.AddUser);
-            //await _userDal.Add(userDto);
+            await _userDal.Add(userDto);
         }
 
         /// <returns>All users in the database</returns>

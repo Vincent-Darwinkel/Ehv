@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using User_Service.Models.FromFrontend;
 using User_Service.Models.RabbitMq;
+using User_Service.Models.ToFrontend;
 
 namespace User_Service.Models.HelperFiles
 {
@@ -10,6 +11,7 @@ namespace User_Service.Models.HelperFiles
             {
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<User, UserRabbitMq>();
+                cfg.CreateMap<UserDto, UserViewModel>();
                 cfg.CreateMap<FavoriteArtist, FavoriteArtistDto>();
                 cfg.CreateMap<UserHobby, UserHobbyDto>();
             });
