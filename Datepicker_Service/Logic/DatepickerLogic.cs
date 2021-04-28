@@ -12,7 +12,6 @@ using Datepicker_Service.Models.RabbitMq;
 using Datepicker_Service.RabbitMq.Publishers;
 using Datepicker_Service.RabbitMq.Rpc;
 using RabbitMQ.Client;
-using User_Service.Models.HelperFiles;
 
 namespace Datepicker_Service.Logic
 {

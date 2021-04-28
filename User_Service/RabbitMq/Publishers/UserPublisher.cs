@@ -20,7 +20,7 @@ namespace User_Service.RabbitMq.Publishers
                     {"x-message-ttl", 30000}
                 };
 
-            _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct, arguments: ttl);
+            _channel.ExchangeDeclare(RabbitMqExchange.UserExchange, ExchangeType.Direct, arguments: ttl);
 
             string message = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
             byte[] body = Encoding.UTF8.GetBytes(message);

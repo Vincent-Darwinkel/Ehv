@@ -18,12 +18,14 @@ services:
   mariadb:
     container_name: mariadb
     image: mariadb:latest
+    ports:
+      - 3306:3306
     restart: always
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: qwerty
-      
+            
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin:latest

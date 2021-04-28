@@ -1,4 +1,4 @@
-﻿namespace User_Service.Models.HelperFiles
+﻿namespace Datepicker_Service.Models.HelperFiles
 {
     public static class RabbitMqExchange
     {
