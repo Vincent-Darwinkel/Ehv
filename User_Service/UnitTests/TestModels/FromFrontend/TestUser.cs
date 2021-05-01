@@ -7,6 +7,18 @@ namespace User_Service.UnitTests.TestModels.FromFrontend
 {
     public class TestUser
     {
+        public readonly User NewUser = new User
+        {
+            Username = "New User",
+            About = "Test About",
+            Email = "Test email",
+            Gender = Gender.Male,
+            AccountRole = AccountRole.User,
+            BirthDate = new DateTime(2021, 01, 6),
+            Hobbies = new List<UserHobby> { new TestUserHobby().UserHobby },
+            FavoriteArtists = new List<FavoriteArtist> { new TestFavoriteArtist().FavoriteArtist }
+        };
+
         public readonly User User = new User
         {
             Username = "Test",

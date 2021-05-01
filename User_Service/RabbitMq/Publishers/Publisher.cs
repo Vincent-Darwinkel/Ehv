@@ -2,7 +2,7 @@
 using System.Text;
 using RabbitMQ.Client;
 
-namespace Event_Service.RabbitMq.Producers
+namespace User_Service.RabbitMq.Publishers
 {
     public class Publisher : IPublisher
     {

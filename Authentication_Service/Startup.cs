@@ -5,6 +5,7 @@ using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.RabbitMq;
 using Authentication_Service.RabbitMq.Consumers;
+using Authentication_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,10 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
-            }, ServiceLifetime.Transient);
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
@@ -43,6 +44,8 @@ namespace Authentication_Service
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
 
+            services.AddScoped<IPublisher, Publisher>();
+            services.AddScoped<LogLogic>();
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
             services.AddScoped<IUserDal, UserDal>();

@@ -13,10 +13,12 @@ namespace Authentication_Service.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly AuthenticationLogic _authorizationLogic;
+        private readonly LogLogic _logLogic;
 
-        public AuthenticationController(AuthenticationLogic authorizationLogic)
+        public AuthenticationController(AuthenticationLogic authorizationLogic, LogLogic logLogic)
         {
             _authorizationLogic = authorizationLogic;
+            _logLogic = logLogic;
         }
 
         [HttpPost]
@@ -31,8 +33,9 @@ namespace Authentication_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

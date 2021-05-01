@@ -1,4 +1,4 @@
-﻿namespace Event_Service.RabbitMq.Producers
+﻿namespace Authentication_Service.RabbitMq.Publishers
 {
     public interface IPublisher
     {

@@ -1,4 +1,4 @@
-﻿namespace Authentication_Service.RabbitMq.Consumers
+﻿namespace Email_Service.RabbitMq.Consumers
 {
     public interface IConsumer
     {
