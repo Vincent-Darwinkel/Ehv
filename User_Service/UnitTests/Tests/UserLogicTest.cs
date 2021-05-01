@@ -26,7 +26,7 @@ namespace User_Service.UnitTests.Tests
         [Test]
         public void RegisterTest()
         {
-            Assert.DoesNotThrowAsync(() => _userLogic.Register(new TestUser().User));
+            Assert.DoesNotThrowAsync(() => _userLogic.Register(new TestUser().NewUser));
         }
 
         [Test]

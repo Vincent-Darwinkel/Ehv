@@ -3,6 +3,7 @@ using Datepicker_Service.Dal;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.RabbitMq;
+using Datepicker_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +25,10 @@ namespace Datepicker_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
-            }, ServiceLifetime.Transient);
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -35,10 +36,12 @@ namespace Datepicker_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
+            services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<ControllerHelper>();
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
             services.AddScoped<ControllerHelper>();
             services.AddScoped<JwtLogic>();
+            services.AddScoped<LogLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

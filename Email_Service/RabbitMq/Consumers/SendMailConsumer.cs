@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Authentication_Service.RabbitMq.Consumers;
 using Email_Service.Logic;
 using Email_Service.Models.Helpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,12 +13,14 @@ namespace Email_Service.RabbitMq.Consumers
     {
         private readonly IModel _channel;
         private readonly EmailLogic _emailLogic;
+        private readonly LogLogic _logLogic;
 
         public SendMailConsumer(IServiceProvider serviceProvider, IModel channel)
         {
             _channel = channel;
             using var scope = serviceProvider.CreateScope();
-            _emailLogic = scope.ServiceProvider.GetRequiredService<EmailLogic>(); // TODO ask teacher if this is a good solution
+            _emailLogic = scope.ServiceProvider.GetRequiredService<EmailLogic>();
+            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Email_Service.RabbitMq.Consumers
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    _logLogic.Log(exception);
                 }
             };
 

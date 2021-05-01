@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Authentication_Service.Logic;
-using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
@@ -16,12 +15,14 @@ namespace Authentication_Service.RabbitMq.Consumers
     {
         private readonly IModel _channel;
         private readonly UserLogic _userLogic;
+        private readonly LogLogic _logLogic;
 
         public DeleteUserConsumer(IServiceProvider serviceProvider, IModel channel)
         {
             _channel = channel;
             using var scope = serviceProvider.CreateScope();
-            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>(); // TODO ask teacher if this is a good solution
+            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
+            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
         }
 
         public void Consume()
@@ -44,7 +45,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    _logLogic.Log(exception);
                 }
             };
 

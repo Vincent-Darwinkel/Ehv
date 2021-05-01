@@ -10,6 +10,7 @@ using User_Service.Models;
 using User_Service.Models.FromFrontend;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
+using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
 
 namespace User_Service.Logic
@@ -18,13 +19,13 @@ namespace User_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
-        private readonly IUserPublisher _producer;
+        private readonly IPublisher _publisher;
 
-        public UserLogic(IUserDal userDal, IMapper mapper, IUserPublisher producer)
+        public UserLogic(IUserDal userDal, IMapper mapper, IPublisher publisher)
         {
             _userDal = userDal;
             _mapper = mapper;
-            _producer = producer;
+            _publisher = publisher;
         }
 
         private bool UserModelValid(User user)
@@ -58,7 +59,7 @@ namespace User_Service.Logic
             var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
             userRabbitMq.Uuid = userDto.Uuid;
 
-            _producer.Publish(userRabbitMq, RabbitMqRouting.AddUser);
+            _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
             await _userDal.Add(userDto);
         }
 
@@ -107,7 +108,7 @@ namespace User_Service.Logic
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Email != user.Email)
             {
                 var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
-                _producer.Publish(userRabbitMq, RabbitMqRouting.UpdateUser);
+                _publisher.Publish(userRabbitMq, RabbitMqRouting.UpdateUser, RabbitMqExchange.UserExchange);
             }
 
             await _userDal.Update(dbUser);
@@ -151,15 +152,15 @@ namespace User_Service.Logic
             switch (requestingUser.AccountRole)
             {
                 case AccountRole.SiteAdmin:
-                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    _publisher.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser, RabbitMqExchange.UserExchange);
                     await _userDal.Delete(userUuidToDeleteUuid);
                     break;
                 case AccountRole.Admin when dbUserToDelete.AccountRole == AccountRole.User:
-                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    _publisher.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser, RabbitMqExchange.UserExchange);
                     await _userDal.Delete(userUuidToDeleteUuid);
                     break;
                 case AccountRole.User when requestingUser.Uuid == userUuidToDeleteUuid:
-                    _producer.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser);
+                    _publisher.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser, RabbitMqExchange.UserExchange);
                     await _userDal.Delete(userUuidToDeleteUuid);
                     break;
                 case AccountRole.Undefined:

@@ -14,10 +14,12 @@ namespace File_Service.Controllers
     public class FileController : ControllerBase
     {
         private readonly FileLogic _fileLogic;
+        private readonly LogLogic _logLogic;
 
-        public FileController(FileLogic fileLogic)
+        public FileController(FileLogic fileLogic, LogLogic logLogic)
         {
             _fileLogic = fileLogic;
+            _logLogic = logLogic;
         }
 
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
@@ -43,8 +45,9 @@ namespace File_Service.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -67,8 +70,9 @@ namespace File_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
