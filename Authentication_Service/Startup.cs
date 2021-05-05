@@ -1,5 +1,4 @@
-using System.Linq;
-using Authentication_Service.Dal;
+﻿using Authentication_Service.Dal;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
@@ -11,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Authentication_Service
 {
@@ -29,7 +30,7 @@ namespace Authentication_Service
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(ServerVersion.AutoDetect(connectionString)));
+                                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
@@ -39,6 +40,9 @@ namespace Authentication_Service
         private void AddDependencyInjection(ref IServiceCollection services)
         {
             services.AddScoped<UserLogic>();
+            services.AddScoped<AuthenticationLogic>();
+            services.AddScoped<SecurityLogic>();
+            services.AddScoped<JwtLogic>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
@@ -58,8 +62,12 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AddUserConsumer consumer = app.ApplicationServices.GetService<AddUserConsumer>();
-            consumer.Consume();
+            var rabbitMqConsumers = new List<IConsumer>();
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<AddUserConsumer>());
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<UpdateUserConsumer>());
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<DeleteUserConsumer>());
+
+            rabbitMqConsumers.ForEach(consumer => consumer.Consume());
 
             app.UseRouting();
             app.UseAuthorization();

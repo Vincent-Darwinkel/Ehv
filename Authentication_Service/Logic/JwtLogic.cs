@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
@@ -15,6 +7,14 @@ using Authentication_Service.Models.ToFrontend;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.Logic
 {
@@ -151,6 +151,7 @@ namespace Authentication_Service.Logic
             var refreshTokenDto = new RefreshTokenDto
             {
                 RefreshToken = GenerateRefreshToken(),
+                ExpirationDate = DateTime.Now.AddDays(7),
                 UserUuid = user.Uuid
             };
 

@@ -1,5 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using User_Service.CustomExceptions;
 using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models;
@@ -19,6 +20,11 @@ namespace User_Service
         public UserDto GetRequestingUser(ControllerBase controllerBase)
         {
             string jwt = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            if (jwt.Length < 25)
+            {
+                throw new UnprocessableException();
+            }
+
             return new UserDto
             {
                 Uuid = _jwtLogic.GetClaim<Guid>(jwt, JwtClaim.Uuid),

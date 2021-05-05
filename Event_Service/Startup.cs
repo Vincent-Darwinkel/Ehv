@@ -1,5 +1,4 @@
-using System.Linq;
-using Event_Service.Dal;
+﻿using Event_Service.Dal;
 using Event_Service.Logic;
 using Event_Service.RabbitMq;
 using Event_Service.RabbitMq.Publishers;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Event_Service
 {
@@ -26,7 +26,7 @@ namespace Event_Service
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(ServerVersion.AutoDetect(connectionString)));
+                                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             AddDependencies(ref services);
             services.AddControllers();

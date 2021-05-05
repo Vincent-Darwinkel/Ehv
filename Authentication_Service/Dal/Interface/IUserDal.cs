@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Authentication_Service.Models.Dto;
+using System;
 using System.Threading.Tasks;
-using Authentication_Service.Models.Dto;
 
 namespace Authentication_Service.Dal.Interface
 {
@@ -18,6 +18,13 @@ namespace Authentication_Service.Dal.Interface
         /// <param name="username">The username to search for</param>
         /// <returns>The found user, null if nothing is found</returns>
         Task<UserDto> Find(string username);
+
+        /// <summary>
+        /// Finds the user by uuid
+        /// </summary>
+        /// <param name="uuid">The uuid to search for</param>
+        /// <returns>The found user, null if nothing is found</returns>
+        Task<UserDto> Find(Guid uuid);
 
         /// <summary>
         /// Updates the user in the database
