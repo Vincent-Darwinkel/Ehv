@@ -1,15 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using Event_Service.Dal.Interfaces;
+using Event_Service.Models;
+using Event_Service.Models.FromFrontend;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Event_Service.Dal.Interfaces;
-using Event_Service.Models;
-using Event_Service.Models.FromFrontend;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Event_Service
+namespace Event_Service.Logic
 {
     public class EventLogic
     {
@@ -42,6 +41,17 @@ namespace Event_Service
             {
 
             }
+        }
+
+        /// <summary>
+        /// Checks if event with same name exists, this method is called by the Rpc server
+        /// </summary>
+        /// <param name="title">The title to search for</param>
+        /// <returns>True or false in string format</returns>
+        public async Task<string> Exists(string title)
+        {
+            return (await _eventDal.Exists(title))
+                .ToString();
         }
     }
 }

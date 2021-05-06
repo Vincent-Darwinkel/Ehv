@@ -1,8 +1,8 @@
-﻿using System;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System;
 using System.Collections.Concurrent;
 using System.Text;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace Datepicker_Service.RabbitMq.Rpc
 {
@@ -16,10 +16,11 @@ namespace Datepicker_Service.RabbitMq.Rpc
 
         public RpcClient(IModel channel)
         {
-            _replyQueueName = channel.QueueDeclare().QueueName;
-            _consumer = new EventingBasicConsumer(channel);
+            _channel = channel;
+            _replyQueueName = _channel.QueueDeclare().QueueName;
+            _consumer = new EventingBasicConsumer(_channel);
 
-            _props = channel.CreateBasicProperties();
+            _props = _channel.CreateBasicProperties();
             var correlationId = Guid.NewGuid().ToString();
             _props.CorrelationId = correlationId;
             _props.ReplyTo = _replyQueueName;
@@ -33,19 +34,22 @@ namespace Datepicker_Service.RabbitMq.Rpc
                     _respQueue.Add(response);
                 }
             };
-
-            _channel = channel;
         }
 
-        public T Call<T>(object objectToSend, string routingKey)
+        public T Call<T>(object objectToSend, string queue)
         {
+            if (objectToSend == null || string.IsNullOrEmpty(queue))
+            {
+                throw new NullReferenceException();
+            }
+
             try
             {
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
                 var messageBytes = Encoding.UTF8.GetBytes(json);
                 _channel.BasicPublish(
                     "",
-                    routingKey,
+                    queue, // this parameter name is routing key but needs the name of the queue, the name is probably wrong
                     _props,
                     messageBytes);
 

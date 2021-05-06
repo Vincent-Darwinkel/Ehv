@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text;
-using Authentication_Service.Logic;
+﻿using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {
@@ -25,7 +25,7 @@ namespace Authentication_Service.RabbitMq.Consumers
 
         public void Consume()
         {
-            _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct);
+            _channel.ExchangeDeclare(RabbitMqExchange.UserExchange, ExchangeType.Direct);
             _channel.QueueDeclare(RabbitMqQueues.AddUserQueue, true, false, false, null);
             _channel.QueueBind(RabbitMqQueues.AddUserQueue, "user_exchange", RabbitMqRouting.AddUser);
             _channel.BasicQos(0, 10, false);

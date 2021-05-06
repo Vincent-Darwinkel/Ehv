@@ -1,5 +1,5 @@
-using System.Linq;
-using Datepicker_Service.Dal;
+﻿using Datepicker_Service.Dal;
+using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.RabbitMq;
@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace Datepicker_Service
 {
@@ -42,6 +43,9 @@ namespace Datepicker_Service
             services.AddScoped<ControllerHelper>();
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
+            services.AddScoped<DatepickerLogic>();
+            services.AddScoped<IDatepickerDal, DatepickerDal>();
+            services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
