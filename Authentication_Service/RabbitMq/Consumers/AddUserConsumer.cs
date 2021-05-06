@@ -13,12 +13,14 @@ namespace Authentication_Service.RabbitMq.Consumers
     {
         private readonly IModel _channel;
         private readonly UserLogic _userLogic;
+        private readonly LogLogic _logLogic;
 
         public AddUserConsumer(IServiceProvider serviceProvider, IModel channel)
         {
             _channel = channel;
             using var scope = serviceProvider.CreateScope();
-            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>(); // TODO ask teacher if this is a good solution
+            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
+            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
         }
 
         public void Consume()
@@ -41,7 +43,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    _logLogic.Log(exception);
                 }
             };
 

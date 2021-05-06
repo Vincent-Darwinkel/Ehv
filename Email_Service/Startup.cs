@@ -1,5 +1,7 @@
+using Email_Service.Logic;
 using Email_Service.RabbitMq;
 using Email_Service.RabbitMq.Consumers;
+using Email_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +20,10 @@ namespace Email_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
+            services.AddScoped<IPublisher, Publisher>();
             services.AddSingleton<SendMailConsumer>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddScoped<LogLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -17,10 +17,12 @@ namespace File_Service.Controllers
     public class DirectoryController : ControllerBase
     {
         private readonly DirectoryLogic _directoryLogic;
+        private readonly LogLogic _logLogic;
 
-        public DirectoryController(DirectoryLogic directoryLogic)
+        public DirectoryController(DirectoryLogic directoryLogic, LogLogic logLogic)
         {
             _directoryLogic = directoryLogic;
+            _logLogic = logLogic;
         }
 
         [HttpGet]
@@ -34,8 +36,9 @@ namespace File_Service.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -57,8 +60,9 @@ namespace File_Service.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -81,8 +85,9 @@ namespace File_Service.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -105,8 +110,9 @@ namespace File_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

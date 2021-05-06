@@ -1,5 +1,6 @@
 using File_Service.Logic;
 using File_Service.Models.HelperFiles;
+using File_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -42,7 +43,9 @@ namespace File_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
+            services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<FileLogic>();
+            services.AddScoped<LogLogic>();
             services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();

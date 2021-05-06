@@ -1,15 +1,17 @@
-using Authentication_Service.Dal;
+﻿using Authentication_Service.Dal;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.RabbitMq;
 using Authentication_Service.RabbitMq.Consumers;
-using AutoMapper;
+using Authentication_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Authentication_Service
 {
@@ -25,10 +27,10 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
-            }, ServiceLifetime.Transient);
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
@@ -38,11 +40,16 @@ namespace Authentication_Service
         private void AddDependencyInjection(ref IServiceCollection services)
         {
             services.AddScoped<UserLogic>();
+            services.AddScoped<AuthenticationLogic>();
+            services.AddScoped<SecurityLogic>();
+            services.AddScoped<JwtLogic>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
 
+            services.AddScoped<IPublisher, Publisher>();
+            services.AddScoped<LogLogic>();
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
             services.AddScoped<IUserDal, UserDal>();
@@ -55,8 +62,12 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AddUserConsumer consumer = app.ApplicationServices.GetService<AddUserConsumer>();
-            consumer.Consume();
+            var rabbitMqConsumers = new List<IConsumer>();
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<AddUserConsumer>());
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<UpdateUserConsumer>());
+            rabbitMqConsumers.Add(app.ApplicationServices.GetService<DeleteUserConsumer>());
+
+            rabbitMqConsumers.ForEach(consumer => consumer.Consume());
 
             app.UseRouting();
             app.UseAuthorization();
@@ -64,6 +75,17 @@ namespace Authentication_Service
             {
                 endpoints.MapControllers();
             });
+
+            DataContext context = app.ApplicationServices.GetService<DataContext>();
+            ApplyMigrations(context);
+        }
+
+        public void ApplyMigrations(DataContext context)
+        {
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,10 @@ namespace User_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
-            }, ServiceLifetime.Transient);
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -37,13 +38,13 @@ namespace User_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             services.AddScoped<ControllerHelper>();
+            services.AddScoped<IPublisher, Publisher>();
 
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
-            services.AddSingleton<IUserPublisher, UserPublisher>();
-
             services.AddScoped<UserLogic>();
+            services.AddScoped<LogLogic>();
             services.AddScoped<JwtLogic>();
 
             services.AddScoped<IUserDal, UserDal>();
@@ -72,6 +73,17 @@ namespace User_Service
             {
                 endpoints.MapControllers();
             });
+
+            DataContext context = app.ApplicationServices.GetService<DataContext>();
+            ApplyMigrations(context);
+        }
+
+        public void ApplyMigrations(DataContext context)
+        {
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
         }
     }
 }

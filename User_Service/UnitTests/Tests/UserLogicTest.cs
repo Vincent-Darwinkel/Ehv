@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using NUnit.Framework;
 using User_Service.CustomExceptions;
 using User_Service.Logic;
 using User_Service.Models;
@@ -26,7 +26,7 @@ namespace User_Service.UnitTests.Tests
         [Test]
         public void RegisterTest()
         {
-            Assert.DoesNotThrowAsync(() => _userLogic.Register(new TestUser().User));
+            Assert.DoesNotThrowAsync(() => _userLogic.Register(new TestUser().NewUser));
         }
 
         [Test]
@@ -74,8 +74,9 @@ namespace User_Service.UnitTests.Tests
         [Test]
         public void UpdateDuplicateNameExceptionTest()
         {
-            UserDto testUser = new TestUserDto().User;
-            Assert.ThrowsAsync<DuplicateNameException>(() => _userLogic.Update(new User { Username = "test", Email = testUser.Email }, testUser.Uuid));
+            UserDto testUserDto = new TestUserDto().User;
+            User testUser = new TestUser().Admin;
+            Assert.ThrowsAsync<DuplicateNameException>(() => _userLogic.Update(testUser, testUserDto.Uuid));
         }
 
         [Test]

@@ -17,13 +17,15 @@ services:
 
   mariadb:
     container_name: mariadb
-    image: mariadb:10.4
+    image: mariadb:latest
+    ports:
+      - 3306:3306
     restart: always
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: qwerty
-      
+            
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin:latest
@@ -64,6 +66,8 @@ services:
       dockerfile: Datepicker_Service/Dockerfile
     ports:
         - "5002:80"
+    depends_on:
+      - rabbitmq
 
   event_service:
     image: ${DOCKER_REGISTRY-}eventservice
@@ -72,6 +76,8 @@ services:
       dockerfile: Event_Service/Dockerfile
     ports:
         - "5003:80"
+    depends_on:
+      - rabbitmq
 
   user_service:
     image: ${DOCKER_REGISTRY-}userservice
@@ -80,6 +86,8 @@ services:
       dockerfile: User_Service/Dockerfile
     ports:
         - "5004:80"
+    depends_on:
+      - rabbitmq
 
   email_service:
     image: ${DOCKER_REGISTRY-}emailservice
@@ -88,6 +96,8 @@ services:
       dockerfile: Email_Service/Dockerfile
     ports:
         - "5005:80"
+    depends_on:
+      - rabbitmq
 
   authentication_service:
     image: ${DOCKER_REGISTRY-}authenticationservice
@@ -96,6 +106,8 @@ services:
       dockerfile: Authentication_Service/Dockerfile
     ports:
         - "5006:80"
+    depends_on:
+      - rabbitmq
 
 volumes:
   mariadb-data:

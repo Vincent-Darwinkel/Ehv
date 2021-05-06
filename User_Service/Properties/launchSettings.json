@@ -27,7 +27,6 @@
     },
     "Docker": {
       "commandName": "Docker",
-      "launchBrowser": true,
       "publishAllPorts": true
     }
   }

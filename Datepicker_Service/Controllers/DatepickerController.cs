@@ -20,12 +20,15 @@ namespace Datepicker_Service.Controllers
         private readonly DatepickerLogic _datepickerlogic;
         private readonly IMapper _mapper;
         private readonly ControllerHelper _controllerHelper;
+        private readonly LogLogic _logLogic;
 
-        public DatepickerController(DatepickerLogic datepickerlogic, IMapper mapper, ControllerHelper controllerHelper)
+        public DatepickerController(DatepickerLogic datepickerlogic, IMapper mapper,
+            ControllerHelper controllerHelper, LogLogic logLogic)
         {
             _datepickerlogic = datepickerlogic;
             _mapper = mapper;
             _controllerHelper = controllerHelper;
+            _logLogic = logLogic;
         }
 
         [HttpPost]
@@ -37,8 +40,9 @@ namespace Datepicker_Service.Controllers
                 await _datepickerlogic.Add(datepickerDto, _controllerHelper.GetRequestingUser(this));
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -59,8 +63,9 @@ namespace Datepicker_Service.Controllers
             {
                 return UnprocessableEntity();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -74,8 +79,9 @@ namespace Datepicker_Service.Controllers
                 await _datepickerlogic.Update(datepickerDto);
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -88,8 +94,9 @@ namespace Datepicker_Service.Controllers
                 await _datepickerlogic.Delete(uuid);
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

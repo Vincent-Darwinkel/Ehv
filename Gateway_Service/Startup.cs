@@ -66,9 +66,10 @@ namespace Gateway_Service
             }
 
             app.UseRouting();
+            //app.UseAntiXssMiddleware(); TODO uncomment
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
-            app.UseOcelot();
+            app.UseOcelot().Wait();
         }
     }
 }
