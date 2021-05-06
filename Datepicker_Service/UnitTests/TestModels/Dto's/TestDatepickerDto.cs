@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Datepicker_Service.Models;
+﻿using Datepicker_Service.Models;
 using Datepicker_Service.UnitTests.TestModels.FromFrontend;
+using System;
+using System.Collections.Generic;
 
 namespace Datepicker_Service.UnitTests.TestModels
 {
@@ -23,7 +23,7 @@ namespace Datepicker_Service.UnitTests.TestModels
             AuthorUuid = new TestUser().User.Uuid,
             Dates = new List<DatepickerDateDto> { new TestDatepickerDatesDto().DateNoUsers },
             Description = "Test Description",
-            Expires = new DateTime(2021, 05, 2),
+            Expires = DateTime.Now.AddDays(2),
             Location = "Test Location",
             Title = "Test Title"
         };
