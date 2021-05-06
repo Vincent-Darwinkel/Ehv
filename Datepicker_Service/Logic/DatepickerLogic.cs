@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Datepicker_Service.CustomExceptions;
+﻿using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Models;
 using Datepicker_Service.Models.FromFrontend;
@@ -12,19 +7,24 @@ using Datepicker_Service.Models.RabbitMq;
 using Datepicker_Service.RabbitMq.Publishers;
 using Datepicker_Service.RabbitMq.Rpc;
 using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Datepicker_Service.Logic
 {
     public class DatepickerLogic
     {
         private readonly IDatepickerDal _datepickerDal;
-        private readonly IModel _model;
+        private readonly IModel _channel;
         private readonly IPublisher _publisher;
 
-        public DatepickerLogic(IDatepickerDal datepickerDal, IModel model, IPublisher publisher)
+        public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel, IPublisher publisher)
         {
             _datepickerDal = datepickerDal;
-            _model = model;
+            _channel = channel;
             _publisher = publisher;
         }
 
@@ -53,10 +53,10 @@ namespace Datepicker_Service.Logic
 
             datepicker.AuthorUuid = requestingUser.Uuid;
             datepicker.Dates.ForEach(d => d.DatePickerUuid = datepicker.Uuid);
-            var rpcClient = new RpcClient(_model);
+            var rpcClient = new RpcClient(_channel);
 
             bool datepickerExists = await _datepickerDal.Exists(datepicker.Title);
-            bool eventExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqRouting.EventExists);
+            bool eventExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
             if (eventExists || datepickerExists)
             {
                 throw new DuplicateNameException();
@@ -102,14 +102,14 @@ namespace Datepicker_Service.Logic
             }
 
             // Inform users about the update
-            var rpcClient = new RpcClient(_model);
+            var rpcClient = new RpcClient(_channel);
             var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqRouting.FindUser);
 
             var emails = users
                 .Select(user => new EmailRabbitMq
                 {
                     EmailAddress = user.Email,
-                    Subject = $"Opnieuw opgeven beschrikbaarheid datumprikker {dbDatepicker.Title}",
+                    Subject = $"Opnieuw opgeven beschikbaarheid datumprikker {dbDatepicker.Title}",
                     Message = $"Beste {user.Username},{Environment.NewLine}" +
                 $"Een aantal datums van de datumprikker {dbDatepicker.Title} zijn aangepast. Daarom moet je opnieuw je beschikbaarheid opgeven."
                 })
@@ -146,7 +146,7 @@ namespace Datepicker_Service.Logic
                 return;
             }
 
-            var rpcClient = new RpcClient(_model);
+            var rpcClient = new RpcClient(_channel);
             var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqRouting.FindUser);
 
             var emails = users

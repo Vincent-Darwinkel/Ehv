@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models;
@@ -10,6 +7,9 @@ using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Datepicker_Service.Controllers
 {
@@ -17,15 +17,15 @@ namespace Datepicker_Service.Controllers
     [ApiController]
     public class DatepickerController : ControllerBase
     {
-        private readonly DatepickerLogic _datepickerlogic;
+        private readonly DatepickerLogic _datepickerLogic;
         private readonly IMapper _mapper;
         private readonly ControllerHelper _controllerHelper;
         private readonly LogLogic _logLogic;
 
-        public DatepickerController(DatepickerLogic datepickerlogic, IMapper mapper,
+        public DatepickerController(DatepickerLogic datepickerLogic, IMapper mapper,
             ControllerHelper controllerHelper, LogLogic logLogic)
         {
-            _datepickerlogic = datepickerlogic;
+            _datepickerLogic = datepickerLogic;
             _mapper = mapper;
             _controllerHelper = controllerHelper;
             _logLogic = logLogic;
@@ -37,7 +37,7 @@ namespace Datepicker_Service.Controllers
             try
             {
                 var datepickerDto = _mapper.Map<DatepickerDto>(datepicker);
-                await _datepickerlogic.Add(datepickerDto, _controllerHelper.GetRequestingUser(this));
+                await _datepickerLogic.Add(datepickerDto, _controllerHelper.GetRequestingUser(this));
                 return Ok();
             }
             catch (Exception e)
@@ -52,7 +52,7 @@ namespace Datepicker_Service.Controllers
         {
             try
             {
-                DatepickerDto datepicker = await _datepickerlogic.Find(uuid);
+                DatepickerDto datepicker = await _datepickerLogic.Find(uuid);
                 return _mapper.Map<DatepickerViewmodel>(datepicker);
             }
             catch (KeyNotFoundException)
@@ -76,7 +76,7 @@ namespace Datepicker_Service.Controllers
             try
             {
                 var datepickerDto = _mapper.Map<DatepickerDto>(datepicker);
-                await _datepickerlogic.Update(datepickerDto);
+                await _datepickerLogic.Update(datepickerDto);
                 return Ok();
             }
             catch (Exception e)
@@ -91,7 +91,7 @@ namespace Datepicker_Service.Controllers
         {
             try
             {
-                await _datepickerlogic.Delete(uuid);
+                await _datepickerLogic.Delete(uuid);
                 return Ok();
             }
             catch (Exception e)

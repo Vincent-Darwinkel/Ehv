@@ -62,12 +62,13 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var rabbitMqConsumers = new List<IConsumer>();
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<AddUserConsumer>());
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<UpdateUserConsumer>());
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<DeleteUserConsumer>());
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<AddUserConsumer>(),
+                app.ApplicationServices.GetService<UpdateUserConsumer>(),
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
+            }.ForEach(consumer => consumer.Consume());
 
-            rabbitMqConsumers.ForEach(consumer => consumer.Consume());
 
             app.UseRouting();
             app.UseAuthorization();
