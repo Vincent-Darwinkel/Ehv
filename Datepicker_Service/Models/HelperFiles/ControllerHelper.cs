@@ -4,7 +4,6 @@ using Datepicker_Service.Logic;
 using Datepicker_Service.Models.FromFrontend;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using RequestHeaders = Datepicker_Service.Models.FromFrontend.RequestHeaders;
 
 namespace Datepicker_Service.Models.HelperFiles
 {

@@ -140,11 +140,6 @@ namespace Authentication_Service.Logic
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (oldRefreshToken != null)
-            {
-                await _refreshTokenDal.Delete(oldRefreshToken);
-            }
-
             string jwt = _handler.CreateToken(GetTokenDescriptor(user));
             await _refreshTokenDal.DeleteOutdatedTokens();
 
@@ -154,6 +149,11 @@ namespace Authentication_Service.Logic
                 ExpirationDate = DateTime.Now.AddDays(7),
                 UserUuid = user.Uuid
             };
+
+            if (await _refreshTokenDal.Find(refreshTokenDto) != null)
+            {
+                await _refreshTokenDal.Delete(user.Uuid);
+            }
 
             await _refreshTokenDal.Add(refreshTokenDto);
             return new LoginResultViewmodel
@@ -191,7 +191,7 @@ namespace Authentication_Service.Logic
 
             if (savedRefreshToken.ExpirationDate < DateTime.Now)
             {
-                await _refreshTokenDal.Delete(savedRefreshToken);
+                await _refreshTokenDal.Delete(requestingUser.Uuid);
                 throw new SecurityTokenException("Refresh token is expired");
             }
 

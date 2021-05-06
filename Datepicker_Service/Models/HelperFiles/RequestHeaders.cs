@@ -1,7 +1,7 @@
-﻿namespace Datepicker_Service.Models.FromFrontend
+﻿namespace Datepicker_Service.Models.HelperFiles
 {
     public static class RequestHeaders
     {
-        public const string Jwt = "Jwt";
+        public const string Jwt = "jwt";
     }
 }

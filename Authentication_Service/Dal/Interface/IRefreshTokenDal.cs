@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Authentication_Service.Models.Dto;
+using System;
 using System.Threading.Tasks;
-using Authentication_Service.Models.Dto;
 
 namespace Authentication_Service.Dal.Interface
 {
@@ -22,8 +22,8 @@ namespace Authentication_Service.Dal.Interface
         /// <summary>
         /// Deletes refresh token by user uuid
         /// </summary>
-        /// <param name="refreshToken">The refresh token object to remove</param>
-        Task Delete(RefreshTokenDto refreshToken);
+        /// <param name="userUuid">The uuid of the user uuid to remove</param>
+        Task Delete(Guid userUuid);
 
         /// <summary>
         /// Deletes expired refresh tokens in the database

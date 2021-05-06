@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Enums;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
@@ -9,8 +7,10 @@ using Authentication_Service.UnitTests.MockedLogics;
 using Authentication_Service.UnitTests.TestModels;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
-namespace Authentication_Service.UnitTests
+namespace Authentication_Service.UnitTests.Tests
 {
     [TestFixture]
     public class JwtLogicTest

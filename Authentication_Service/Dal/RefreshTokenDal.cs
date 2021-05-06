@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Authentication_Service.Dal.Interface;
+using Authentication_Service.Models.Dto;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Authentication_Service.Dal.Interface;
-using Authentication_Service.Models.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace Authentication_Service.Dal
 {
@@ -26,13 +26,14 @@ namespace Authentication_Service.Dal
         public async Task<RefreshTokenDto> Find(RefreshTokenDto refreshToken)
         {
             return await _context.RefreshToken
-                .FirstOrDefaultAsync(rt => rt.RefreshToken == refreshToken.RefreshToken &&
-                                           rt.UserUuid == refreshToken.UserUuid);
+                .FirstOrDefaultAsync(rt => rt.UserUuid == refreshToken.UserUuid);
         }
 
-        public async Task Delete(RefreshTokenDto refreshToken)
+        public async Task Delete(Guid userUuid)
         {
-            _context.RefreshToken.Remove(refreshToken);
+            RefreshTokenDto refreshTokenToDelete = await _context.RefreshToken
+                .FirstOrDefaultAsync(rt => rt.UserUuid == userUuid);
+            _context.RefreshToken.Remove(refreshTokenToDelete);
             await _context.SaveChangesAsync();
         }
 

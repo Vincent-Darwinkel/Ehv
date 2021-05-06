@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
@@ -34,7 +35,8 @@ namespace User_Service.Logic
                    user.AccountRole != AccountRole.Undefined &&
                    !string.IsNullOrEmpty(user.Email) &&
                    !string.IsNullOrEmpty(user.About) &&
-                   user.Gender != Gender.Undefined;
+                   user.Gender != Gender.Undefined &&
+                   EmailIsValid(user.Email);
         }
 
         /// <summary>
@@ -91,6 +93,8 @@ namespace User_Service.Logic
             return await _userDal.Find(uuid);
         }
 
+        public static bool EmailIsValid(string address) => address != null && new EmailAddressAttribute().IsValid(address);
+
         /// <summary>
         /// Updates the user
         /// </summary>
@@ -98,6 +102,11 @@ namespace User_Service.Logic
         /// <param name="requestingUserUuid">the uuid of the user that made the request</param>
         public async Task Update(User user, Guid requestingUserUuid)
         {
+            if (!UserModelValid(user))
+            {
+                throw new UnprocessableException();
+            }
+
             UserDto dbUser = await _userDal.Find(requestingUserUuid);
             await CheckForDuplicatedUserData(user, dbUser);
 
@@ -124,12 +133,12 @@ namespace User_Service.Logic
         /// <param name="dbUser">The found user in the database by uuid</param>
         private async Task CheckForDuplicatedUserData(User user, UserDto dbUser)
         {
-            if (user.Email != dbUser.Email && await _userDal.Find(null, user.Email) != null)
+            if (user.Email != dbUser.Email && await _userDal.Exists(null, user.Email))
             {
                 throw new DuplicateNameException();
             }
 
-            if (user.Username != dbUser.Username && await _userDal.Find(user.Username, null) != null)
+            if (user.Username != dbUser.Username && await _userDal.Exists(user.Username, null))
             {
                 throw new DuplicateNameException();
             }
