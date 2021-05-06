@@ -11,7 +11,7 @@ namespace User_Service.UnitTests.TestModels.FromFrontend
         {
             Username = "New User",
             About = "Test About",
-            Email = "Test email",
+            Email = "testnewuser@example.com",
             Gender = Gender.Male,
             AccountRole = AccountRole.User,
             BirthDate = new DateTime(2021, 01, 6),
@@ -23,9 +23,21 @@ namespace User_Service.UnitTests.TestModels.FromFrontend
         {
             Username = "Test",
             About = "Test About",
-            Email = "Test email",
+            Email = "testuser@example.com",
             Gender = Gender.Male,
             AccountRole = AccountRole.User,
+            BirthDate = new DateTime(2021, 05, 21),
+            Hobbies = new List<UserHobby> { new TestUserHobby().UserHobby },
+            FavoriteArtists = new List<FavoriteArtist> { new TestFavoriteArtist().FavoriteArtist }
+        };
+
+        public readonly User Admin = new User
+        {
+            Username = "Test Admin",
+            About = "Test About",
+            Email = "testadmin@example.com",
+            Gender = Gender.Male,
+            AccountRole = AccountRole.Admin,
             BirthDate = new DateTime(2021, 05, 21),
             Hobbies = new List<UserHobby> { new TestUserHobby().UserHobby },
             FavoriteArtists = new List<FavoriteArtist> { new TestFavoriteArtist().FavoriteArtist }

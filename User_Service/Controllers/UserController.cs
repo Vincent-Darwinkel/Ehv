@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using User_Service.CustomExceptions;
 using User_Service.Logic;
 using User_Service.Models;
@@ -87,7 +87,7 @@ namespace User_Service.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromForm] User user)
+        public async Task<ActionResult> Update([FromBody] User user)
         {
             try
             {

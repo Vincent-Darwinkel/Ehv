@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Authentication_Service.Dal.Interface;
+﻿using Authentication_Service.Dal.Interface;
 using Authentication_Service.Models.Dto;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.Dal
 {
@@ -25,6 +25,11 @@ namespace Authentication_Service.Dal
         {
             return await _context.User
                 .FirstOrDefaultAsync(u => u.Username == username);
+        }
+
+        public async Task<UserDto> Find(Guid uuid)
+        {
+            return await _context.User.FindAsync(uuid);
         }
 
         public async Task Update(UserDto user)

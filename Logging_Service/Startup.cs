@@ -30,7 +30,7 @@ namespace Logging_Service
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(ServerVersion.AutoDetect(connectionString)));
+                                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddControllers();
             AddDependencies(ref services);

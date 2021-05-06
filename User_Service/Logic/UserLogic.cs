@@ -1,8 +1,9 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
-using AutoMapper;
 using User_Service.CustomExceptions;
 using User_Service.Dal;
 using User_Service.Enums;
@@ -34,7 +35,8 @@ namespace User_Service.Logic
                    user.AccountRole != AccountRole.Undefined &&
                    !string.IsNullOrEmpty(user.Email) &&
                    !string.IsNullOrEmpty(user.About) &&
-                   user.Gender != Gender.Undefined;
+                   user.Gender != Gender.Undefined &&
+                   EmailIsValid(user.Email);
         }
 
         /// <summary>
@@ -56,6 +58,8 @@ namespace User_Service.Logic
 
             var userDto = _mapper.Map<UserDto>(user);
             userDto.AccountRole = AccountRole.User;
+            userDto.Uuid = Guid.NewGuid();
+
             var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
             userRabbitMq.Uuid = userDto.Uuid;
 
@@ -89,6 +93,8 @@ namespace User_Service.Logic
             return await _userDal.Find(uuid);
         }
 
+        public static bool EmailIsValid(string address) => address != null && new EmailAddressAttribute().IsValid(address);
+
         /// <summary>
         /// Updates the user
         /// </summary>
@@ -96,8 +102,13 @@ namespace User_Service.Logic
         /// <param name="requestingUserUuid">the uuid of the user that made the request</param>
         public async Task Update(User user, Guid requestingUserUuid)
         {
+            if (!UserModelValid(user))
+            {
+                throw new UnprocessableException();
+            }
+
             UserDto dbUser = await _userDal.Find(requestingUserUuid);
-            await ValidateUpdateData(user, dbUser);
+            await CheckForDuplicatedUserData(user, dbUser);
 
             dbUser.Username = user.Username;
             dbUser.Email = user.Email;
@@ -105,9 +116,10 @@ namespace User_Service.Logic
             dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
             dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
 
-            if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Email != user.Email)
+            if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Username != user.Username)
             {
                 var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+                userRabbitMq.Uuid = dbUser.Uuid;
                 _publisher.Publish(userRabbitMq, RabbitMqRouting.UpdateUser, RabbitMqExchange.UserExchange);
             }
 
@@ -115,24 +127,20 @@ namespace User_Service.Logic
         }
 
         /// <summary>
-        /// Checks if the updated data is valid, if not an exception is thrown
+        /// Checks if the username and email is already in use
         /// </summary>
-        /// <param name="user">The new data</param>
-        /// <param name="dbUser">The data from the database</param>
-        private async Task ValidateUpdateData(User user, UserDto dbUser)
+        /// <param name="user">The updated user data</param>
+        /// <param name="dbUser">The found user in the database by uuid</param>
+        private async Task CheckForDuplicatedUserData(User user, UserDto dbUser)
         {
-            if (dbUser == null)
+            if (user.Email != dbUser.Email && await _userDal.Exists(null, user.Email))
             {
-                throw new UnprocessableException();
+                throw new DuplicateNameException();
             }
 
-            if (user.Email != dbUser.Email || user.Username != dbUser.Username)
+            if (user.Username != dbUser.Username && await _userDal.Exists(user.Username, null))
             {
-                bool userExists = await _userDal.Exists(user.Username, user.Email);
-                if (userExists)
-                {
-                    throw new DuplicateNameException();
-                }
+                throw new DuplicateNameException();
             }
         }
 

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
@@ -15,6 +7,14 @@ using Authentication_Service.Models.ToFrontend;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.Logic
 {
@@ -140,19 +140,20 @@ namespace Authentication_Service.Logic
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (oldRefreshToken != null)
-            {
-                await _refreshTokenDal.Delete(oldRefreshToken);
-            }
-
             string jwt = _handler.CreateToken(GetTokenDescriptor(user));
             await _refreshTokenDal.DeleteOutdatedTokens();
 
             var refreshTokenDto = new RefreshTokenDto
             {
                 RefreshToken = GenerateRefreshToken(),
+                ExpirationDate = DateTime.Now.AddDays(7),
                 UserUuid = user.Uuid
             };
+
+            if (await _refreshTokenDal.Find(refreshTokenDto) != null)
+            {
+                await _refreshTokenDal.Delete(user.Uuid);
+            }
 
             await _refreshTokenDal.Add(refreshTokenDto);
             return new LoginResultViewmodel
@@ -190,7 +191,7 @@ namespace Authentication_Service.Logic
 
             if (savedRefreshToken.ExpirationDate < DateTime.Now)
             {
-                await _refreshTokenDal.Delete(savedRefreshToken);
+                await _refreshTokenDal.Delete(requestingUser.Uuid);
                 throw new SecurityTokenException("Refresh token is expired");
             }
 

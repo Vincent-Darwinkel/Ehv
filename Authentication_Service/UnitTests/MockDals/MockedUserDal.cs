@@ -13,6 +13,7 @@ namespace Authentication_Service.UnitTests.MockDals
             var testUser = new TestUserDto().User;
             var mock = new Mock<IUserDal>();
             mock.Setup(m => m.Find(testUser.Username)).ReturnsAsync(testUser);
+            mock.Setup(m => m.Find(testUser.Uuid)).ReturnsAsync(testUser);
 
             Mock = mock.Object;
         }
