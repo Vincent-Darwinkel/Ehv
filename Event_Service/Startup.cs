@@ -53,6 +53,7 @@ namespace Event_Service
             var eventLogic = app.ApplicationServices.GetService<EventLogic>();
             var logLogic = app.ApplicationServices.GetService<LogLogic>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             new RpcServer(channel, RabbitMqQueues.ExistsEventQueue, eventLogic.Exists, logLogic);
 
             app.UseRouting();

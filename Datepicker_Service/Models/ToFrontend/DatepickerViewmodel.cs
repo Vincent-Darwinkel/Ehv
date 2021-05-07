@@ -11,6 +11,6 @@ namespace Datepicker_Service.Models.ToFrontend
         public string Description { get; set; }
         public string Location { get; set; }
         public DateTime Expires { get; set; }
-        public List<DatePickerDate> Dates { get; set; } = new List<DatePickerDate>();
+        public List<DatePickerDateViewmodel> Dates { get; set; } = new List<DatePickerDateViewmodel>();
     }
 }

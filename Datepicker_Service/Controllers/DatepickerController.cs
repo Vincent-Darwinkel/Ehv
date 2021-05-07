@@ -52,8 +52,12 @@ namespace Datepicker_Service.Controllers
         {
             try
             {
+                User requestingUser = _controllerHelper.GetRequestingUser(this);
                 DatepickerDto datepicker = await _datepickerLogic.Find(uuid);
-                return _mapper.Map<DatepickerViewmodel>(datepicker);
+                var datepickerViewmodel = _mapper.Map<DatepickerViewmodel>(datepicker);
+                datepickerViewmodel.CanBeRemoved = datepicker.AuthorUuid == requestingUser.Uuid;
+
+                return datepickerViewmodel;
             }
             catch (KeyNotFoundException)
             {
@@ -79,6 +83,14 @@ namespace Datepicker_Service.Controllers
                 await _datepickerLogic.Update(datepickerDto);
                 return Ok();
             }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (UnprocessableException)
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            }
             catch (Exception e)
             {
                 _logLogic.Log(e);
@@ -91,7 +103,8 @@ namespace Datepicker_Service.Controllers
         {
             try
             {
-                await _datepickerLogic.Delete(uuid);
+                Guid userUuid = _controllerHelper.GetRequestingUser(this).Uuid;
+                await _datepickerLogic.Delete(uuid, userUuid);
                 return Ok();
             }
             catch (Exception e)

@@ -1,16 +1,18 @@
-using System.Linq;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
+using System.Linq;
 using User_Service.Dal;
 using User_Service.Dal.Interfaces;
 using User_Service.Logic;
 using User_Service.Models.HelperFiles;
 using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
+using User_Service.RabbitMq.Rpc;
 
 namespace User_Service
 {
@@ -55,6 +57,13 @@ namespace User_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var channel = app.ApplicationServices.GetService<IModel>();
+            var userLogic = app.ApplicationServices.GetService<UserLogic>();
+            var logLogic = app.ApplicationServices.GetService<LogLogic>();
+
+            // ReSharper disable once ObjectCreationAsStatement
+            new RpcServer(channel, RabbitMqQueues.FindUserQueue, userLogic.Find, logLogic);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

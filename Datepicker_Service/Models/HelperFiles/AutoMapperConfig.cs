@@ -10,7 +10,10 @@ namespace Datepicker_Service.Models.HelperFiles
             {
                 cfg.CreateMap<Datepicker, DatepickerDto>();
                 cfg.CreateMap<DatepickerDate, DatepickerDateDto>();
-                cfg.CreateMap<DatepickerAvailability, DatepickerAvailabilityDto>();
+                cfg.CreateMap<DatepickerAvailabilityViewmodel, DatepickerAvailabilityDto>();
+                cfg.CreateMap<DatepickerDto, DatepickerViewmodel>();
+                cfg.CreateMap<DatepickerDateDto, DatePickerDateViewmodel>();
+                cfg.CreateMap<DatepickerAvailabilityDto, DatepickerAvailabilityViewmodel>();
             });
     }
 }

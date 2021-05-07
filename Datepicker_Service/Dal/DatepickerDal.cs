@@ -2,6 +2,7 @@
 using Datepicker_Service.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Datepicker_Service.Dal
@@ -23,7 +24,11 @@ namespace Datepicker_Service.Dal
 
         public async Task<DatepickerDto> Find(Guid uuid)
         {
-            return await _context.Datepicker.FindAsync(uuid);
+            return await _context.Datepicker
+                .Include(dp => dp.Dates)
+                .ThenInclude(dp => dp.UserAvailabilities)
+                .Where(dp => dp.Uuid == uuid)
+                .FirstAsync();
         }
 
         public async Task<bool> Exists(string title)

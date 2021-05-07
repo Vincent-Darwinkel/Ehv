@@ -50,8 +50,8 @@ namespace Event_Service.Logic
         /// <returns>True or false in string format</returns>
         public async Task<string> Exists(string title)
         {
-            return (await _eventDal.Exists(title))
-                .ToString();
+            bool exists = await _eventDal.Exists(title);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(exists);
         }
     }
 }
