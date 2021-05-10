@@ -33,7 +33,6 @@ namespace Datepicker_Service.Logic
             return !string.IsNullOrEmpty(datepicker.Title) &&
                    !string.IsNullOrEmpty(datepicker.Description) &&
                    !string.IsNullOrEmpty(datepicker.Location) &&
-                   datepicker.AuthorUuid != Guid.Empty &&
                    datepicker.Dates.Any() &&
                    datepicker.Expires > DateTime.Now &&
                    datepicker.Uuid != Guid.Empty;
@@ -92,18 +91,42 @@ namespace Datepicker_Service.Logic
             }
 
             DatepickerDto dbDatepicker = await _datepickerDal.Find(datepicker.Uuid);
-            await _datepickerDal.Update(datepicker);
+            if (dbDatepicker == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
             List<Guid> userUuidCollection = dbDatepicker.Dates.SelectMany(d => d.UserAvailabilities.Select(ua => ua.UserUuid))
                 .ToList();
 
-            if (!userUuidCollection.Any())
+            var rpcClient = new RpcClient(_channel);
+            if (datepicker.Title != dbDatepicker.Title)
+            {
+                bool eventNameExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
+                if (eventNameExists)
+                {
+                    throw new DuplicateNameException();
+                }
+            }
+
+            await UpdateDatabaseDatepicker(datepicker, dbDatepicker);
+            if (userUuidCollection.Count <= 0)
             {
                 return;
             }
+            if (datepicker.Dates.Count != dbDatepicker.Dates.Count || datepicker.Dates // update datepicker dates if supplied dates date time is different from database values
+                .TrueForAll(dpd => dbDatepicker.Dates
+                    .All(dbDpd => dbDpd.DateTime != dpd.DateTime)))
+            {
+                dbDatepicker.Dates = datepicker.Dates;
+                InformUsersAboutDatepickerDatesUpdate(rpcClient, userUuidCollection, dbDatepicker);
+            }
+        }
 
-            // Inform users about the update
-            var rpcClient = new RpcClient(_channel);
-            var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqRouting.FindUser);
+        private void InformUsersAboutDatepickerDatesUpdate(RpcClient rpcClient, List<Guid> userUuidCollection,
+            DatepickerDto dbDatepicker)
+        {
+            var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqQueues.FindUserQueue);
 
             var emails = users
                 .Select(user => new EmailRabbitMq
@@ -111,18 +134,27 @@ namespace Datepicker_Service.Logic
                     EmailAddress = user.Email,
                     Subject = $"Opnieuw opgeven beschikbaarheid datumprikker {dbDatepicker.Title}",
                     Message = $"Beste {user.Username},{Environment.NewLine}" +
-                $"Een aantal datums van de datumprikker {dbDatepicker.Title} zijn aangepast. Daarom moet je opnieuw je beschikbaarheid opgeven."
+                              $"Een aantal datums van de datumprikker {dbDatepicker.Title} zijn aangepast. Daarom moet je opnieuw je beschikbaarheid opgeven."
                 })
                 .ToList();
 
             _publisher.Publish(emails, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
         }
 
+        private async Task UpdateDatabaseDatepicker(DatepickerDto datepicker, DatepickerDto dbDatepicker)
+        {
+            dbDatepicker.Title = datepicker.Title;
+            dbDatepicker.Description = datepicker.Description;
+            dbDatepicker.Expires = datepicker.Expires;
+            dbDatepicker.Location = datepicker.Location;
+            await _datepickerDal.Update(dbDatepicker);
+        }
+
         /// <summary>
         /// Deletes the datepicker in the database by uuid
         /// </summary>
         /// <param name="uuid">The uuid to delete</param>
-        public async Task Delete(Guid uuid)
+        public async Task Delete(Guid uuid, Guid requestingUserUuid)
         {
             if (uuid == Guid.Empty)
             {
@@ -133,6 +165,11 @@ namespace Datepicker_Service.Logic
             if (dbDatepicker == null)
             {
                 throw new KeyNotFoundException();
+            }
+
+            if (dbDatepicker.AuthorUuid != requestingUserUuid)
+            {
+                throw new UnauthorizedAccessException();
             }
 
             await _datepickerDal.Delete(uuid);

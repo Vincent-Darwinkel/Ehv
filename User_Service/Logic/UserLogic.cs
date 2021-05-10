@@ -84,6 +84,18 @@ namespace User_Service.Logic
         }
 
         /// <summary>
+        /// Finds all users which match the uuid in the collection
+        /// </summary>
+        /// <param name="uuidCollectionJson">The uuid collection in json</param>
+        /// <returns>The found users, null if nothing is found</returns>
+        public async Task<string> Find(string uuidCollectionJson)
+        {
+            var uuidCollection = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(uuidCollectionJson);
+            List<UserDto> foundUsers = await _userDal.Find(uuidCollection);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(foundUsers);
+        }
+
+        /// <summary>
         /// Finds the user by uuid
         /// </summary>
         /// <param name="uuid">The uuid to search for</param>

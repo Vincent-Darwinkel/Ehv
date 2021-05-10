@@ -2,7 +2,7 @@
 
 namespace Datepicker_Service.Models.ToFrontend
 {
-    public class DatepickerAvailability
+    public class DatepickerAvailabilityViewmodel
     {
         public Guid Uuid { get; set; } = Guid.NewGuid();
         public Guid DateUuid { get; set; }

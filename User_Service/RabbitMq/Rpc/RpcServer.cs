@@ -1,11 +1,11 @@
-﻿using Event_Service.Logic;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using User_Service.Logic;
 
-namespace Event_Service.RabbitMq.RPC
+namespace User_Service.RabbitMq.Rpc
 {
     public class RpcServer
     {
