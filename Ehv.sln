@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication_Service", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email_Service", "Email_Service\Email_Service.csproj", "{24664586-88C9-4154-BAAD-8101722717FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging_Service", "Logging_Service\Logging_Service.csproj", "{BAC29404-B4A3-4EF4-A2AB-A77A4A003293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging_Service", "Logging_Service\Logging_Service.csproj", "{BAC29404-B4A3-4EF4-A2AB-A77A4A003293}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hobby_Service", "Hobby_Service\Hobby_Service.csproj", "{E97E9152-F499-404E-9C63-43E843E288AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{BAC29404-B4A3-4EF4-A2AB-A77A4A003293}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAC29404-B4A3-4EF4-A2AB-A77A4A003293}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAC29404-B4A3-4EF4-A2AB-A77A4A003293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E97E9152-F499-404E-9C63-43E843E288AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E97E9152-F499-404E-9C63-43E843E288AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E97E9152-F499-404E-9C63-43E843E288AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E97E9152-F499-404E-9C63-43E843E288AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

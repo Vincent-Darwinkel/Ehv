@@ -99,9 +99,9 @@ namespace Datepicker_Service.Logic
             List<Guid> userUuidCollection = dbDatepicker.Dates.SelectMany(d => d.UserAvailabilities.Select(ua => ua.UserUuid))
                 .ToList();
 
-            var rpcClient = new RpcClient(_channel);
             if (datepicker.Title != dbDatepicker.Title)
             {
+                var rpcClient = new RpcClient(_channel);
                 bool eventNameExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
                 if (eventNameExists)
                 {
@@ -119,6 +119,8 @@ namespace Datepicker_Service.Logic
                     .All(dbDpd => dbDpd.DateTime != dpd.DateTime)))
             {
                 dbDatepicker.Dates = datepicker.Dates;
+
+                var rpcClient = new RpcClient(_channel);
                 InformUsersAboutDatepickerDatesUpdate(rpcClient, userUuidCollection, dbDatepicker);
             }
         }

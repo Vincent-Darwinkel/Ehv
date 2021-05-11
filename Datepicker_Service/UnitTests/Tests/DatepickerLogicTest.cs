@@ -57,19 +57,19 @@ namespace Datepicker_Service.UnitTests.Tests
         public void DeleteTest()
         {
             var datepicker = new TestDatepickerDto().DatepickerNoUsers;
-            Assert.DoesNotThrowAsync(() => _datepickerLogic.Delete(datepicker.Uuid));
+            Assert.DoesNotThrowAsync(() => _datepickerLogic.Delete(datepicker.Uuid, new TestUser().User.Uuid));
         }
 
         [Test]
         public void DeleteKeyNotFoundExceptionTest()
         {
-            Assert.ThrowsAsync<KeyNotFoundException>(() => _datepickerLogic.Delete(Guid.Parse("af128fe3-d828-4b44-9411-bdf27235f34d")));
+            Assert.ThrowsAsync<KeyNotFoundException>(() => _datepickerLogic.Delete(Guid.Parse("af128fe3-d828-4b44-9411-bdf27235f34d"), Guid.Empty));
         }
 
         [Test]
         public void DeleteUnprocessableExceptionTest()
         {
-            Assert.ThrowsAsync<UnprocessableException>(() => _datepickerLogic.Delete(Guid.Empty));
+            Assert.ThrowsAsync<UnprocessableException>(() => _datepickerLogic.Delete(Guid.Empty, Guid.Empty));
         }
     }
 }
