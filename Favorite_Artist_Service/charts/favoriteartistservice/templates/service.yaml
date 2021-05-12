@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "favoriteartistservice.fullname" . }}
+  labels:
+    app: {{ template "favoriteartistservice.name" . }}
+    chart: {{ template "favoriteartistservice.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "favoriteartistservice.name" . }}
+    release: {{ .Release.Name }}

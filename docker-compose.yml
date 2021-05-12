@@ -109,5 +109,18 @@ services:
     depends_on:
       - rabbitmq
 
+  favorite_artist_service:
+    image: ${DOCKER_REGISTRY-}favoriteartistservice
+    build:
+      context: .
+      dockerfile: Favorite_Artist_Service/Dockerfile
+
+  hobby_service:
+    image: ${DOCKER_REGISTRY-}hobbyservice
+    build:
+      context: .
+      dockerfile: Hobby_Service/Dockerfile
+
 volumes:
   mariadb-data:
+
