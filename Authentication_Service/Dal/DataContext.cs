@@ -11,6 +11,7 @@ namespace Authentication_Service.Dal
         public virtual DbSet<PasswordResetDto> PasswordReset { get; set; }
         public virtual DbSet<DisabledUserDto> DisabledUser { get; set; }
         public virtual DbSet<ActivationDto> Activation { get; set; }
+        public virtual DbSet<PendingLoginDto> PendingLogin { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +34,10 @@ namespace Authentication_Service.Dal
             modelBuilder.Entity<ActivationDto>(entity =>
             {
                 entity.HasKey(a => a.Uuid);
+            });
+            modelBuilder.Entity<PendingLoginDto>(entity =>
+            {
+                entity.HasKey(pl => pl.Uuid);
             });
         }
     }

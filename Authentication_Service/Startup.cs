@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Authentication_Service
 {
@@ -28,9 +29,19 @@ namespace Authentication_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddControllers();
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
@@ -44,7 +55,7 @@ namespace Authentication_Service
             services.AddScoped<SecurityLogic>();
             services.AddScoped<JwtLogic>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
-            services.AddSingleton<AddUserConsumer>();
+            services.AddScoped<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
 
@@ -57,6 +68,7 @@ namespace Authentication_Service
             services.AddScoped<IPasswordResetDal, PasswordResetDal>();
             services.AddScoped<IDisabledUserDal, DisabledUserDal>();
             services.AddScoped<IActivationDal, ActivationDal>();
+            services.AddScoped<IPendingLoginDal, PendingLoginDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,17 +88,6 @@ namespace Authentication_Service
             {
                 endpoints.MapControllers();
             });
-
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
-        }
-
-        public void ApplyMigrations(DataContext context)
-        {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
         }
     }
 }

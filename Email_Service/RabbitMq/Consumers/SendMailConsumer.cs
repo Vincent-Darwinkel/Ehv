@@ -15,12 +15,11 @@ namespace Email_Service.RabbitMq.Consumers
         private readonly EmailLogic _emailLogic;
         private readonly LogLogic _logLogic;
 
-        public SendMailConsumer(IServiceProvider serviceProvider, IModel channel)
+        public SendMailConsumer(IModel channel, EmailLogic emailLogic, LogLogic logLogic)
         {
             _channel = channel;
-            using var scope = serviceProvider.CreateScope();
-            _emailLogic = scope.ServiceProvider.GetRequiredService<EmailLogic>();
-            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
+            _emailLogic = emailLogic;
+            _logLogic = logLogic;
         }
 
         /// <summary>

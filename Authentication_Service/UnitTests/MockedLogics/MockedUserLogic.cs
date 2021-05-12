@@ -1,5 +1,7 @@
 ﻿using Authentication_Service.Logic;
+using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.UnitTests.MockDals;
+using Moq;
 
 namespace Authentication_Service.UnitTests.MockedLogics
 {
@@ -10,7 +12,10 @@ namespace Authentication_Service.UnitTests.MockedLogics
         public MockedUserLogic()
         {
             var mockedUserDal = new MockedUserDal().Mock;
-            UserLogic = new UserLogic(mockedUserDal, new SecurityLogic());
+            var mockedDisabledUserDal = new MockedDisabledUserDal().Mock;
+            var mockedActivationDal = new MockedActivationDal().Mock;
+            var mockedPublisher = new Mock<IPublisher>().Object;
+            UserLogic = new UserLogic(mockedUserDal, mockedDisabledUserDal, mockedActivationDal, new SecurityLogic(), mockedPublisher);
         }
     }
 }

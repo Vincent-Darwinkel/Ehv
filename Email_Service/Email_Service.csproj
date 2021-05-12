@@ -21,6 +21,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="EmailTemplates\ActivateAccount.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="EmailTemplates\LoginMultiRole.html">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

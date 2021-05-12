@@ -15,12 +15,11 @@ namespace Authentication_Service.RabbitMq.Consumers
         private readonly UserLogic _userLogic;
         private readonly LogLogic _logLogic;
 
-        public AddUserConsumer(IServiceProvider serviceProvider, IModel channel)
+        public AddUserConsumer(IModel channel, UserLogic userLogic, LogLogic logLogic)
         {
             _channel = channel;
-            using var scope = serviceProvider.CreateScope();
-            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
-            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
+            _userLogic = userLogic;
+            _logLogic = logLogic;
         }
 
         public void Consume()

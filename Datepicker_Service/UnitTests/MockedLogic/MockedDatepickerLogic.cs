@@ -17,7 +17,7 @@ namespace Datepicker_Service.UnitTests.MockedLogic
         {
             var mockedDatepickerDal = new MockedDatepickerDal().DatepickerDal;
             var mockedPublisher = new Mock<IPublisher>();
-            var datepickerLogic = new DatepickerLogic(mockedDatepickerDal, null, mockedPublisher.Object);
+            var datepickerLogic = new DatepickerLogic(mockedDatepickerDal, null, mockedPublisher.Object, null);
 
             DatepickerLogic = datepickerLogic;
         }

@@ -11,7 +11,7 @@ using Favorite_Artist_Service.Model.ToFrontend;
 
 namespace Favorite_Artist_Service.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("favorite-artist")]
     [ApiController]
     public class FavoriteArtistController : ControllerBase
     {
@@ -26,14 +26,17 @@ namespace Favorite_Artist_Service.Controllers
             _mapper = mapper;
         }
 
-        public async Task<ActionResult> Add(FavoriteArtist favoriteArtist)
+        [HttpPost]
+        public async Task<ActionResult> Add(string name)
         {
             try
             {
-                var favoriteArtistToAdd = _mapper.Map<FavoriteArtistDto>(favoriteArtist);
-                favoriteArtistToAdd.Uuid = Guid.NewGuid();
+                await _favoriteArtistLogic.Add(new FavoriteArtistDto
+                {
+                    Uuid = Guid.NewGuid(),
+                    Name = name
+                });
 
-                await _favoriteArtistLogic.Add(favoriteArtistToAdd);
                 return Ok();
             }
             catch (Exception e)
@@ -43,6 +46,7 @@ namespace Favorite_Artist_Service.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<ActionResult<List<FavoriteArtistViewmodel>>> All()
         {
             try
@@ -57,6 +61,7 @@ namespace Favorite_Artist_Service.Controllers
             }
         }
 
+        [HttpPut]
         public async Task<ActionResult> Update(FavoriteArtist favoriteArtist)
         {
             try
@@ -72,6 +77,7 @@ namespace Favorite_Artist_Service.Controllers
             }
         }
 
+        [HttpDelete]
         public async Task<ActionResult> Delete(Guid uuid)
         {
             try

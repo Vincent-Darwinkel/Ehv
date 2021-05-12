@@ -1,9 +1,11 @@
+using System.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Logging_Service.Dal;
 using Logging_Service.Dal.Interfaces;
 using Logging_Service.Logic;
@@ -28,9 +30,19 @@ namespace Logging_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -61,17 +73,6 @@ namespace Logging_Service
                     await context.Response.WriteAsync("Hello World!");
                 });
             });
-
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
-        }
-
-        public void ApplyMigrations(DataContext context)
-        {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
         }
     }
 }

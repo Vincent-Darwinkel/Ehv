@@ -4,7 +4,7 @@ using Authentication_Service.Models.Dto;
 
 namespace Authentication_Service.Dal.Interface
 {
-    interface IDisabledUserDal
+    public interface IDisabledUserDal
     {
         /// <summary>
         /// Adds the disabled user object to the database

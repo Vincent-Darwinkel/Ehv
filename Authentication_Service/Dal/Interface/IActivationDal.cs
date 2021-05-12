@@ -4,7 +4,7 @@ using Authentication_Service.Models.Dto;
 
 namespace Authentication_Service.Dal.Interface
 {
-    interface IActivationDal
+    public interface IActivationDal
     {
         /// <summary>
         /// Adds the activation object to the database

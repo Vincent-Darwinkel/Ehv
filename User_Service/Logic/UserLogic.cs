@@ -32,7 +32,6 @@ namespace User_Service.Logic
         private bool UserModelValid(User user)
         {
             return !string.IsNullOrEmpty(user.Username) &&
-                   user.AccountRole != AccountRole.Undefined &&
                    !string.IsNullOrEmpty(user.Email) &&
                    !string.IsNullOrEmpty(user.About) &&
                    user.Gender != Gender.Undefined &&
@@ -62,9 +61,10 @@ namespace User_Service.Logic
 
             var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
             userRabbitMq.Uuid = userDto.Uuid;
+            userRabbitMq.AccountRole = AccountRole.User;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
-            await _userDal.Add(userDto);
+            //await _userDal.Add(userDto);
         }
 
         /// <returns>All users in the database</returns>
@@ -92,7 +92,7 @@ namespace User_Service.Logic
         {
             var uuidCollection = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(uuidCollectionJson);
             List<UserDto> foundUsers = await _userDal.Find(uuidCollection);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(foundUsers);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(true);
         }
 
         /// <summary>

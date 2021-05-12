@@ -26,14 +26,16 @@ namespace Hobby_Service.Controllers
             _mapper = mapper;
         }
 
-        public async Task<ActionResult> Add(Hobby hobby)
+        [HttpPost]
+        public async Task<ActionResult> Add(string name)
         {
             try
             {
-                var hobbyToAdd = _mapper.Map<HobbyDto>(hobby);
-                hobbyToAdd.Uuid = Guid.NewGuid();
-
-                await _hobbyLogic.Add(hobbyToAdd);
+                await _hobbyLogic.Add(new HobbyDto
+                {
+                    Uuid = Guid.NewGuid(),
+                    Name = name
+                });
                 return Ok();
             }
             catch (Exception e)
@@ -43,6 +45,7 @@ namespace Hobby_Service.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<ActionResult<List<HobbyViewmodel>>> All()
         {
             try
@@ -57,6 +60,7 @@ namespace Hobby_Service.Controllers
             }
         }
 
+        [HttpPut]
         public async Task<ActionResult> Update(Hobby hobby)
         {
             try
@@ -72,6 +76,7 @@ namespace Hobby_Service.Controllers
             }
         }
 
+        [HttpDelete]
         public async Task<ActionResult> Delete(Guid uuid)
         {
             try

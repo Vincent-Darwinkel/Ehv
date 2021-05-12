@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Email_Service.Logic;
 using Email_Service.RabbitMq;
 using Email_Service.RabbitMq.Consumers;
 using Email_Service.RabbitMq.Publishers;
+using Email_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,11 +26,18 @@ namespace Email_Service
             services.AddSingleton<SendMailConsumer>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddScoped<LogLogic>();
+            services.AddScoped<RpcClient>();
+            services.AddScoped<EmailLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<SendMailConsumer>(),
+            }.ForEach(consumer => consumer.Consume());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

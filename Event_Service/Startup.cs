@@ -1,4 +1,5 @@
-﻿using Event_Service.Dal;
+﻿using System.Data;
+using Event_Service.Dal;
 using Event_Service.Dal.Interfaces;
 using Event_Service.Logic;
 using Event_Service.Models.HelperFiles;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Event_Service
 {
@@ -28,9 +30,19 @@ namespace Event_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             AddDependencies(ref services);
             services.AddControllers();
@@ -64,17 +76,6 @@ namespace Event_Service
             {
                 endpoints.MapControllers();
             });
-
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
-        }
-
-        public void ApplyMigrations(DataContext context)
-        {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
         }
     }
 }

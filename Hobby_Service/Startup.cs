@@ -1,8 +1,12 @@
+using System.Data;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Hobby_Service.Dal;
 using Hobby_Service.Dal.Interfaces;
 using Hobby_Service.Logic;
 using Hobby_Service.Models.Helpers;
+using Hobby_Service.RabbitMq;
+using Hobby_Service.RabbitMq.Publishers;
 using Hobby_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,8 +30,23 @@ namespace Hobby_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
             AddDependencies(ref services);
+            services.AddControllers();
         }
 
         public void AddDependencies(ref IServiceCollection services)
@@ -37,6 +56,8 @@ namespace Hobby_Service
             services.AddScoped<IHobbyDal, HobbyDal>();
             services.AddScoped<HobbyLogic>();
             services.AddScoped<JwtLogic>();
+            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddScoped<IPublisher, Publisher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,17 +83,6 @@ namespace Hobby_Service
             {
                 endpoints.MapControllers();
             });
-
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
-        }
-
-        public void ApplyMigrations(DataContext context)
-        {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
         }
     }
 }

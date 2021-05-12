@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Authentication_Service.CustomExceptions;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.FromFrontend;
 using Authentication_Service.Models.ToFrontend;
@@ -22,7 +23,7 @@ namespace Authentication_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login([FromForm] Login login)
+        public async Task<ActionResult> Login([FromBody] Login login)
         {
             try
             {
@@ -32,6 +33,10 @@ namespace Authentication_Service.Controllers
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
+            }
+            catch (DisabledUserException)
+            {
+                return Forbid();
             }
             catch (Exception e)
             {

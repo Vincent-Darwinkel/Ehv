@@ -1,16 +1,18 @@
-﻿using Datepicker_Service.Dal;
+﻿using System.Data;
+using System.Text.Json.Serialization;
+using Datepicker_Service.Dal;
 using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.RabbitMq;
 using Datepicker_Service.RabbitMq.Publishers;
+using Datepicker_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
 
 namespace Datepicker_Service
 {
@@ -27,9 +29,19 @@ namespace Datepicker_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -44,6 +56,7 @@ namespace Datepicker_Service
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
+            services.AddScoped<RpcClient>();
             services.AddScoped<IDatepickerDal, DatepickerDal>();
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
         }
@@ -64,17 +77,6 @@ namespace Datepicker_Service
             {
                 endpoints.MapControllers();
             });
-
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
-        }
-
-        public void ApplyMigrations(DataContext context)
-        {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
         }
     }
 }

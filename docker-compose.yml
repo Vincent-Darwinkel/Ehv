@@ -67,6 +67,7 @@ services:
     ports:
         - "5002:80"
     depends_on:
+      - mariadb
       - rabbitmq
 
   event_service:
@@ -77,6 +78,7 @@ services:
     ports:
         - "5003:80"
     depends_on:
+      - mariadb
       - rabbitmq
 
   user_service:
@@ -114,12 +116,18 @@ services:
     build:
       context: .
       dockerfile: Favorite_Artist_Service/Dockerfile
+    depends_on:
+        - mariadb
+        - rabbitmq
 
   hobby_service:
     image: ${DOCKER_REGISTRY-}hobbyservice
     build:
       context: .
       dockerfile: Hobby_Service/Dockerfile
+    depends_on:
+        - mariadb
+        - rabbitmq
 
 volumes:
   mariadb-data:

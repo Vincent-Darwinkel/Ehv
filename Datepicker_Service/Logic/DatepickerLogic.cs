@@ -20,12 +20,14 @@ namespace Datepicker_Service.Logic
         private readonly IDatepickerDal _datepickerDal;
         private readonly IModel _channel;
         private readonly IPublisher _publisher;
+        private readonly RpcClient _rpcClient;
 
-        public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel, IPublisher publisher)
+        public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel, IPublisher publisher, RpcClient rpcClient)
         {
             _datepickerDal = datepickerDal;
             _channel = channel;
             _publisher = publisher;
+            _rpcClient = rpcClient;
         }
 
         private bool DatepickerValid(DatepickerDto datepicker)
@@ -52,10 +54,9 @@ namespace Datepicker_Service.Logic
 
             datepicker.AuthorUuid = requestingUser.Uuid;
             datepicker.Dates.ForEach(d => d.DatePickerUuid = datepicker.Uuid);
-            var rpcClient = new RpcClient(_channel);
 
             bool datepickerExists = await _datepickerDal.Exists(datepicker.Title);
-            bool eventExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
+            bool eventExists = _rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
             if (eventExists || datepickerExists)
             {
                 throw new DuplicateNameException();

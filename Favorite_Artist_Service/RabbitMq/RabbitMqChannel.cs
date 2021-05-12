@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace Hobby_Service.RabbitMq
+namespace Favorite_Artist_Service.RabbitMq
 {
     public class RabbitMqChannel
     {

@@ -9,6 +9,8 @@ namespace User_Service.Models.FromFrontend
     {
         [Required]
         public string Username { get; set; }
+        public string Avatar { get; set; }
+
         [Required]
         public string Password { get; set; }
         public string NewPassword { get; set; }

@@ -6,5 +6,6 @@
         public static readonly string AddUser = "create.user";
         public static readonly string UpdateUser = "update.user";
         public static readonly string DeleteUser = "delete.user";
+        public static readonly string SendMail = "send.mail";
     }
 }
