@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using Hobby_Service.CustomExceptions;
-using Hobby_Service.Enums;
+using Favorite_Artist_Service.CustomExceptions;
+using Favorite_Artist_Service.Enums;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace Hobby_Service.Logic
+namespace Favorite_Artist_Service.Logic
 {
     public class JwtLogic
     {
