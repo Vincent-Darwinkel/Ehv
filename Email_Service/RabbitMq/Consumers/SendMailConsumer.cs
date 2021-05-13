@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Email_Service.Logic;
 using Email_Service.Models.Helpers;
-using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 

@@ -1,5 +1,6 @@
 ﻿using Authentication_Service.Logic;
 using Authentication_Service.RabbitMq.Publishers;
+using Authentication_Service.RabbitMq.Rpc;
 using Authentication_Service.UnitTests.MockDals;
 using Moq;
 
@@ -15,8 +16,9 @@ namespace Authentication_Service.UnitTests.MockedLogics
             var iPendingLoginDalMock = new MockedPendingLoginDal().Mock;
             var iDisabledUserDalMock = new MockedDisabledUserDal().Mock;
             var mockedPublisher = new Mock<IPublisher>().Object;
+            var mockedRpcClient = new Mock<RpcClient>().Object;
             AuthenticationLogic = new AuthenticationLogic(iUserDalMock, iDisabledUserDalMock,
-                mockedPublisher, iPendingLoginDalMock, new SecurityLogic(), new MockedJwtLogic().JwtLogic);
+                mockedPublisher, iPendingLoginDalMock, new SecurityLogic(), new MockedJwtLogic().JwtLogic, mockedRpcClient);
         }
     }
 }

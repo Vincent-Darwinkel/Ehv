@@ -5,15 +5,14 @@ using Event_Service.Logic;
 using Event_Service.Models.HelperFiles;
 using Event_Service.RabbitMq;
 using Event_Service.RabbitMq.Publishers;
-using Event_Service.RabbitMq.RPC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
-using System.Linq;
 using System.Text.Json.Serialization;
+using Event_Service.RabbitMq.RPC;
+using RabbitMQ.Client;
 
 namespace Event_Service
 {
@@ -69,7 +68,12 @@ namespace Event_Service
             new RpcServer(channel, RabbitMqQueues.ExistsEventQueue, eventLogic.Exists, logLogic);
 
             app.UseRouting();
-
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

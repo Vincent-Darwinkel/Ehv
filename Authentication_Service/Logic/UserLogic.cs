@@ -4,11 +4,13 @@ using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.RabbitMq.Publishers;
-using DisableReason = User_Service.Enums.DisableReason;
+using Authentication_Service.RabbitMq.Rpc;
 
 namespace Authentication_Service.Logic
 {
@@ -19,15 +21,17 @@ namespace Authentication_Service.Logic
         private readonly IActivationDal _activationDal;
         private readonly SecurityLogic _securityLogic;
         private readonly IPublisher _publisher;
+        private readonly RpcClient _rpcClient;
 
         public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
-            SecurityLogic securityLogic, IPublisher publisher)
+            SecurityLogic securityLogic, IPublisher publisher, RpcClient rpcClient)
         {
             _userDal = userDal;
             _disabledUserDal = disabledUserDal;
             _activationDal = activationDal;
             _securityLogic = securityLogic;
             _publisher = publisher;
+            _rpcClient = rpcClient;
         }
 
         private bool UserModelValid(UserDto user)
@@ -46,13 +50,13 @@ namespace Authentication_Service.Logic
             }
 
             user.Password = _securityLogic.HashPassword(user.Password);
-            /* await _userDal.Add(user);
-             await _disabledUserDal.Add(new DisabledUserDto
-             {
-                 Reason = DisableReason.EmailVerificationRequired,
-                 UserUuid = user.Uuid,
-                 Uuid = Guid.NewGuid()
-             });*/
+            await _userDal.Add(user);
+            await _disabledUserDal.Add(new DisabledUserDto
+            {
+                Reason = DisableReason.EmailVerificationRequired,
+                UserUuid = user.Uuid,
+                Uuid = Guid.NewGuid()
+            });
 
             var activationDto = new ActivationDto
             {
@@ -61,11 +65,21 @@ namespace Authentication_Service.Logic
                 Uuid = Guid.NewGuid()
             };
 
-            //await _activationDal.Add(activationDto);
+            await _activationDal.Add(activationDto);
+
+            var userFromUserService = _rpcClient.Call<List<UserRabbitMq>>(new List<Guid>
+            {
+                user.Uuid
+            }, RabbitMqQueues.FindUserQueue).FirstOrDefault();
+
+            if (userFromUserService == null)
+            {
+                throw new NoNullAllowedException();
+            }
 
             var email = new EmailRabbitMq
             {
-                UserUuid = user.Uuid,
+                EmailAddress = userFromUserService.Email,
                 TemplateName = "ActivateAccount",
                 Subject = "Activatie Eindhovense vriendjes",
                 KeyWordValues = new List<EmailKeyWordValue>

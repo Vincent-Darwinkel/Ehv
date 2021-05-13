@@ -20,12 +20,14 @@ namespace User_Service.Controllers
         private readonly UserLogic _userLogic;
         private readonly IMapper _mapper;
         private readonly ControllerHelper _helper;
+        private readonly LogLogic _logLogic;
 
-        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper)
+        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper, LogLogic logLogic)
         {
             _userLogic = userLogic;
             _mapper = mapper;
             _helper = helper;
+            _logLogic = logLogic;
         }
 
         [HttpPost]
@@ -44,8 +46,9 @@ namespace User_Service.Controllers
             {
                 return UnprocessableEntity();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -62,8 +65,9 @@ namespace User_Service.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -80,8 +84,9 @@ namespace User_Service.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -99,8 +104,9 @@ namespace User_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -122,8 +128,9 @@ namespace User_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

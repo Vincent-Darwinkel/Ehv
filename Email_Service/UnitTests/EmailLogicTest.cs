@@ -15,7 +15,7 @@ namespace Email_Service.UnitTests
 
         public EmailLogicTest()
         {
-            _emailLogic = new EmailLogic(null, null);
+            _emailLogic = new EmailLogic(null);
         }
 
         [Test]

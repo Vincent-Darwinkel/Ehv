@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Datepicker_Service
 {
@@ -52,7 +51,6 @@ namespace Datepicker_Service
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<ControllerHelper>();
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
-            services.AddScoped<ControllerHelper>();
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
@@ -64,11 +62,6 @@ namespace Datepicker_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseRouting();
 
             app.UseAuthorization();

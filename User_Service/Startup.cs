@@ -75,11 +75,6 @@ namespace User_Service
             // ReSharper disable once ObjectCreationAsStatement
             new RpcServer(channel, RabbitMqQueues.FindUserQueue, userLogic.Find, logLogic);
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseRouting();
             app.UseCors(builder =>
             {

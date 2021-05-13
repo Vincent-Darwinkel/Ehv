@@ -30,7 +30,7 @@ namespace User_Service.Logic
                 {
                     return true;
                 }
-                if (exception.StackTrace.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.StackTrace) && exception.StackTrace.Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }

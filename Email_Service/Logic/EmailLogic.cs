@@ -5,23 +5,20 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Net.NetworkInformation;
 using System.Text;
 using Email_Service.Models.Helpers;
-using Email_Service.Models.RabbitMq;
-using Email_Service.RabbitMq.Rpc;
 using Microsoft.Extensions.Configuration;
 
 namespace Email_Service.Logic
 {
     public class EmailLogic
     {
-        private readonly IConfiguration _config;
-        private readonly RpcClient _rpcClient;
+        private readonly EmailConfig _emailConfig;
 
-        public EmailLogic(IConfiguration config, RpcClient rpcClient)
+        public EmailLogic(EmailConfig emailConfig)
         {
-            _config = config;
-            _rpcClient = rpcClient;
+            _emailConfig = emailConfig;
         }
 
         /// <summary>
@@ -43,7 +40,7 @@ namespace Email_Service.Logic
             var sb = new StringBuilder(fileText);
             keyValueCollection.ForEach(emailKeyWordValue =>
             {
-                sb.Replace(emailKeyWordValue.Key, emailKeyWordValue.Value);
+                sb.Replace("@{" + emailKeyWordValue.Key + "}", emailKeyWordValue.Value);
             });
 
             return sb.ToString();
@@ -60,24 +57,16 @@ namespace Email_Service.Logic
                 throw new ArgumentNullException(nameof(emails));
             }
 
-            List<Guid> userUuidCollection = emails
-                .Select(e => e.UserUuid)
-                .ToList();
+            if (emails.Any(e => string.IsNullOrEmpty(e.TemplateName)))
+            {
+                throw new NoNullAllowedException();
+            }
 
-            var users = _rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqQueues.FindUserQueue);
-            /* foreach (var email in emails)
-             {
-                 email.EmailAddress = users
-                     .Find(u => u.Uuid == email.UserUuid)
-                     .Email;
-
-                 if (!string.IsNullOrEmpty(email.TemplateName))
-                 {
-                     email.Message = GetHtmlFormattedEmail(email.TemplateName, email.KeyWordValues);
-                 }
-
-                 Send(email);
-             }*/
+            foreach (var email in emails)
+            {
+                email.Message = GetHtmlFormattedEmail(email.TemplateName, email.KeyWordValues);
+                Send(email);
+            }
         }
 
         /// <summary>
@@ -94,22 +83,25 @@ namespace Email_Service.Logic
             }
 
             // client settings
-            using var client = new SmtpClient(_config[ConfigurationParameters.SmtpHost])
+            using var client = new SmtpClient(_emailConfig.SmtpHost, _emailConfig.SmtpPort)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_config[ConfigurationParameters.EmailToSendFrom], _config[ConfigurationParameters.EmailPassword]),
-                Port = Convert.ToInt32(_config[ConfigurationParameters.SmtpPort]),
+                Credentials = new NetworkCredential(_emailConfig.Email, _emailConfig.EmailPassword),
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 Timeout = 10000
             };
 
             // mail settings
-            using var message = new MailMessage { From = new MailAddress(_config[ConfigurationParameters.EmailToSendFrom]) };
+            using var message = new MailMessage
+            {
+                From = new MailAddress(_emailConfig.Email)
+            };
             message.To.Add(email.EmailAddress);
             message.Body = email.Message;
             message.Subject = email.Subject;
             message.IsBodyHtml = true;
+
             client.Send(message);
         }
     }

@@ -1,5 +1,5 @@
 ﻿using System;
-using User_Service.Enums;
+using Authentication_Service.Enums;
 
 namespace Authentication_Service.Models.Dto
 {

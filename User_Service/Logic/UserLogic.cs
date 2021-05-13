@@ -59,12 +59,12 @@ namespace User_Service.Logic
             userDto.AccountRole = AccountRole.User;
             userDto.Uuid = Guid.NewGuid();
 
-            var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+            var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
             userRabbitMq.Uuid = userDto.Uuid;
             userRabbitMq.AccountRole = AccountRole.User;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
-            //await _userDal.Add(userDto);
+            await _userDal.Add(userDto);
         }
 
         /// <returns>All users in the database</returns>
@@ -92,7 +92,8 @@ namespace User_Service.Logic
         {
             var uuidCollection = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(uuidCollectionJson);
             List<UserDto> foundUsers = await _userDal.Find(uuidCollection);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(true);
+            var users = _mapper.Map<List<UserRabbitMq>>(foundUsers ?? new List<UserDto>());
+            return Newtonsoft.Json.JsonConvert.SerializeObject(users);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace User_Service.Logic
 
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Username != user.Username)
             {
-                var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+                var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
                 userRabbitMq.Uuid = dbUser.Uuid;
                 _publisher.Publish(userRabbitMq, RabbitMqRouting.UpdateUser, RabbitMqExchange.UserExchange);
             }

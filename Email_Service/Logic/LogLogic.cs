@@ -2,7 +2,6 @@
 using Email_Service.Models.Helpers;
 using Email_Service.Models.RabbitMq;
 using Email_Service.RabbitMq.Publishers;
-using RabbitMQ.Client;
 
 namespace Email_Service.Logic
 {

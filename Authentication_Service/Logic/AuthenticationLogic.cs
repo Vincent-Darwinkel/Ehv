@@ -11,6 +11,7 @@ using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.Models.ToFrontend;
 using Authentication_Service.RabbitMq.Publishers;
+using Authentication_Service.RabbitMq.Rpc;
 
 namespace Authentication_Service.Logic
 {
@@ -22,9 +23,11 @@ namespace Authentication_Service.Logic
         private readonly IPendingLoginDal _pendingLoginDal;
         private readonly SecurityLogic _securityLogic;
         private readonly JwtLogic _jwtLogic;
+        private readonly RpcClient _rpcClient;
 
         public AuthenticationLogic(IUserDal userDal, IDisabledUserDal disabledUserDal,
-            IPublisher publisher, IPendingLoginDal pendingLoginDal, SecurityLogic securityLogic, JwtLogic jwtLogic)
+            IPublisher publisher, IPendingLoginDal pendingLoginDal, SecurityLogic securityLogic,
+            JwtLogic jwtLogic, RpcClient rpcClient)
         {
             _userDal = userDal;
             _disabledUserDal = disabledUserDal;
@@ -32,6 +35,7 @@ namespace Authentication_Service.Logic
             _pendingLoginDal = pendingLoginDal;
             _securityLogic = securityLogic;
             _jwtLogic = jwtLogic;
+            _rpcClient = rpcClient;
         }
 
         /// <summary>
@@ -102,10 +106,15 @@ namespace Authentication_Service.Logic
                 UserUuid = user.Uuid
             };
 
+            var userFromUserService = _rpcClient.Call<List<UserRabbitMq>>(new List<Guid>
+            {
+                user.Uuid
+            }, RabbitMqQueues.FindUserQueue).FirstOrDefault();
+
             var email = new EmailRabbitMq
             {
+                EmailAddress = userFromUserService.Email,
                 Subject = "Login code",
-                UserUuid = user.Uuid,
                 TemplateName = "LoginMultiRole",
                 KeyWordValues = new List<EmailKeyWordValue>
                 {

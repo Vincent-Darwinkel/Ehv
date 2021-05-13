@@ -37,7 +37,7 @@ namespace User_Service.RabbitMq.Rpc
                 }
                 finally
                 {
-                    var responseBytes = Encoding.UTF8.GetBytes(response);
+                    var responseBytes = Encoding.UTF8.GetBytes(response ?? "");
                     channel.BasicPublish("", props.ReplyTo, replyProps, responseBytes);
                     channel.BasicAck(ea.DeliveryTag, false);
                 }

@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Data;
 using System.Text.Json.Serialization;
+using Authentication_Service.RabbitMq.Rpc;
 
 namespace Authentication_Service
 {
@@ -58,6 +59,7 @@ namespace Authentication_Service
             services.AddScoped<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
+            services.AddScoped<RpcClient>();
 
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<LogLogic>();

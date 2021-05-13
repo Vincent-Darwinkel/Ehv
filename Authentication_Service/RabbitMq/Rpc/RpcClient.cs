@@ -4,7 +4,7 @@ using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Email_Service.RabbitMq.Rpc
+namespace Authentication_Service.RabbitMq.Rpc
 {
     public class RpcClient
     {
@@ -43,27 +43,20 @@ namespace Email_Service.RabbitMq.Rpc
                 throw new NullReferenceException();
             }
 
-            try
-            {
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
-                var messageBytes = Encoding.UTF8.GetBytes(json);
-                _channel.BasicPublish(
-                    "",
-                    queue, // this parameter name is routing key but needs the name of the queue, the name is probably wrong
-                    _props,
-                    messageBytes);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
+            var messageBytes = Encoding.UTF8.GetBytes(json);
+            _channel.BasicPublish(
+                "",
+                queue, // this parameter name is routing key but needs the name of the queue, the name is probably wrong
+                _props,
+                messageBytes);
 
-                _channel.BasicConsume(
-                    consumer: _consumer,
-                    queue: _replyQueueName,
-                    autoAck: true);
+            _channel.BasicConsume(
+                consumer: _consumer,
+                queue: _replyQueueName,
+                autoAck: true);
 
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(_respQueue.Take());
-            }
-            finally
-            {
-                _channel.Close();
-            }
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(_respQueue.Take());
         }
     }
 }
