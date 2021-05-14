@@ -13,11 +13,9 @@ namespace Authentication_Service.UnitTests.MockedLogics
         public MockedUserLogic()
         {
             var mockedUserDal = new MockedUserDal().Mock;
-            var mockedDisabledUserDal = new MockedDisabledUserDal().Mock;
-            var mockedActivationDal = new MockedActivationDal().Mock;
             var mockedPublisher = new Mock<IPublisher>().Object;
             var mockedRpcServer = new Mock<RpcClient>().Object;
-            UserLogic = new UserLogic(mockedUserDal, mockedDisabledUserDal, mockedActivationDal, new SecurityLogic(), mockedPublisher, mockedRpcServer);
+            UserLogic = new UserLogic(mockedUserDal, new SecurityLogic(), mockedPublisher, mockedRpcServer, null);
         }
     }
 }

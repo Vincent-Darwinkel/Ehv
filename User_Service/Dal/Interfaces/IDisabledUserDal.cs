@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Authentication_Service.Models.Dto;
+using User_Service.Models;
 
-namespace Authentication_Service.Dal.Interface
+namespace User_Service.Dal.Interfaces
 {
     public interface IDisabledUserDal
     {
@@ -12,12 +13,15 @@ namespace Authentication_Service.Dal.Interface
         /// <param name="disabledUser">The disabled user object to add</param>
         Task Add(DisabledUserDto disabledUser);
 
+        /// <returns>All disabled users in the database</returns>
+        Task<List<Guid>> All();
+
         /// <summary>
-        /// Finds the disabled user object by the user uuid
+        /// Checks if the user is disabled
         /// </summary>
-        /// <param name="userUuid"></param>
-        /// <returns>The found disabled user object, null if nothing is found</returns>
-        Task<DisabledUserDto> Find(Guid userUuid);
+        /// <param name="userUuid">The user uuid to search for</param>
+        /// <returns>True if found, false if not found</returns>
+        Task<bool> Exists(Guid userUuid);
 
         /// <summary>
         /// Deletes the disabled user object by uuid

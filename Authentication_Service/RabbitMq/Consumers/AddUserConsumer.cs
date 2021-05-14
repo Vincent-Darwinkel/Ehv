@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using Authentication_Service.Models.RabbitMq;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {
@@ -36,7 +37,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 {
                     byte[] body = e.Body.ToArray();
                     string json = Encoding.UTF8.GetString(body);
-                    var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(json);
+                    var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserRabbitMqSensitiveInformation>(json);
 
                     await _userLogic.Add(user);
                 }

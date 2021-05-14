@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Authentication_Service.Models.Dto;
+using User_Service.Models;
 
-namespace Authentication_Service.Dal.Interface
+namespace User_Service.Dal.Interfaces
 {
     public interface IActivationDal
     {
@@ -16,9 +16,8 @@ namespace Authentication_Service.Dal.Interface
         /// Finds the activation object by the provided code
         /// </summary>
         /// <param name="code">The activation code</param>
-        /// <param name="userUuid">The uuid of the user</param>
         /// <returns>The found activation object</returns>
-        Task<ActivationDto> Find(string code, Guid userUuid);
+        Task<ActivationDto> Find(string code);
 
         /// <summary>
         /// Deletes the activation object which matches the uuid

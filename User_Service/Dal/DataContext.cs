@@ -9,6 +9,9 @@ namespace User_Service.Dal
         public virtual DbSet<UserDto> User { get; set; }
         public virtual DbSet<UserHobbyDto> Hobby { get; set; }
         public virtual DbSet<FavoriteArtistDto> Artist { get; set; }
+        public virtual DbSet<PasswordResetDto> PasswordReset { get; set; }
+        public virtual DbSet<DisabledUserDto> DisabledUser { get; set; }
+        public virtual DbSet<ActivationDto> Activation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +26,18 @@ namespace User_Service.Dal
             modelBuilder.Entity<FavoriteArtistDto>(entity =>
             {
                 entity.HasKey(fa => fa.Uuid);
+            });
+            modelBuilder.Entity<DisabledUserDto>(entity =>
+            {
+                entity.HasKey(du => du.Uuid);
+            });
+            modelBuilder.Entity<ActivationDto>(entity =>
+            {
+                entity.HasKey(a => a.Uuid);
+            });
+            modelBuilder.Entity<PasswordResetDto>(entity =>
+            {
+                entity.HasKey(pr => pr.Uuid);
             });
         }
     }

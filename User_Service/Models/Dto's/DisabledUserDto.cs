@@ -1,7 +1,7 @@
 ﻿using System;
-using Authentication_Service.Enums;
+using User_Service.Enums;
 
-namespace Authentication_Service.Models.Dto
+namespace User_Service.Models
 {
     public class DisabledUserDto
     {

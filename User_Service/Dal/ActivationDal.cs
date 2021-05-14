@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Authentication_Service.Dal.Interface;
-using Authentication_Service.Models.Dto;
 using Microsoft.EntityFrameworkCore;
+using User_Service.Dal.Interfaces;
+using User_Service.Models;
 
-namespace Authentication_Service.Dal
+namespace User_Service.Dal
 {
     public class ActivationDal : IActivationDal
     {
@@ -21,11 +21,10 @@ namespace Authentication_Service.Dal
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ActivationDto> Find(string code, Guid userUuid)
+        public async Task<ActivationDto> Find(string code)
         {
             return await _context.Activation
-                .FirstOrDefaultAsync(a => a.Code == code &&
-                                          a.UserUuid == userUuid);
+                .FirstOrDefaultAsync(a => a.Code == code);
         }
 
         public async Task Delete(Guid uuid)

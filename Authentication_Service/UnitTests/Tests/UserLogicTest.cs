@@ -2,6 +2,7 @@
 using Authentication_Service.CustomExceptions;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
+using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.UnitTests.MockedLogics;
 using Authentication_Service.UnitTests.TestModels;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ namespace Authentication_Service.UnitTests
         [Test]
         public void AddUnprocessableExceptionTest()
         {
-            Assert.ThrowsAsync<UnprocessableException>(() => _userLogic.Add(new UserDto()));
+            Assert.ThrowsAsync<UnprocessableException>(() => _userLogic.Add(new UserRabbitMqSensitiveInformation()));
         }
 
         [Test]

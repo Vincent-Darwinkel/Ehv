@@ -3,7 +3,7 @@ using Authentication_Service.Enums;
 
 namespace Authentication_Service.Models.RabbitMq
 {
-    public class UserRabbitMq
+    public class UserRabbitMqSensitiveInformation
     {
         public Guid Uuid { get; set; }
         public string Username { get; set; }

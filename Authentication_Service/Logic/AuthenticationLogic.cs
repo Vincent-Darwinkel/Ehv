@@ -12,6 +12,9 @@ using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.Models.ToFrontend;
 using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
+using User_Service.Dal.Interfaces;
+using User_Service.Models;
+using UserDto = Authentication_Service.Models.Dto.UserDto;
 
 namespace Authentication_Service.Logic
 {
@@ -51,8 +54,8 @@ namespace Authentication_Service.Logic
                 throw new UnauthorizedAccessException();
             }
 
-            DisabledUserDto disabledUser = await _disabledUserDal.Find(dbUser.Uuid);
-            if (disabledUser != null)
+            bool userIsDisabled = _rpcClient.Call<bool>(dbUser.Uuid, RabbitMqQueues.DisabledExistsUserQueue);
+            if (userIsDisabled)
             {
                 throw new DisabledUserException();
             }
@@ -106,7 +109,7 @@ namespace Authentication_Service.Logic
                 UserUuid = user.Uuid
             };
 
-            var userFromUserService = _rpcClient.Call<List<UserRabbitMq>>(new List<Guid>
+            var userFromUserService = _rpcClient.Call<List<UserRabbitMqSensitiveInformation>>(new List<Guid>
             {
                 user.Uuid
             }, RabbitMqQueues.FindUserQueue).FirstOrDefault();

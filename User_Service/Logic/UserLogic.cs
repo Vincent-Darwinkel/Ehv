@@ -6,12 +6,12 @@ using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
 using User_Service.Dal;
+using User_Service.Dal.Interfaces;
 using User_Service.Enums;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
-using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
 
 namespace User_Service.Logic
@@ -19,12 +19,17 @@ namespace User_Service.Logic
     public class UserLogic
     {
         private readonly IUserDal _userDal;
+        private readonly IDisabledUserDal _disabledUserDal;
+        private readonly IActivationDal _activationDal;
         private readonly IMapper _mapper;
         private readonly IPublisher _publisher;
 
-        public UserLogic(IUserDal userDal, IMapper mapper, IPublisher publisher)
+        public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
+            IMapper mapper, IPublisher publisher)
         {
             _userDal = userDal;
+            _disabledUserDal = disabledUserDal;
+            _activationDal = activationDal;
             _mapper = mapper;
             _publisher = publisher;
         }
@@ -59,12 +64,55 @@ namespace User_Service.Logic
             userDto.AccountRole = AccountRole.User;
             userDto.Uuid = Guid.NewGuid();
 
+            var disabledUserDto = new DisabledUserDto()
+            {
+                Reason = DisableReason.EmailVerificationRequired,
+                UserUuid = userDto.Uuid,
+                Uuid = Guid.NewGuid()
+            };
+
+            var activationDto = new ActivationDto()
+            {
+                Code = Guid.NewGuid().ToString(),
+                UserUuid = userDto.Uuid,
+                Uuid = Guid.NewGuid()
+            };
+
+            await _disabledUserDal.Add(disabledUserDto);
+            await _activationDal.Add(activationDto);
+
             var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
             userRabbitMq.Uuid = userDto.Uuid;
             userRabbitMq.AccountRole = AccountRole.User;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
             await _userDal.Add(userDto);
+            SendActivationEmail(userDto, activationDto);
+        }
+
+        private void SendActivationEmail(UserDto user, ActivationDto activation)
+        {
+            var email = new EmailRabbitMq
+            {
+                EmailAddress = user.Email,
+                TemplateName = "ActivateAccount",
+                Subject = "Activatie Eindhovense vriendjes",
+                KeyWordValues = new List<EmailKeyWordValue>
+                {
+                    new EmailKeyWordValue
+                    {
+                        Key = "Username",
+                        Value = user.Username
+                    },
+                    new EmailKeyWordValue
+                    {
+                        Key = "ActivationCode",
+                        Value = activation.Code
+                    }
+                }
+            };
+
+            _publisher.Publish(new List<EmailRabbitMq> { email }, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
         }
 
         /// <returns>All users in the database</returns>

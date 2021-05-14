@@ -59,10 +59,14 @@ namespace User_Service
             services.AddScoped<UserLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<JwtLogic>();
+            services.AddScoped<DisabledUserLogic>();
+            services.AddScoped<ActivationDal>();
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IHobbyDal, HobbyDal>();
             services.AddScoped<IArtistDal, ArtistDal>();
+            services.AddScoped<IActivationDal, ActivationDal>();
+            services.AddScoped<IDisabledUserDal, DisabledUserDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,10 +74,12 @@ namespace User_Service
         {
             var channel = app.ApplicationServices.GetService<IModel>();
             var userLogic = app.ApplicationServices.GetService<UserLogic>();
+            var disabledUserLogic = app.ApplicationServices.GetService<DisabledUserLogic>();
             var logLogic = app.ApplicationServices.GetService<LogLogic>();
 
             // ReSharper disable once ObjectCreationAsStatement
             new RpcServer(channel, RabbitMqQueues.FindUserQueue, userLogic.Find, logLogic);
+            new RpcServer(channel, RabbitMqQueues.DisabledExistsUserQueue, disabledUserLogic.Exists, logLogic);
 
             app.UseRouting();
             app.UseCors(builder =>

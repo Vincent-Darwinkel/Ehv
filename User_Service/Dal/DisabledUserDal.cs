@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Authentication_Service.Dal.Interface;
-using Authentication_Service.Models.Dto;
+using Microsoft.EntityFrameworkCore;
+using User_Service.Dal.Interfaces;
+using User_Service.Models;
 
-namespace Authentication_Service.Dal
+namespace User_Service.Dal
 {
     public class DisabledUserDal : IDisabledUserDal
     {
@@ -20,10 +23,17 @@ namespace Authentication_Service.Dal
             await _context.SaveChangesAsync();
         }
 
-        public async Task<DisabledUserDto> Find(Guid userUuid)
+        public async Task<List<Guid>> All()
         {
             return await _context.DisabledUser
-                .FindAsync(userUuid);
+                .Select(du => du.UserUuid)
+                .ToListAsync();
+        }
+
+        public async Task<bool> Exists(Guid userUuid)
+        {
+            return await _context.DisabledUser
+                .AnyAsync(u => u.UserUuid == userUuid);
         }
 
         public async Task Delete(Guid uuid)

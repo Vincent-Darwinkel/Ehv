@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text.Json.Serialization;
 using Authentication_Service.RabbitMq.Rpc;
+using DataContext = Authentication_Service.Dal.DataContext;
+using IUserDal = Authentication_Service.Dal.Interface.IUserDal;
+using UserDal = Authentication_Service.Dal.UserDal;
 
 namespace Authentication_Service
 {
@@ -67,9 +70,6 @@ namespace Authentication_Service
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IRefreshTokenDal, RefreshTokenDal>();
-            services.AddScoped<IPasswordResetDal, PasswordResetDal>();
-            services.AddScoped<IDisabledUserDal, DisabledUserDal>();
-            services.AddScoped<IActivationDal, ActivationDal>();
             services.AddScoped<IPendingLoginDal, PendingLoginDal>();
         }
 

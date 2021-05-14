@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Authentication_Service.Models.Dto
+namespace User_Service.Models
 {
     public class ActivationDto
     {

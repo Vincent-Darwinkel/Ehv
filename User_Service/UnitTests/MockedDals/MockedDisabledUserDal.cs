@@ -1,7 +1,7 @@
-﻿using Authentication_Service.Dal.Interface;
-using Moq;
+﻿using Moq;
+using User_Service.Dal.Interfaces;
 
-namespace Authentication_Service.UnitTests.MockDals
+namespace User_Service.UnitTests.MockedDals
 {
     public class MockedActivationDal
     {

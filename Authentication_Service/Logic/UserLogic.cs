@@ -1,37 +1,36 @@
 ﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
-using Authentication_Service.Models.Dto;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
+using AutoMapper;
 
 namespace Authentication_Service.Logic
 {
     public class UserLogic
     {
         private readonly IUserDal _userDal;
-        private readonly IDisabledUserDal _disabledUserDal;
-        private readonly IActivationDal _activationDal;
         private readonly SecurityLogic _securityLogic;
         private readonly IPublisher _publisher;
         private readonly RpcClient _rpcClient;
+        private readonly IMapper _mapper;
 
-        public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
-            SecurityLogic securityLogic, IPublisher publisher, RpcClient rpcClient)
+        public UserLogic(IUserDal userDal, SecurityLogic securityLogic, IPublisher publisher,
+            RpcClient rpcClient, IMapper mapper)
         {
             _userDal = userDal;
-            _disabledUserDal = disabledUserDal;
-            _activationDal = activationDal;
             _securityLogic = securityLogic;
             _publisher = publisher;
             _rpcClient = rpcClient;
+            _mapper = mapper;
         }
 
         private bool UserModelValid(UserDto user)
@@ -42,62 +41,16 @@ namespace Authentication_Service.Logic
                    user.AccountRole != AccountRole.Undefined;
         }
 
-        public async Task Add(UserDto user)
+        public async Task Add(UserRabbitMqSensitiveInformation user)
         {
-            if (!UserModelValid(user))
+            var userDto = _mapper.Map<UserDto>(user);
+            if (!UserModelValid(userDto))
             {
                 throw new UnprocessableException();
             }
 
             user.Password = _securityLogic.HashPassword(user.Password);
-            await _userDal.Add(user);
-            await _disabledUserDal.Add(new DisabledUserDto
-            {
-                Reason = DisableReason.EmailVerificationRequired,
-                UserUuid = user.Uuid,
-                Uuid = Guid.NewGuid()
-            });
-
-            var activationDto = new ActivationDto
-            {
-                Code = Guid.NewGuid().ToString(),
-                UserUuid = user.Uuid,
-                Uuid = Guid.NewGuid()
-            };
-
-            await _activationDal.Add(activationDto);
-
-            var userFromUserService = _rpcClient.Call<List<UserRabbitMq>>(new List<Guid>
-            {
-                user.Uuid
-            }, RabbitMqQueues.FindUserQueue).FirstOrDefault();
-
-            if (userFromUserService == null)
-            {
-                throw new NoNullAllowedException();
-            }
-
-            var email = new EmailRabbitMq
-            {
-                EmailAddress = userFromUserService.Email,
-                TemplateName = "ActivateAccount",
-                Subject = "Activatie Eindhovense vriendjes",
-                KeyWordValues = new List<EmailKeyWordValue>
-                {
-                    new EmailKeyWordValue
-                    {
-                        Key = "Username",
-                        Value = user.Username
-                    },
-                    new EmailKeyWordValue
-                    {
-                        Key = "ActivationCode",
-                        Value = activationDto.Code
-                    }
-                }
-            };
-
-            _publisher.Publish(new List<EmailRabbitMq> { email }, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
+            await _userDal.Add(userDto);
         }
 
         public async Task Update(UserDto user)

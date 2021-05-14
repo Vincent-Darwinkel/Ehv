@@ -3,6 +3,8 @@ using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
 using Authentication_Service.UnitTests.MockDals;
 using Moq;
+using User_Service.UnitTests.MockedDals;
+using MockedUserDal = Authentication_Service.UnitTests.MockDals.MockedUserDal;
 
 namespace Authentication_Service.UnitTests.MockedLogics
 {

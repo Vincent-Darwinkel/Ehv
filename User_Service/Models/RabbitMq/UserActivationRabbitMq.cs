@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Authentication_Service.Models.Dto
+namespace User_Service.Models.RabbitMq
 {
-    public class PasswordResetDto
+    public class UserActivationRabbitMq
     {
         public Guid Uuid { get; set; }
         public Guid UserUuid { get; set; }

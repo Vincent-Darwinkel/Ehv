@@ -1,8 +1,8 @@
-﻿using Authentication_Service.Dal.Interface;
-using Authentication_Service.UnitTests.TestModels;
-using Moq;
+﻿using Moq;
+using User_Service.Dal.Interfaces;
+using User_Service.UnitTests.TestModels;
 
-namespace Authentication_Service.UnitTests.MockDals
+namespace User_Service.UnitTests.MockedDals
 {
     public class MockedDisabledUserDal
     {

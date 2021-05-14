@@ -15,7 +15,9 @@ namespace User_Service.UnitTests.MockedLogics
         {
             var mockedUserDal = new MockedUserDal().Mock;
             var mockedProducer = new Mock<IPublisher>();
-            UserLogic = new UserLogic(mockedUserDal, new Mapper(AutoMapperConfig.Config), mockedProducer.Object);
+            var mockedActivationDal = new MockedActivationDal().Mock;
+            var mockedDisabledUserDal = new MockedDisabledUserDal().Mock;
+            UserLogic = new UserLogic(mockedUserDal, mockedDisabledUserDal, mockedActivationDal, null, mockedProducer.Object);
         }
     }
 }
