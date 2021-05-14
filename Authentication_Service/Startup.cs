@@ -63,6 +63,7 @@ namespace Authentication_Service
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
             services.AddScoped<RpcClient>();
+            services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<LogLogic>();
@@ -90,6 +91,17 @@ namespace Authentication_Service
             {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

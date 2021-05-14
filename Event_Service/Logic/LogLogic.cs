@@ -2,7 +2,6 @@
 using Event_Service.Models.HelperFiles;
 using Event_Service.Models.RabbitMq;
 using Event_Service.RabbitMq.Publishers;
-using RabbitMQ.Client;
 
 namespace Event_Service.Logic
 {

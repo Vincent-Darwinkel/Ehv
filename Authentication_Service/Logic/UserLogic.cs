@@ -49,7 +49,7 @@ namespace Authentication_Service.Logic
                 throw new UnprocessableException();
             }
 
-            user.Password = _securityLogic.HashPassword(user.Password);
+            userDto.Password = _securityLogic.HashPassword(user.Password);
             await _userDal.Add(userDto);
         }
 

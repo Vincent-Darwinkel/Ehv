@@ -1,5 +1,4 @@
 using System.Data;
-using System.Linq;
 using System.Text.Json.Serialization;
 using Favorite_Artist_Service.Dal;
 using Favorite_Artist_Service.Dal.Interfaces;
@@ -83,6 +82,17 @@ namespace Favorite_Artist_Service
             {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

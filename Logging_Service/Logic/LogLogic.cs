@@ -81,6 +81,11 @@ namespace Logging_Service.Logic
             await _logDal.Add(log);
         }
 
+        public async Task<List<LogDto>> All()
+        {
+            return await _logDal.All();
+        }
+
         public async Task<List<LogDto>> Find(List<Guid> uuidCollection)
         {
             if (!uuidCollection.Any())

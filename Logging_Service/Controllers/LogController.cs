@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Logging_Service.Logic;
 using Logging_Service.Models;
-using Logging_Service.Models.FromFrontend;
+using Logging_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,26 +23,13 @@ namespace Logging_Service.Controllers
             _mapper = mapper;
         }
 
-        public async Task<ActionResult<List<Log>>> Find(List<Guid> uuidCollection)
-        {
-            try
-            {
-                List<LogDto> logCollection = await _logLogic.Find(uuidCollection);
-                return _mapper.Map<List<Log>>(logCollection);
-            }
-            catch (Exception e)
-            {
-                await _logLogic.Log(e);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        public async Task<ActionResult<List<Log>>> Find(string microService)
+        [HttpGet("/microservice")]
+        public async Task<ActionResult<List<LogViewmodel>>> Find(string microService)
         {
             try
             {
                 List<LogDto> logCollection = await _logLogic.Find(microService);
-                return _mapper.Map<List<Log>>(logCollection);
+                return _mapper.Map<List<LogViewmodel>>(logCollection);
             }
             catch (Exception e)
             {
@@ -51,6 +38,22 @@ namespace Logging_Service.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<LogViewmodel>>> All()
+        {
+            try
+            {
+                List<LogDto> logCollection = await _logLogic.All();
+                return _mapper.Map<List<LogViewmodel>>(logCollection);
+            }
+            catch (Exception e)
+            {
+                await _logLogic.Log(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete]
         public async Task<ActionResult> Delete(List<Guid> uuidCollection)
         {
             try

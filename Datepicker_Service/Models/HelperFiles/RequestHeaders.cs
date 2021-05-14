@@ -2,6 +2,6 @@
 {
     public static class RequestHeaders
     {
-        public const string Jwt = "jwt";
+        public const string Jwt = "Authorization";
     }
 }

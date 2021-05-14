@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Datepicker_Service.Logic
 {
@@ -21,13 +22,18 @@ namespace Datepicker_Service.Logic
         private readonly IModel _channel;
         private readonly IPublisher _publisher;
         private readonly RpcClient _rpcClient;
+        private readonly IMapper _mapper;
+        private readonly IDatepickerDateDal _datepickerDateDal;
 
-        public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel, IPublisher publisher, RpcClient rpcClient)
+        public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel,
+            IPublisher publisher, RpcClient rpcClient, IMapper mapper, IDatepickerDateDal datepickerDateDal)
         {
             _datepickerDal = datepickerDal;
             _channel = channel;
             _publisher = publisher;
             _rpcClient = rpcClient;
+            _mapper = mapper;
+            _datepickerDateDal = datepickerDateDal;
         }
 
         private bool DatepickerValid(DatepickerDto datepicker)
@@ -45,8 +51,9 @@ namespace Datepicker_Service.Logic
         /// </summary>
         /// <param name="datepicker">The datepicker to add</param>
         /// <param name="requestingUser">The user that made the request</param>
-        public async Task Add(DatepickerDto datepicker, User requestingUser)
+        public async Task Add(DatepickerDto datepicker, UserHelper requestingUser)
         {
+            datepicker.Uuid = Guid.NewGuid();
             if (!DatepickerValid(datepicker))
             {
                 throw new UnprocessableException(nameof(datepicker));
@@ -65,6 +72,47 @@ namespace Datepicker_Service.Logic
             await _datepickerDal.Add(datepicker);
         }
 
+        private static bool DatepickerConversionModelValid(DatePickerConversion datePickerConversion)
+        {
+            return datePickerConversion.Uuid != Guid.Empty &&
+                   datePickerConversion.SelectedDates.Count > 0 &&
+                   datePickerConversion.DatepickerUuid != Guid.Empty;
+        }
+
+        public async Task ConvertDatepicker(DatePickerConversion datePickerConversion, UserHelper requestingUser)
+        {
+            if (DatepickerConversionModelValid(datePickerConversion))
+            {
+                throw new UnprocessableException();
+            }
+
+            DatepickerDto dbDatepicker = await _datepickerDal.Find(datePickerConversion.Uuid);
+            if (dbDatepicker == null)
+            {
+                throw new NoNullAllowedException();
+            }
+
+            if (dbDatepicker.AuthorUuid != requestingUser.Uuid)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            bool datesAreInDatePicker = datePickerConversion.SelectedDates
+                .TrueForAll(dateUuid => dbDatepicker.Dates
+                    .Exists(dbDate => dbDate.Uuid == dateUuid));
+
+            if (!datesAreInDatePicker)
+            {
+                throw new UnprocessableException();
+            }
+
+            var datepickerRabbitMq = _mapper.Map<DatepickerRabbitMq>(dbDatepicker);
+            datepickerRabbitMq.EventSteps = _mapper.Map<List<EventStepRabbitMq>>(datepickerRabbitMq.EventSteps);
+            datepickerRabbitMq.SelectedDates = datePickerConversion.SelectedDates;
+
+            _publisher.Publish(datepickerRabbitMq, RabbitMqRouting.ConvertDatepicker, RabbitMqExchange.ConvertDatepicker);
+        }
+
         /// <summary>
         /// Finds the datepicker by uuid
         /// </summary>
@@ -78,6 +126,11 @@ namespace Datepicker_Service.Logic
             }
 
             return await _datepickerDal.Find(uuid);
+        }
+
+        public async Task<List<DatepickerDto>> All()
+        {
+            return await _datepickerDal.All();
         }
 
         /// <summary>
@@ -111,18 +164,18 @@ namespace Datepicker_Service.Logic
             }
 
             await UpdateDatabaseDatepicker(datepicker, dbDatepicker);
-            if (userUuidCollection.Count <= 0)
-            {
-                return;
-            }
+
             if (datepicker.Dates.Count != dbDatepicker.Dates.Count || datepicker.Dates // update datepicker dates if supplied dates date time is different from database values
                 .TrueForAll(dpd => dbDatepicker.Dates
                     .All(dbDpd => dbDpd.DateTime != dpd.DateTime)))
             {
-                dbDatepicker.Dates = datepicker.Dates;
-
-                var rpcClient = new RpcClient(_channel);
-                InformUsersAboutDatepickerDatesUpdate(rpcClient, userUuidCollection, dbDatepicker);
+                await _datepickerDateDal.Delete(dbDatepicker.Dates);
+                await _datepickerDateDal.Add(datepicker.Dates);
+                if (userUuidCollection.Any())
+                {
+                    var rpcClient = new RpcClient(_channel);
+                    InformUsersAboutDatepickerDatesUpdate(rpcClient, userUuidCollection, dbDatepicker);
+                }
             }
         }
 

@@ -27,7 +27,7 @@ namespace Authentication_Service.UnitTests.Tests
         [Test]
         public async Task CreateJwtTest()
         {
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+            AuthorizationTokensViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
             Assert.NotNull(result.RefreshToken);
             Assert.NotNull(result.Jwt);
         }
@@ -56,7 +56,7 @@ namespace Authentication_Service.UnitTests.Tests
         [Test]
         public async Task GetClaimGuidTest()
         {
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+            AuthorizationTokensViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
             Guid userUuid = _jwtLogic.GetClaim<Guid>(result.Jwt, JwtClaim.Uuid);
             Assert.AreNotEqual(userUuid, Guid.Empty);
         }
@@ -64,7 +64,7 @@ namespace Authentication_Service.UnitTests.Tests
         [Test]
         public async Task GetClaimAccountRoleTest()
         {
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+            AuthorizationTokensViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
             AccountRole accountRole = _jwtLogic.GetClaim<AccountRole>(result.Jwt, JwtClaim.AccountRole);
             Assert.IsTrue(accountRole == AccountRole.User);
         }
@@ -78,7 +78,7 @@ namespace Authentication_Service.UnitTests.Tests
         [Test]
         public async Task ValidateJwtTest()
         {
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+            AuthorizationTokensViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
             TokenValidationResult validationResult = _jwtLogic.ValidateJwt(result.Jwt);
             Assert.True(validationResult.IsValid);
         }
@@ -99,15 +99,15 @@ namespace Authentication_Service.UnitTests.Tests
         [Test]
         public void RefreshJwtUnauthorizedAccessExceptionTest()
         {
-            Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await _jwtLogic.RefreshJwt("123", null, null));
+            Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await _jwtLogic.RefreshJwt("123", Guid.Empty, null));
         }
 
         [Test]
         public async Task RefreshJwtSecurityTokenExceptionTest()
         {
             var testUser = new TestUserDto().User;
-            LoginResultViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
-            Assert.ThrowsAsync<SecurityTokenException>(async () => await _jwtLogic.RefreshJwt(result.Jwt, null, testUser));
+            AuthorizationTokensViewmodel result = await _jwtLogic.CreateJwt(new TestUserDto().User);
+            Assert.ThrowsAsync<SecurityTokenException>(async () => await _jwtLogic.RefreshJwt(result.Jwt, Guid.Empty, testUser));
         }
     }
 }

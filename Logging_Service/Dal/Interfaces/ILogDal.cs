@@ -27,6 +27,9 @@ namespace Logging_Service.Dal.Interfaces
         /// <returns>The found logs</returns>
         Task<List<LogDto>> Find(string microService);
 
+        /// <returns>All logs in the database</returns>
+        Task<List<LogDto>> All();
+
         /// <summary>
         /// Deletes the logs which matches the uuidCollection in the collection
         /// </summary>

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using User_Service.Dal;
 using User_Service.Dal.Interfaces;
@@ -60,7 +59,8 @@ namespace User_Service
             services.AddScoped<LogLogic>();
             services.AddScoped<JwtLogic>();
             services.AddScoped<DisabledUserLogic>();
-            services.AddScoped<ActivationDal>();
+            services.AddScoped<ActivationLogic>();
+            services.AddScoped<DisabledUserLogic>();
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IHobbyDal, HobbyDal>();
@@ -94,6 +94,17 @@ namespace User_Service
             {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

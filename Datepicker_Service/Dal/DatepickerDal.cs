@@ -2,6 +2,7 @@
 using Datepicker_Service.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,6 +30,11 @@ namespace Datepicker_Service.Dal
                 .ThenInclude(dp => dp.UserAvailabilities)
                 .Where(dp => dp.Uuid == uuid)
                 .FirstAsync();
+        }
+
+        public async Task<List<DatepickerDto>> All()
+        {
+            return await _context.Datepicker.ToListAsync();
         }
 
         public async Task<bool> Exists(string title)

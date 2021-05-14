@@ -12,11 +12,13 @@ namespace User_Service.Logic
     public class ActivationLogic
     {
         private readonly IActivationDal _activationDal;
+        private readonly IDisabledUserDal _disabledUserDal;
         private readonly IMapper _mapper;
 
-        public ActivationLogic(IActivationDal activationDal, IMapper mapper)
+        public ActivationLogic(IActivationDal activationDal, IDisabledUserDal disabledUserDal, IMapper mapper)
         {
             _activationDal = activationDal;
+            _disabledUserDal = disabledUserDal;
             _mapper = mapper;
         }
 
@@ -46,6 +48,7 @@ namespace User_Service.Logic
                 throw new KeyNotFoundException();
             }
 
+            await _disabledUserDal.Delete(activationDto.UserUuid);
             await _activationDal.Delete(activationDto.Uuid);
         }
     }

@@ -129,6 +129,15 @@ services:
         - mariadb
         - rabbitmq
 
+  logging_service:
+    image: ${DOCKER_REGISTRY-}loggingservice
+    build:
+      context: .
+      dockerfile: Logging_Service/Dockerfile
+    depends_on:
+        - mariadb
+        - rabbitmq
 volumes:
   mariadb-data:
+
 

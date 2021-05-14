@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
+using Event_Service.RabbitMq.Rpc;
 using Event_Service.RabbitMq.RPC;
 using RabbitMQ.Client;
 
@@ -52,9 +53,21 @@ namespace Event_Service
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
-            services.AddScoped<LogLogic>();
-            services.AddScoped<EventLogic>();
+            services.AddScoped<RpcClient>();
+
             services.AddScoped<IEventDal, EventDal>();
+            services.AddScoped<IEventDateDal, EventDateDal>();
+            services.AddScoped<IEventDateUserDal, EventDateUserDal>();
+            services.AddScoped<IEventStepDal, EventStepDal>();
+            services.AddScoped<IEventStepUserDal, EventStepUserDal>();
+
+            services.AddScoped<EventLogic>();
+            services.AddScoped<EventDateLogic>();
+            services.AddScoped<EventDateUserLogic>();
+            services.AddScoped<EventStepLogic>();
+            services.AddScoped<EventStepUserLogic>();
+            services.AddScoped<EventDateUserLogic>();
+            services.AddScoped<LogLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,6 +93,17 @@ namespace Event_Service
             {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

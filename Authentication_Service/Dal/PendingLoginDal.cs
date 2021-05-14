@@ -23,20 +23,20 @@ namespace Authentication_Service.Dal
             await _context.SaveChangesAsync();
         }
 
-        public async Task<PendingLoginDto> FindAsync(PendingLoginDto pendingLogin)
+        public async Task<PendingLoginDto> Find(PendingLoginDto pendingLogin)
         {
             return await _context.PendingLogin
                 .FirstOrDefaultAsync(pl => pl.UserUuid == pendingLogin.UserUuid &&
                                            pl.AccessCode == pendingLogin.AccessCode);
         }
 
-        public async Task RemoveAsync(PendingLoginDto pendingLogin)
+        public async Task Remove(PendingLoginDto pendingLogin)
         {
             _context.PendingLogin.Remove(pendingLogin);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveOutdatedAsync()
+        public async Task RemoveOutdated()
         {
             List<PendingLoginDto> outdatedPendingLogin = await _context.PendingLogin
                 .Where(pl => pl.ExpirationDate < DateTime.UtcNow)

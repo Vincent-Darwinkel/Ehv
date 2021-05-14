@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper.Mappers;
 using Datepicker_Service.Logic;
 using Datepicker_Service.RabbitMq.Publishers;
 using Datepicker_Service.UnitTests.MockedDals;
@@ -17,7 +18,7 @@ namespace Datepicker_Service.UnitTests.MockedLogic
         {
             var mockedDatepickerDal = new MockedDatepickerDal().DatepickerDal;
             var mockedPublisher = new Mock<IPublisher>();
-            var datepickerLogic = new DatepickerLogic(mockedDatepickerDal, null, mockedPublisher.Object, null);
+            var datepickerLogic = new DatepickerLogic(null, null, null, null, null, null);
 
             DatepickerLogic = datepickerLogic;
         }

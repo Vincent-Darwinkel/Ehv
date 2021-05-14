@@ -26,7 +26,7 @@ namespace User_Service.Dal.Interfaces
         /// <summary>
         /// Deletes the disabled user object by uuid
         /// </summary>
-        /// <param name="uuid">The uuid of the disabled user</param>
-        Task Delete(Guid uuid);
+        /// <param name="userUuid">The uuid of the disabled user</param>
+        Task Delete(Guid userUuid);
     }
 }

@@ -36,9 +36,10 @@ namespace User_Service.Dal
                 .AnyAsync(u => u.UserUuid == userUuid);
         }
 
-        public async Task Delete(Guid uuid)
+        public async Task Delete(Guid userUuid)
         {
-            DisabledUserDto disabledUser = await _context.DisabledUser.FindAsync(uuid);
+            DisabledUserDto disabledUser = await _context.DisabledUser
+                .FirstOrDefaultAsync(du => du.UserUuid == userUuid);
             _context.DisabledUser.Remove(disabledUser);
             await _context.SaveChangesAsync();
         }

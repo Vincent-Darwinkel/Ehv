@@ -16,17 +16,17 @@ namespace Authentication_Service.Dal.Interface
         /// </summary>
         /// <param name="pendingLogin">The pending login to find</param>
         /// <returns>The found pending login</returns>
-        Task<PendingLoginDto> FindAsync(PendingLoginDto pendingLogin);
+        Task<PendingLoginDto> Find(PendingLoginDto pendingLogin);
 
         /// <summary>
         /// Removes the specified pending login
         /// </summary>
         /// <param name="pendingLogin">The pending login to remove</param>
-        Task RemoveAsync(PendingLoginDto pendingLogin);
+        Task Remove(PendingLoginDto pendingLogin);
 
         /// <summary>
         /// Removes expired pending logins
         /// </summary>
-        Task RemoveOutdatedAsync();
+        Task RemoveOutdated();
     }
 }

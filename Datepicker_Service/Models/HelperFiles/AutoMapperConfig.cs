@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Datepicker_Service.Models.FromFrontend;
+using Datepicker_Service.Models.RabbitMq;
 using Datepicker_Service.Models.ToFrontend;
 
 namespace Datepicker_Service.Models.HelperFiles
@@ -14,6 +15,9 @@ namespace Datepicker_Service.Models.HelperFiles
                 cfg.CreateMap<DatepickerDto, DatepickerViewmodel>();
                 cfg.CreateMap<DatepickerDateDto, DatePickerDateViewmodel>();
                 cfg.CreateMap<DatepickerAvailabilityDto, DatepickerAvailabilityViewmodel>();
+                cfg.CreateMap<DatepickerRabbitMq, DatepickerDto>();
+                cfg.CreateMap<DatepickerDateRabbitMq, DatepickerDateDto>();
+                cfg.CreateMap<EventStepRabbitMq, EventStepRabbitMq>();
             });
     }
 }

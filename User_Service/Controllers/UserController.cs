@@ -9,6 +9,7 @@ using User_Service.CustomExceptions;
 using User_Service.Logic;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
+using User_Service.Models.HelperFiles;
 using User_Service.Models.ToFrontend;
 
 namespace User_Service.Controllers

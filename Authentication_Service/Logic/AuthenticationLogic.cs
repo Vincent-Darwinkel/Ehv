@@ -12,8 +12,6 @@ using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.Models.ToFrontend;
 using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
-using User_Service.Dal.Interfaces;
-using User_Service.Models;
 using UserDto = Authentication_Service.Models.Dto.UserDto;
 
 namespace Authentication_Service.Logic
@@ -21,19 +19,16 @@ namespace Authentication_Service.Logic
     public class AuthenticationLogic
     {
         private readonly IUserDal _userDal;
-        private readonly IDisabledUserDal _disabledUserDal;
         private readonly IPublisher _publisher;
         private readonly IPendingLoginDal _pendingLoginDal;
         private readonly SecurityLogic _securityLogic;
         private readonly JwtLogic _jwtLogic;
         private readonly RpcClient _rpcClient;
 
-        public AuthenticationLogic(IUserDal userDal, IDisabledUserDal disabledUserDal,
-            IPublisher publisher, IPendingLoginDal pendingLoginDal, SecurityLogic securityLogic,
-            JwtLogic jwtLogic, RpcClient rpcClient)
+        public AuthenticationLogic(IUserDal userDal, IPublisher publisher, IPendingLoginDal pendingLoginDal,
+            SecurityLogic securityLogic, JwtLogic jwtLogic, RpcClient rpcClient)
         {
             _userDal = userDal;
-            _disabledUserDal = disabledUserDal;
             _publisher = publisher;
             _pendingLoginDal = pendingLoginDal;
             _securityLogic = securityLogic;
@@ -76,12 +71,17 @@ namespace Authentication_Service.Logic
                 return await HandleMultipleAccountRolesLogin(dbUser);
             }
 
-            return await _jwtLogic.CreateJwt(dbUser);
+            AuthorizationTokensViewmodel tokens = await _jwtLogic.CreateJwt(dbUser);
+            return new LoginResultViewmodel
+            {
+                Jwt = tokens.Jwt,
+                RefreshToken = tokens.RefreshToken
+            };
         }
 
         private async Task<LoginResultViewmodel> LoginWithSelectedAccount(Login login, UserDto user)
         {
-            PendingLoginDto dbPendingLogin = await _pendingLoginDal.FindAsync(new PendingLoginDto
+            PendingLoginDto dbPendingLogin = await _pendingLoginDal.Find(new PendingLoginDto
             {
                 UserUuid = user.Uuid,
                 AccessCode = login.LoginCode
@@ -93,7 +93,15 @@ namespace Authentication_Service.Logic
             }
 
             user.AccountRole = login.SelectedAccountRole;
-            return await _jwtLogic.CreateJwt(user);
+            await _pendingLoginDal.Remove(dbPendingLogin);
+            await _pendingLoginDal.RemoveOutdated();
+
+            AuthorizationTokensViewmodel tokens = await _jwtLogic.CreateJwt(user);
+            return new LoginResultViewmodel
+            {
+                Jwt = tokens.Jwt,
+                RefreshToken = tokens.RefreshToken,
+            };
         }
 
         /// <summary>
@@ -134,9 +142,9 @@ namespace Authentication_Service.Logic
                 }
             };
 
-            _publisher.Publish(email, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
+            _publisher.Publish(new List<EmailRabbitMq> { email }, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
 
-            await _pendingLoginDal.RemoveOutdatedAsync();
+            await _pendingLoginDal.RemoveOutdated();
             await _pendingLoginDal.AddAsync(pendingLogin);
             List<AccountRole> allAccountRoles = Enum.GetValues(typeof(AccountRole))
                 .Cast<AccountRole>()

@@ -6,7 +6,7 @@ namespace Datepicker_Service.Models.FromFrontend
 {
     public class Datepicker
     {
-        public Guid Uuid { get; set; } = Guid.NewGuid();
+        public Guid Uuid { get; set; }
         [Required]
         public Guid AuthorUuid { get; set; }
         [Required]

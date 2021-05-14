@@ -33,6 +33,7 @@ namespace Datepicker_Service
                 throw new NoNullAllowedException();
             }
 
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -56,6 +57,8 @@ namespace Datepicker_Service
             services.AddScoped<DatepickerLogic>();
             services.AddScoped<RpcClient>();
             services.AddScoped<IDatepickerDal, DatepickerDal>();
+            services.AddScoped<IDatepickerDateDal, DatepickerDateDal>();
+            services.AddScoped<IDatepickerAvailabilityDal, DatepickerDatepickerAvailabilityDal>();
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
         }
 
@@ -70,6 +73,17 @@ namespace Datepicker_Service
             {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

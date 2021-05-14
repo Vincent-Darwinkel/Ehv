@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Datepicker_Service.Models;
 
@@ -18,6 +19,9 @@ namespace Datepicker_Service.Dal.Interfaces
         /// <param name="uuid">The uuid to search for</param>
         /// <returns>The found datepicker, null if nothing found</returns>
         Task<DatepickerDto> Find(Guid uuid);
+
+        /// <returns>All datepickers</returns>
+        Task<List<DatepickerDto>> All();
 
         /// <summary>
         /// Checks if the datepicker exists

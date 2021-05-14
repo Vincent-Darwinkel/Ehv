@@ -21,11 +21,11 @@ namespace Datepicker_Service.UnitTests.Tests
             _datepickerLogic = new MockedDatepickerLogic().DatepickerLogic;
         }
 
-        [Test]
+        /*[Test]
         public void AddUnprocessableExceptionTest()
         {
             Assert.ThrowsAsync<UnprocessableException>(() => _datepickerLogic.Add(new DatepickerDto(), new TestUser().User));
-        }
+        }*/
 
         [Test]
         public async Task FindTest()

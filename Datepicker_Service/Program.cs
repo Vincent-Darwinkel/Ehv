@@ -6,8 +6,11 @@ namespace Datepicker_Service
 {
     public class Program
     {
+        public static bool IsNotStartedFromEfMigration { get; private set; }
+
         public static void Main(string[] args)
         {
+            IsNotStartedFromEfMigration = true;
             CreateHostBuilder(args).Build().Run();
         }
 

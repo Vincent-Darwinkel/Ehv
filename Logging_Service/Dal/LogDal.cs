@@ -38,6 +38,11 @@ namespace Logging_Service.Dal
                 .ToListAsync();
         }
 
+        public async Task<List<LogDto>> All()
+        {
+            return await _context.Log.ToListAsync();
+        }
+
         public async Task Delete(List<Guid> uuidCollection)
         {
             List<LogDto> logsToRemove = await _context.Log
