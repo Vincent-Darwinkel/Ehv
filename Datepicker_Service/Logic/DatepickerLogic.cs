@@ -74,19 +74,18 @@ namespace Datepicker_Service.Logic
 
         private static bool DatepickerConversionModelValid(DatePickerConversion datePickerConversion)
         {
-            return datePickerConversion.Uuid != Guid.Empty &&
-                   datePickerConversion.SelectedDates.Count > 0 &&
+            return datePickerConversion.SelectedDates.Count > 0 &&
                    datePickerConversion.DatepickerUuid != Guid.Empty;
         }
 
         public async Task ConvertDatepicker(DatePickerConversion datePickerConversion, UserHelper requestingUser)
         {
-            if (DatepickerConversionModelValid(datePickerConversion))
+            if (!DatepickerConversionModelValid(datePickerConversion))
             {
                 throw new UnprocessableException();
             }
 
-            DatepickerDto dbDatepicker = await _datepickerDal.Find(datePickerConversion.Uuid);
+            DatepickerDto dbDatepicker = await _datepickerDal.Find(datePickerConversion.DatepickerUuid);
             if (dbDatepicker == null)
             {
                 throw new NoNullAllowedException();
@@ -107,8 +106,11 @@ namespace Datepicker_Service.Logic
             }
 
             var datepickerRabbitMq = _mapper.Map<DatepickerRabbitMq>(dbDatepicker);
-            datepickerRabbitMq.EventSteps = _mapper.Map<List<EventStepRabbitMq>>(datepickerRabbitMq.EventSteps);
+            datepickerRabbitMq.EventSteps = _mapper.Map<List<EventStepRabbitMq>>(datePickerConversion.EventSteps);
             datepickerRabbitMq.SelectedDates = datePickerConversion.SelectedDates;
+            datepickerRabbitMq.Dates
+                .RemoveAll(d => !datePickerConversion.SelectedDates
+                    .Contains(d.Uuid));
 
             _publisher.Publish(datepickerRabbitMq, RabbitMqRouting.ConvertDatepicker, RabbitMqExchange.ConvertDatepicker);
         }

@@ -112,7 +112,7 @@ namespace Event_Service.Logic
             }
         }
 
-        public async Task ConvertToEventAsync(DatepickerRabbitMq datepickerRabbitMq, UserHelper requestingUser)
+        public async Task ConvertToEventAsync(DatepickerRabbitMq datepickerRabbitMq)
         {
             var selectedDates = datepickerRabbitMq.Dates
                 .FindAll(date => datepickerRabbitMq.SelectedDates
@@ -121,9 +121,12 @@ namespace Event_Service.Logic
             var eventDates = _mapper.Map<List<EventDateDto>>(selectedDates);
             var eventDto = new EventDto
             {
+                Uuid = Guid.NewGuid(),
                 AuthorUuid = datepickerRabbitMq.AuthorUuid,
                 Description = datepickerRabbitMq.Description,
                 EventDates = eventDates,
+                Location = datepickerRabbitMq.Location,
+                Title = datepickerRabbitMq.Title
             };
 
             datepickerRabbitMq.EventSteps
@@ -161,8 +164,11 @@ namespace Event_Service.Logic
         {
             selectedDates.ForEach(sd =>
             {
-                var eventDate = new EventDateDto();
                 var eventDateUsers = new List<EventDateUserDto>();
+                var eventDate = new EventDateDto
+                {
+                    Uuid = Guid.NewGuid(),
+                };
 
                 datepicker.Dates
                     .Find(d => d.Uuid == sd.Uuid)
@@ -170,15 +176,17 @@ namespace Event_Service.Logic
                     {
                         eventDateUsers.Add(new EventDateUserDto
                         {
+                            Uuid = Guid.NewGuid(),
                             EventDateUuid = eventDate.Uuid,
                             UserUuid = user.UserUuid
                         });
                     });
 
-                eventToInsert.EventDates.Add(new EventDateDto
+                eventToInsert.EventDates.ForEach(ed =>
                 {
-                    DateTime = sd.DateTime,
-                    EventDateUsers = eventDateUsers
+                    ed.Uuid = Guid.NewGuid();
+                    ed.EventUuid = eventToInsert.Uuid;
+                    ed.EventDateUsers = eventDateUsers;
                 });
             });
         }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Datepicker_Service.Models.FromFrontend
 {
-    public class EventStepViewModel
+    public class EventStep
     {
         public Guid Uuid { get; set; }
         [Required]

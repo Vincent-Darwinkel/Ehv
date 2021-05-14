@@ -18,6 +18,10 @@ namespace Datepicker_Service.Models.HelperFiles
                 cfg.CreateMap<DatepickerRabbitMq, DatepickerDto>();
                 cfg.CreateMap<DatepickerDateRabbitMq, DatepickerDateDto>();
                 cfg.CreateMap<EventStepRabbitMq, EventStepRabbitMq>();
+                cfg.CreateMap<DatepickerDto, DatepickerRabbitMq>();
+                cfg.CreateMap<DatepickerDateDto, DatepickerDateRabbitMq>();
+                cfg.CreateMap<DatepickerAvailabilityDto, DatepickerAvailabilityRabbitMq>();
+                cfg.CreateMap<EventStep, EventStepRabbitMq>();
             });
     }
 }

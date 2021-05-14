@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using Event_Service.Dal;
 using Event_Service.Dal.Interfaces;
 using Event_Service.Logic;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
+using Event_Service.RabbitMq.Consumers;
 using Event_Service.RabbitMq.Rpc;
 using Event_Service.RabbitMq.RPC;
 using RabbitMQ.Client;
@@ -68,11 +70,17 @@ namespace Event_Service
             services.AddScoped<EventStepUserLogic>();
             services.AddScoped<EventDateUserLogic>();
             services.AddScoped<LogLogic>();
+            services.AddScoped<ConvertToEventConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<ConvertToEventConsumer>(),
+            }.ForEach(consumer => consumer.Consume());
+
             var channel = app.ApplicationServices.GetService<IModel>();
             var eventLogic = app.ApplicationServices.GetService<EventLogic>();
             var logLogic = app.ApplicationServices.GetService<LogLogic>();

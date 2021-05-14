@@ -74,7 +74,7 @@ namespace User_Service.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserViewModel>>> Find([FromBody] List<Guid> uuidCollection)
+        public async Task<ActionResult<List<UserViewModel>>> Find([FromQuery] List<Guid> uuidCollection)
         {
             try
             {

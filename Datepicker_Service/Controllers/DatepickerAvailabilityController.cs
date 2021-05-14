@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Datepicker_Service.Logic;
+using Datepicker_Service.Models.FromFrontend;
 using Datepicker_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,12 +29,12 @@ namespace Datepicker_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddOrUpdate([FromBody] List<Guid> datepickerAvailability, Guid uuid)
+        public async Task<ActionResult> AddOrUpdate([FromBody] UserAvailability availability)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _datepickerAvailabilityLogic.AddOrUpdateAsync(datepickerAvailability, uuid, requestingUser);
+                await _datepickerAvailabilityLogic.AddOrUpdateAsync(availability.AvailableDates, availability.DatepickerUuid, requestingUser);
                 return Ok();
             }
             catch (ArgumentNullException e)
