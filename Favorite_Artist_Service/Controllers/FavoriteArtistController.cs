@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Favorite_Artist_Service.CustomExceptions;
 
 namespace Favorite_Artist_Service.Controllers
 {
@@ -38,6 +39,10 @@ namespace Favorite_Artist_Service.Controllers
                 });
 
                 return Ok();
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
             }
             catch (Exception e)
             {

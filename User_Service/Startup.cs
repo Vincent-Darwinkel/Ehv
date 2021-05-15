@@ -63,8 +63,6 @@ namespace User_Service
             services.AddScoped<DisabledUserLogic>();
 
             services.AddScoped<IUserDal, UserDal>();
-            services.AddScoped<IHobbyDal, HobbyDal>();
-            services.AddScoped<IArtistDal, ArtistDal>();
             services.AddScoped<IActivationDal, ActivationDal>();
             services.AddScoped<IDisabledUserDal, DisabledUserDal>();
         }

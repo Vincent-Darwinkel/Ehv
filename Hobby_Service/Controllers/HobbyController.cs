@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Hobby_Service.CustomExceptions;
 
 namespace Hobby_Service.Controllers
 {
@@ -37,6 +38,10 @@ namespace Hobby_Service.Controllers
                     Name = name
                 });
                 return Ok();
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
             }
             catch (Exception e)
             {

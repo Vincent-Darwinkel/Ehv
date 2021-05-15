@@ -18,6 +18,11 @@ namespace Favorite_Artist_Service.Logic
 
         public async Task Add(FavoriteArtistDto hobby)
         {
+            if (string.IsNullOrEmpty(hobby.Name))
+            {
+                throw new UnprocessableException();
+            }
+
             await _favoriteArtistDal.Add(hobby);
         }
 

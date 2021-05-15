@@ -64,7 +64,7 @@ namespace User_Service.Logic
             userDto.AccountRole = AccountRole.User;
             userDto.Uuid = Guid.NewGuid();
 
-            var disabledUserDto = new DisabledUserDto()
+            var disabledUserDto = new DisabledUserDto
             {
                 Reason = DisableReason.EmailVerificationRequired,
                 UserUuid = userDto.Uuid,
@@ -176,7 +176,7 @@ namespace User_Service.Logic
             dbUser.About = user.About;
             dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
             dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
-
+            
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Username != user.Username)
             {
                 var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);

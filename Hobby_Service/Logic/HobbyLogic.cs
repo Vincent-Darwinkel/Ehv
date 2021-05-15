@@ -18,6 +18,11 @@ namespace Hobby_Service.Logic
 
         public async Task Add(HobbyDto hobby)
         {
+            if (string.IsNullOrEmpty(hobby.Name))
+            {
+                throw new UnprocessableException();
+            }
+
             await _hobbyDal.Add(hobby);
         }
 
