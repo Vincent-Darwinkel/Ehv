@@ -17,7 +17,7 @@ namespace Authentication_Service.Dal
             _context = context;
         }
 
-        public async Task AddAsync(PendingLoginDto pendingLogin)
+        public async Task Add(PendingLoginDto pendingLogin)
         {
             await _context.PendingLogin.AddAsync(pendingLogin);
             await _context.SaveChangesAsync();
@@ -28,6 +28,19 @@ namespace Authentication_Service.Dal
             return await _context.PendingLogin
                 .FirstOrDefaultAsync(pl => pl.UserUuid == pendingLogin.UserUuid &&
                                            pl.AccessCode == pendingLogin.AccessCode);
+        }
+
+        public async Task Remove(Guid userUuid)
+        {
+            PendingLoginDto pendingLoginToRemove =
+                await _context.PendingLogin
+                    .FirstOrDefaultAsync(pl => pl.UserUuid == userUuid);
+
+            if (pendingLoginToRemove != null)
+            {
+                _context.PendingLogin.Remove(pendingLoginToRemove);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task Remove(PendingLoginDto pendingLogin)

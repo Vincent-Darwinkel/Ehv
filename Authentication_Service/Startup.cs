@@ -22,17 +22,17 @@ namespace Authentication_Service
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IConfiguration _config;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();
@@ -48,12 +48,14 @@ namespace Authentication_Service
             });
 
             services.AddControllers();
-            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             AddDependencyInjection(ref services);
         }
 
         private void AddDependencyInjection(ref IServiceCollection services)
         {
+            IConfigurationSection section = _config.GetSection(nameof(JwtConfig));
+
+            services.AddSingleton(section.Get<JwtConfig>());
             services.AddScoped<UserLogic>();
             services.AddScoped<AuthenticationLogic>();
             services.AddScoped<SecurityLogic>();
@@ -86,6 +88,12 @@ namespace Authentication_Service
 
 
             app.UseRouting();
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

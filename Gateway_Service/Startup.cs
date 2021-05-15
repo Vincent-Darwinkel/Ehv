@@ -69,7 +69,7 @@ namespace Gateway_Service
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRouting();
-            app.UseAntiXssMiddleware();
+            //app.UseAntiXssMiddleware(); TODO find out why this kicks in on file uploads
             app.UseCors("CorsPolicy");
             app.UseOcelot().Wait();
         }

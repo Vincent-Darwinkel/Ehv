@@ -25,7 +25,7 @@ namespace Event_Service.Controllers
             _logLogic = logLogic;
         }
 
-        [HttpDelete]
+        [HttpDelete("{uuid}")]
         public async Task<ActionResult> UnsubscribeFromEventDate(Guid uuid)
         {
             try

@@ -31,7 +31,7 @@ namespace Email_Service
         {
             IConfigurationSection section = _config.GetSection(nameof(EmailConfig));
 
-            services.AddSingleton<EmailConfig>(section.Get<EmailConfig>());
+            services.AddSingleton(section.Get<EmailConfig>());
             services.AddScoped<IPublisher, Publisher>();
             services.AddSingleton<SendMailConsumer>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());

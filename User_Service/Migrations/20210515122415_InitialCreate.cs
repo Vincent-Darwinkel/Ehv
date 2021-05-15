@@ -82,18 +82,17 @@ namespace User_Service.Migrations
                     Uuid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     UserUuid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Artist = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserDtoUuid = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Artist", x => x.Uuid);
                     table.ForeignKey(
-                        name: "FK_Artist_User_UserDtoUuid",
-                        column: x => x.UserDtoUuid,
+                        name: "FK_Artist_User_UserUuid",
+                        column: x => x.UserUuid,
                         principalTable: "User",
                         principalColumn: "Uuid",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -104,30 +103,29 @@ namespace User_Service.Migrations
                     Uuid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     UserUuid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Hobby = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserDtoUuid = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hobby", x => x.Uuid);
                     table.ForeignKey(
-                        name: "FK_Hobby_User_UserDtoUuid",
-                        column: x => x.UserDtoUuid,
+                        name: "FK_Hobby_User_UserUuid",
+                        column: x => x.UserUuid,
                         principalTable: "User",
                         principalColumn: "Uuid",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Artist_UserDtoUuid",
+                name: "IX_Artist_UserUuid",
                 table: "Artist",
-                column: "UserDtoUuid");
+                column: "UserUuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hobby_UserDtoUuid",
+                name: "IX_Hobby_UserUuid",
                 table: "Hobby",
-                column: "UserDtoUuid");
+                column: "UserUuid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

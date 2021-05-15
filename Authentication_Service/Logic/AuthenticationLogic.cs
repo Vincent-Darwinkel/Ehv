@@ -144,8 +144,10 @@ namespace Authentication_Service.Logic
 
             _publisher.Publish(new List<EmailRabbitMq> { email }, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
 
+            await _pendingLoginDal.Remove(pendingLogin.UserUuid);
             await _pendingLoginDal.RemoveOutdated();
-            await _pendingLoginDal.AddAsync(pendingLogin);
+            await _pendingLoginDal.Add(pendingLogin);
+
             List<AccountRole> allAccountRoles = Enum.GetValues(typeof(AccountRole))
                 .Cast<AccountRole>()
                 .ToList();

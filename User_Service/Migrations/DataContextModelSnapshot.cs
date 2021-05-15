@@ -60,15 +60,12 @@ namespace User_Service.Migrations
                     b.Property<string>("Artist")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid?>("UserDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("UserDtoUuid");
+                    b.HasIndex("UserUuid");
 
                     b.ToTable("Artist");
                 });
@@ -128,15 +125,12 @@ namespace User_Service.Migrations
                     b.Property<string>("Hobby")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid?>("UserDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("UserDtoUuid");
+                    b.HasIndex("UserUuid");
 
                     b.ToTable("Hobby");
                 });
@@ -145,14 +139,18 @@ namespace User_Service.Migrations
                 {
                     b.HasOne("User_Service.Models.UserDto", null)
                         .WithMany("FavoriteArtists")
-                        .HasForeignKey("UserDtoUuid");
+                        .HasForeignKey("UserUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("User_Service.Models.UserHobbyDto", b =>
                 {
                     b.HasOne("User_Service.Models.UserDto", null)
                         .WithMany("Hobbies")
-                        .HasForeignKey("UserDtoUuid");
+                        .HasForeignKey("UserUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("User_Service.Models.UserDto", b =>

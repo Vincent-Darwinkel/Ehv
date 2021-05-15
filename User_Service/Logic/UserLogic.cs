@@ -54,8 +54,8 @@ namespace User_Service.Logic
                 throw new UnprocessableException();
             }
 
-            UserDto dbUser = await _userDal.Find(user.Username, user.Email);
-            if (dbUser != null)
+            bool usernameOrEmailInUse = await _userDal.Exists(user.Username, user.Email);
+            if (usernameOrEmailInUse)
             {
                 throw new DuplicateNameException();
             }

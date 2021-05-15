@@ -14,7 +14,7 @@ namespace User_Service.Models.ToFrontend
         public Gender Gender { get; set; }
         public AccountRole AccountRole { get; set; }
         public DateTime BirthDate { get; set; }
-        public List<UserHobby> Hobbies { get; set; }
-        public List<FavoriteArtist> FavoriteArtists { get; set; }
+        public List<UserHobbyViewModel> Hobbies { get; set; }
+        public List<FavoriteArtistViewModel> FavoriteArtists { get; set; }
     }
 }

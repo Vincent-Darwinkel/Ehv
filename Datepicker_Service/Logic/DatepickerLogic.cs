@@ -113,6 +113,7 @@ namespace Datepicker_Service.Logic
                     .Contains(d.Uuid));
 
             _publisher.Publish(datepickerRabbitMq, RabbitMqRouting.ConvertDatepicker, RabbitMqExchange.ConvertDatepicker);
+            await _datepickerDal.Delete(datePickerConversion.DatepickerUuid);
         }
 
         /// <summary>
@@ -127,7 +128,13 @@ namespace Datepicker_Service.Logic
                 throw new UnprocessableException();
             }
 
-            return await _datepickerDal.Find(uuid);
+            DatepickerDto datepicker = await _datepickerDal.Find(uuid);
+            if (datepicker == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            return datepicker;
         }
 
         public async Task<List<DatepickerDto>> All()
@@ -157,6 +164,12 @@ namespace Datepicker_Service.Logic
 
             if (datepicker.Title != dbDatepicker.Title)
             {
+                bool datepickerWithNameExists = await _datepickerDal.Exists(datepicker.Title);
+                if (datepickerWithNameExists)
+                {
+                    throw new DuplicateNameException();
+                }
+
                 var rpcClient = new RpcClient(_channel);
                 bool eventNameExists = rpcClient.Call<bool>(datepicker.Title, RabbitMqQueues.ExistsEventQueue);
                 if (eventNameExists)

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Event_Service.Logic;
 using Event_Service.Models;
-using Event_Service.Models.FromFrontend;
 using Event_Service.Models.HelperFiles;
 using Event_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
@@ -33,13 +30,13 @@ namespace Event_Service.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Event>>> All()
+        public async Task<ActionResult<List<EventViewmodel>>> All()
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
                 List<EventDto> events = await _eventLogic.All(requestingUser);
-                return _mapper.Map<List<Event>>(events);
+                return _mapper.Map<List<EventViewmodel>>(events);
             }
             catch (Exception e)
             {
@@ -48,15 +45,15 @@ namespace Event_Service.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{uuid}")]
         public async Task<ActionResult<EventViewmodel>> Find(Guid uuid)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                return await _eventLogic.FindAsync(uuid, requestingUser);
+                return await _eventLogic.Find(uuid, requestingUser);
             }
-            catch (NoNullAllowedException)
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
@@ -67,7 +64,7 @@ namespace Event_Service.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{uuid}")]
         public async Task<ActionResult> Remove(Guid uuid)
         {
             try

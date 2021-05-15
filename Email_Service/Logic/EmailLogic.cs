@@ -5,10 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Net.NetworkInformation;
 using System.Text;
 using Email_Service.Models.Helpers;
-using Microsoft.Extensions.Configuration;
 
 namespace Email_Service.Logic
 {

@@ -64,7 +64,7 @@ namespace Event_Service.Migrations
                     b.Property<Guid>("AuthorUuid")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
@@ -90,14 +90,14 @@ namespace Event_Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
                     b.Property<Guid>("EventUuid")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("StepNr")
                         .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Uuid");
 

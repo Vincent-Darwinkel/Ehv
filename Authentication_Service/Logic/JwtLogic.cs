@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -20,10 +21,10 @@ namespace Authentication_Service.Logic
     public class JwtLogic
     {
         private readonly IRefreshTokenDal _refreshTokenDal;
-        private readonly IOptions<JwtConfig> _config;
+        private readonly JwtConfig _config;
         private readonly JsonWebTokenHandler _handler = new JsonWebTokenHandler();
 
-        public JwtLogic(IRefreshTokenDal refreshTokenDal, IOptions<JwtConfig> config)
+        public JwtLogic(IRefreshTokenDal refreshTokenDal, JwtConfig config)
         {
             _refreshTokenDal = refreshTokenDal;
             _config = config;
@@ -36,12 +37,18 @@ namespace Authentication_Service.Logic
         /// <returns>A security token descriptor</returns>
         private SecurityTokenDescriptor GetTokenDescriptor(UserDto user)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Value.Secret));
+            string secretKey = _config.Secret;
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new NoNullAllowedException();
+            }
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var expirationDate = DateTime.UtcNow.AddMinutes(15);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = "Auth",
-                Audience = _config.Value.FrontendUrl,
+                Audience = _config.FrontendUrl,
                 IssuedAt = DateTime.UtcNow,
                 NotBefore = DateTime.UtcNow,
                 Expires = expirationDate,
@@ -112,7 +119,7 @@ namespace Authentication_Service.Logic
                 throw new ArgumentNullException(nameof(jwt));
             }
 
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Value.Secret));
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Secret));
             return _handler.ValidateToken(jwt,
                 new TokenValidationParameters
                 {

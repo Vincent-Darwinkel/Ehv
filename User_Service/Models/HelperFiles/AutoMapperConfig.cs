@@ -20,6 +20,9 @@ namespace User_Service.Models.HelperFiles
                 cfg.CreateMap<UserActivationRabbitMq, ActivationDto>();
                 cfg.CreateMap<DisabledUserRabbitMq, DisabledUserDto>();
                 cfg.CreateMap<DisabledUser, DisabledUserDto>();
+                cfg.CreateMap<UserDto, UserViewModel>();
+                cfg.CreateMap<UserHobbyDto, UserHobbyViewModel>();
+                cfg.CreateMap<FavoriteArtistDto, FavoriteArtistViewModel>();
             });
     }
 }

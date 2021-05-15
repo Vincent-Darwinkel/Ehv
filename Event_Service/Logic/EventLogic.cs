@@ -62,12 +62,12 @@ namespace Event_Service.Logic
                 .ToList();
         }
 
-        public async Task<EventViewmodel> FindAsync(Guid eventUuid, UserHelper requestingUser)
+        public async Task<EventViewmodel> Find(Guid eventUuid, UserHelper requestingUser)
         {
             EventDto dbEvent = await _eventDal.Find(eventUuid);
             if (dbEvent == null)
             {
-                throw new NoNullAllowedException(nameof(dbEvent));
+                throw new KeyNotFoundException();
             }
 
             var mappedEvent = _mapper.Map<EventViewmodel>(dbEvent);
@@ -114,33 +114,29 @@ namespace Event_Service.Logic
 
         public async Task ConvertToEventAsync(DatepickerRabbitMq datepickerRabbitMq)
         {
+            Guid eventUuid = Guid.NewGuid();
             var selectedDates = datepickerRabbitMq.Dates
                 .FindAll(date => datepickerRabbitMq.SelectedDates
                     .Exists(dateUuid => dateUuid == date.Uuid));
 
             var eventDates = _mapper.Map<List<EventDateDto>>(selectedDates);
-            var eventDto = new EventDto
+            eventDates.ForEach(ed =>
             {
-                Uuid = Guid.NewGuid(),
-                AuthorUuid = datepickerRabbitMq.AuthorUuid,
-                Description = datepickerRabbitMq.Description,
-                EventDates = eventDates,
-                Location = datepickerRabbitMq.Location,
-                Title = datepickerRabbitMq.Title
-            };
+                ed.EventUuid = eventUuid;
+                ed.EventDateUsers
+                    .ForEach(edu => edu.EventDateUuid = ed.Uuid);
+            });
 
-            datepickerRabbitMq.EventSteps
-                .ForEach(es => eventDto.EventSteps.Add(new EventStepDto
-                {
-                    Uuid = Guid.NewGuid(),
-                    Description = es.Text,
-                    EventUuid = eventDto.Uuid,
-                    StepNr = es.StepNr
-                }));
+            var eventDto = _mapper.Map<EventDto>(datepickerRabbitMq);
+            eventDto.Uuid = eventUuid;
+            eventDto.EventDates = eventDates;
+            eventDto.EventSteps.ForEach(es =>
+            {
+                es.EventUuid = eventUuid;
+                es.Uuid = Guid.NewGuid();
+            });
 
-            AddDatesAndAvailableUsersToEvent(selectedDates, datepickerRabbitMq, eventDto);
             await _eventDal.Add(eventDto);
-
             List<Guid> usersToNotifyUuidCollection = eventDto.EventDates
                 .SelectMany(e => e.EventDateUsers
                     .Select(u => u.UserUuid))
@@ -159,43 +155,12 @@ namespace Event_Service.Logic
             return Newtonsoft.Json.JsonConvert.SerializeObject(exists);
         }
 
-        private static void AddDatesAndAvailableUsersToEvent(List<DatepickerDateRabbitMq> selectedDates, DatepickerRabbitMq datepicker,
-            EventDto eventToInsert)
-        {
-            selectedDates.ForEach(sd =>
-            {
-                var eventDateUsers = new List<EventDateUserDto>();
-                var eventDate = new EventDateDto
-                {
-                    Uuid = Guid.NewGuid(),
-                };
-
-                datepicker.Dates
-                    .Find(d => d.Uuid == sd.Uuid)
-                    .UserAvailabilities.ForEach(user =>
-                    {
-                        eventDateUsers.Add(new EventDateUserDto
-                        {
-                            Uuid = Guid.NewGuid(),
-                            EventDateUuid = eventDate.Uuid,
-                            UserUuid = user.UserUuid
-                        });
-                    });
-
-                eventToInsert.EventDates.ForEach(ed =>
-                {
-                    ed.Uuid = Guid.NewGuid();
-                    ed.EventUuid = eventToInsert.Uuid;
-                    ed.EventDateUsers = eventDateUsers;
-                });
-            });
-        }
-
         private void NotifyUsersAboutConversion(List<Guid> usersToNotifyUuidCollection, EventDto eventToInsert)
         {
             var usersRabbitMq = _rpcClient.Call<List<UserRabbitMq>>(usersToNotifyUuidCollection, RabbitMqQueues.FindUserQueue);
             var emails = usersRabbitMq.Select(user => new EmailRabbitMq
             {
+                Subject = $"Datumprikker {eventToInsert.Title} is omgezet naar een evenement",
                 TemplateName = "DatepickerConversion",
                 EmailAddress = user.Email,
                 KeyWordValues = new List<EmailKeyWordValue>
@@ -205,7 +170,18 @@ namespace Event_Service.Logic
                         new EmailKeyWordValue
                         {
                             Key = "DatepickerDates",
-                            Value = string.Join(",", eventToInsert.EventDates.Select(e => e.DateTime)
+                            Value = string.Join(" - ", eventToInsert.EventDates.Select(e => e.DateTime)
+                                .ToArray())
+                        },
+                        new EmailKeyWordValue
+                        {
+                            Key = "StepDescription",
+                            Value = eventToInsert.EventSteps.Any() ? "Voor dit event moeten de volgende stappen worden uitgevoerd:" : null
+                        },
+                        new EmailKeyWordValue
+                        {
+                            Key = "Steps",
+                            Value = string.Join(" - ", eventToInsert.EventSteps.Select(es => es.Text)
                                 .ToArray())
                         }
                     }

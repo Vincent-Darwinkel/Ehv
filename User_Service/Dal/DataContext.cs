@@ -18,6 +18,13 @@ namespace User_Service.Dal
             modelBuilder.Entity<UserDto>(entity =>
             {
                 entity.HasKey(user => user.Uuid);
+                entity.HasMany(user => user.Hobbies)
+                    .WithOne()
+                    .HasForeignKey(e => e.UserUuid);
+
+                entity.HasMany(user => user.FavoriteArtists)
+                    .WithOne()
+                    .HasForeignKey(e => e.UserUuid);
             });
             modelBuilder.Entity<UserHobbyDto>(entity =>
             {

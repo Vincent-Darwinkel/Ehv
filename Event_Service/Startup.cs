@@ -56,6 +56,7 @@ namespace Event_Service
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<RpcClient>();
+            services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IEventDal, EventDal>();
             services.AddScoped<IEventDateDal, EventDateDal>();
@@ -64,6 +65,7 @@ namespace Event_Service
             services.AddScoped<IEventStepUserDal, EventStepUserDal>();
 
             services.AddScoped<EventLogic>();
+            services.AddScoped<JwtLogic>();
             services.AddScoped<EventDateLogic>();
             services.AddScoped<EventDateUserLogic>();
             services.AddScoped<EventStepLogic>();

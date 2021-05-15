@@ -21,14 +21,6 @@ namespace User_Service.Dal
         Task<UserDto> Find(Guid userUuid);
 
         /// <summary>
-        /// Finds the user by username or email
-        /// </summary>
-        /// <param name="username">The username to search for</param>
-        /// <param name="email">The email to search for</param>
-        /// <returns>The found user, null if not found</returns>
-        Task<UserDto> Find(string username, string email);
-
-        /// <summary>
         /// Finds all users which match the uuid in the collection
         /// </summary>
         /// <param name="uuidCollection">The uuid collection</param>

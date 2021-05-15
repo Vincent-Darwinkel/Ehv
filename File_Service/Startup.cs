@@ -1,5 +1,6 @@
 using File_Service.Logic;
 using File_Service.Models.HelperFiles;
+using File_Service.RabbitMq;
 using File_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,12 +44,15 @@ namespace File_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
+            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<FileLogic>();
             services.AddScoped<LogLogic>();
+            services.AddScoped<JwtLogic>();
             services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();
+            services.AddScoped<ControllerHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

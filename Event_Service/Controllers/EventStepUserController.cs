@@ -44,7 +44,7 @@ namespace Event_Service.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{uuid}")]
         public async Task<ActionResult> Remove(Guid uuid)
         {
             try

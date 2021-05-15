@@ -80,6 +80,11 @@ namespace File_Service.Logic
             }
 
             List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
+            if (validFiles.Count == 0)
+            {
+                throw new UnprocessableException();
+            }
+
             var fileNameCollection = new List<Guid>();
             validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid()));
 

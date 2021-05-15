@@ -9,7 +9,8 @@ namespace Email_Service.Models.Helpers
             var dictionary = new Dictionary<string, string>
             {
                 { "LoginMultiRole", "/EmailTemplates/LoginMultiRole.html" },
-                { "ActivateAccount", "/EmailTemplates/ActivateAccount.html" }
+                { "ActivateAccount", "/EmailTemplates/ActivateAccount.html" },
+                { "DatepickerConversion", "/EmailTemplates/DatepickerConversion.html" }
             };
 
             return dictionary[templateName];

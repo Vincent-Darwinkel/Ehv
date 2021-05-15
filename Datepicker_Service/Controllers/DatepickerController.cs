@@ -42,6 +42,10 @@ namespace Datepicker_Service.Controllers
                 await _datepickerLogic.Add(datepickerDto, requestingUser);
                 return Ok();
             }
+            catch (DuplicateNameException)
+            {
+                return StatusCode(StatusCodes.Status409Conflict);
+            }
             catch (Exception e)
             {
                 _logLogic.Log(e);
@@ -143,6 +147,10 @@ namespace Datepicker_Service.Controllers
             catch (UnprocessableException)
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity);
+            }
+            catch (DuplicateNameException)
+            {
+                return StatusCode(StatusCodes.Status409Conflict);
             }
             catch (Exception e)
             {

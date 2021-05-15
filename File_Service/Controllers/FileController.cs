@@ -6,6 +6,8 @@ using System.IO;
 using System.Threading.Tasks;
 using File_Service.CustomExceptions;
 using File_Service.Logic;
+using File_Service.Models.FromFrontend;
+using File_Service.Models.HelperFiles;
 
 namespace File_Service.Controllers
 {
@@ -15,11 +17,13 @@ namespace File_Service.Controllers
     {
         private readonly FileLogic _fileLogic;
         private readonly LogLogic _logLogic;
+        private readonly ControllerHelper _controllerHelper;
 
-        public FileController(FileLogic fileLogic, LogLogic logLogic)
+        public FileController(FileLogic fileLogic, LogLogic logLogic, ControllerHelper controllerHelper)
         {
             _fileLogic = fileLogic;
             _logLogic = logLogic;
+            _controllerHelper = controllerHelper;
         }
 
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
@@ -28,13 +32,12 @@ namespace File_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SaveFilesAsync([FromForm] List<IFormFile> files, string path)
+        public async Task<ActionResult> SaveFilesAsync([FromForm] FileUpload fileUpload)
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _fileLogic.SaveFileAsync(files, path, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _fileLogic.SaveFileAsync(fileUpload.Files, fileUpload.Path, requestingUser.Uuid);
                 return Ok();
             }
             catch (DirectoryNotFoundException)
@@ -57,9 +60,8 @@ namespace File_Service.Controllers
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _fileLogic.RemoveFile(uuid, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _fileLogic.RemoveFile(uuid, requestingUser.Uuid);
                 return Ok();
             }
             catch (UnprocessableException)

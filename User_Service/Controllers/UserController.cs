@@ -73,7 +73,7 @@ namespace User_Service.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("by-list")]
         public async Task<ActionResult<List<UserViewModel>>> Find([FromQuery] List<Guid> uuidCollection)
         {
             try
@@ -84,6 +84,21 @@ namespace User_Service.Controllers
             catch (KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception e)
+            {
+                _logLogic.Log(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<UserViewModel>>> All()
+        {
+            try
+            {
+                List<UserDto> users = await _userLogic.All();
+                return _mapper.Map<List<UserViewModel>>(users);
             }
             catch (Exception e)
             {

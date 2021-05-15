@@ -25,18 +25,16 @@ namespace User_Service.Dal
         public async Task<UserDto> Find(Guid userUuid)
         {
             return await _context.User
-                .FindAsync(userUuid);
-        }
-
-        public async Task<UserDto> Find(string username, string email)
-        {
-            return await _context.User
-                .FirstOrDefaultAsync(user => user.Username == username || user.Email == email);
+                .Include(u => u.FavoriteArtists)
+                .Include(u => u.Hobbies)
+                .FirstOrDefaultAsync(u => u.Uuid == userUuid);
         }
 
         public async Task<List<UserDto>> Find(List<Guid> uuidCollection)
         {
             return await _context.User
+                .Include(u => u.FavoriteArtists)
+                .Include(u => u.Hobbies)
                 .Where(user => uuidCollection
                     .Any(uc => user.Uuid == uc))
                 .ToListAsync();
@@ -52,6 +50,8 @@ namespace User_Service.Dal
         public async Task<List<UserDto>> All()
         {
             return await _context.User
+                .Include(u => u.FavoriteArtists)
+                .Include(u => u.Hobbies)
                 .ToListAsync();
         }
 
