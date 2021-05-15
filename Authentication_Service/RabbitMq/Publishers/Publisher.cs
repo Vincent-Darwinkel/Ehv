@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using RabbitMQ.Client;
+using System.Collections.Generic;
 using System.Text;
-using RabbitMQ.Client;
 
 namespace Authentication_Service.RabbitMq.Publishers
 {

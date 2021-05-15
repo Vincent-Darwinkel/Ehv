@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Event_Service.Dal.Interfaces;
 using Event_Service.Models;
 using Event_Service.Models.HelperFiles;
@@ -11,6 +6,11 @@ using Event_Service.Models.RabbitMq;
 using Event_Service.Models.ToFrontend;
 using Event_Service.RabbitMq.Publishers;
 using Event_Service.RabbitMq.Rpc;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Event_Service.Logic
 {

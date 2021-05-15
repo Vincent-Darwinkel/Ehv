@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using User_Service.CustomExceptions;
 using User_Service.Enums;
 using User_Service.Logic;

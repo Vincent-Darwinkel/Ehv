@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Favorite_Artist_Service.Dal.Interfaces;
+﻿using Favorite_Artist_Service.Dal.Interfaces;
 using Favorite_Artist_Service.Model;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Favorite_Artist_Service.Dal
 {

@@ -1,6 +1,5 @@
 ﻿using Authentication_Service.Models.Dto;
 using Microsoft.EntityFrameworkCore;
-using User_Service.Models;
 using UserDto = Authentication_Service.Models.Dto.UserDto;
 
 namespace Authentication_Service.Dal

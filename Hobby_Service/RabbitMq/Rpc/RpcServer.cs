@@ -1,9 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Hobby_Service.Logic;
+﻿using Hobby_Service.Logic;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Hobby_Service.RabbitMq.Rpc
 {

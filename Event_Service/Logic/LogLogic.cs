@@ -1,7 +1,7 @@
-﻿using System;
-using Event_Service.Models.HelperFiles;
+﻿using Event_Service.Models.HelperFiles;
 using Event_Service.Models.RabbitMq;
 using Event_Service.RabbitMq.Publishers;
+using System;
 
 namespace Event_Service.Logic
 {

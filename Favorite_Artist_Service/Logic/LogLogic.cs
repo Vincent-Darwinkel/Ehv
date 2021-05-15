@@ -1,7 +1,7 @@
-﻿using System;
-using Favorite_Artist_Service.Model.Helpers;
+﻿using Favorite_Artist_Service.Model.Helpers;
 using Favorite_Artist_Service.Model.RabbitMq;
 using Favorite_Artist_Service.RabbitMq.Publishers;
+using System;
 
 namespace Favorite_Artist_Service.Logic
 {

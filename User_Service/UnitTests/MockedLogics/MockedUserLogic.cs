@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Moq;
+﻿using Moq;
 using User_Service.Logic;
-using User_Service.Models.HelperFiles;
 using User_Service.RabbitMq.Publishers;
 using User_Service.UnitTests.MockedDals;
 

@@ -1,5 +1,5 @@
-﻿using System;
-using File_Service.Enums;
+﻿using File_Service.Enums;
+using System;
 
 namespace File_Service.Models.HelperFiles
 {

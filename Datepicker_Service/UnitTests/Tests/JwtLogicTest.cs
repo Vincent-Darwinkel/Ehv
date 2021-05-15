@@ -1,8 +1,8 @@
-﻿using System;
-using Datepicker_Service.CustomExceptions;
+﻿using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Enums;
 using Datepicker_Service.Logic;
 using NUnit.Framework;
+using System;
 
 namespace Datepicker_Service.UnitTests.Tests
 {

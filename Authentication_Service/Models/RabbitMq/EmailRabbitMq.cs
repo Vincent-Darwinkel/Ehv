@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Authentication_Service.Models.HelperFiles;
+﻿using Authentication_Service.Models.HelperFiles;
+using System.Collections.Generic;
 
 namespace Authentication_Service.Models.RabbitMq
 {

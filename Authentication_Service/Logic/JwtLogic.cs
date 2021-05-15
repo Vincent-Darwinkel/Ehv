@@ -4,7 +4,6 @@ using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.ToFrontend;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System;

@@ -1,7 +1,7 @@
-﻿using System;
-using File_Service.Models.HelperFiles;
+﻿using File_Service.Models.HelperFiles;
 using File_Service.Models.RabbitMq;
 using File_Service.RabbitMq.Publishers;
+using System;
 
 namespace File_Service.Logic
 {

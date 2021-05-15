@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Datepicker_Service.CustomExceptions;
+﻿using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models;
 using Datepicker_Service.UnitTests.MockedLogic;
 using Datepicker_Service.UnitTests.TestModels;
 using Datepicker_Service.UnitTests.TestModels.FromFrontend;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Datepicker_Service.UnitTests.Tests
 {

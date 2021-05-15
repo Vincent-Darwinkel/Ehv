@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Email_Service.Models.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Email_Service.Models.Helpers;
 
 namespace Email_Service.Logic
 {

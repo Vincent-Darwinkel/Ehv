@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Text.Json.Serialization;
-using Datepicker_Service.Dal;
+﻿using Datepicker_Service.Dal;
 using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
@@ -12,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Datepicker_Service
 {

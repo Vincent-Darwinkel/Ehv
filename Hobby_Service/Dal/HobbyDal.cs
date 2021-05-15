@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Hobby_Service.Dal.Interfaces;
+﻿using Hobby_Service.Dal.Interfaces;
 using Hobby_Service.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Hobby_Service.Dal
 {

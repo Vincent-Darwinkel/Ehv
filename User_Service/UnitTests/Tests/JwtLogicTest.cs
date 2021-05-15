@@ -1,5 +1,5 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 using User_Service.CustomExceptions;
 using User_Service.Enums;
 using User_Service.Logic;

@@ -1,6 +1,6 @@
-﻿using System;
-using Authentication_Service.Logic;
+﻿using Authentication_Service.Logic;
 using NUnit.Framework;
+using System;
 
 namespace Authentication_Service.UnitTests
 {

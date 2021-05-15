@@ -1,5 +1,3 @@
-using System.Data;
-using System.Text.Json.Serialization;
 using Favorite_Artist_Service.Dal;
 using Favorite_Artist_Service.Dal.Interfaces;
 using Favorite_Artist_Service.Logic;
@@ -14,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Favorite_Artist_Service
 {

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Email_Service.Logic;
+﻿using Email_Service.Logic;
 using Email_Service.Models.Helpers;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Email_Service.RabbitMq.Consumers
 {

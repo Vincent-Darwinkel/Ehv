@@ -1,9 +1,9 @@
-﻿using System;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Enums;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Authentication_Service.Models.HelperFiles
 {

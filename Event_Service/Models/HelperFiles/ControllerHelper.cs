@@ -1,8 +1,8 @@
-﻿using System;
-using Event_Service.CustomExceptions;
+﻿using Event_Service.CustomExceptions;
 using Event_Service.Enums;
 using Event_Service.Logic;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Event_Service.Models.HelperFiles
 {

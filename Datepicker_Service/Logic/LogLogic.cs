@@ -1,7 +1,7 @@
-﻿using System;
-using Datepicker_Service.Models.HelperFiles;
+﻿using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.Models.RabbitMq;
 using Datepicker_Service.RabbitMq.Publishers;
+using System;
 
 namespace Datepicker_Service.Logic
 {

@@ -1,5 +1,5 @@
-﻿using System;
-using Event_Service.Enums;
+﻿using Event_Service.Enums;
+using System;
 
 namespace Event_Service.Models.HelperFiles
 {

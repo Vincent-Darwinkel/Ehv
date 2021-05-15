@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Datepicker_Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Datepicker_Service.Models;
 
 namespace Datepicker_Service.Dal.Interfaces
 {

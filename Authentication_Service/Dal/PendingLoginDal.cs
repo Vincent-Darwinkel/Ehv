@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Authentication_Service.Dal.Interface;
+using Authentication_Service.Models.Dto;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Authentication_Service.Dal.Interface;
-using Authentication_Service.Models.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace Authentication_Service.Dal
 {

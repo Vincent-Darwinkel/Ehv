@@ -1,9 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Favorite_Artist_Service.Logic;
+﻿using Favorite_Artist_Service.Logic;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Favorite_Artist_Service.RabbitMq.Rpc
 {

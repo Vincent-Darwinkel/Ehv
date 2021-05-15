@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Favorite_Artist_Service.Model;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Favorite_Artist_Service.Model;
 
 namespace Favorite_Artist_Service.Dal.Interfaces
 {

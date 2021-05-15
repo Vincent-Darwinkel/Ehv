@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Logging_Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Logging_Service.Models;
 
 namespace Logging_Service.Dal.Interfaces
 {

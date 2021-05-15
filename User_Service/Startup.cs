@@ -1,11 +1,11 @@
-﻿using System.Data;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
+using System.Data;
+using System.Text.Json.Serialization;
 using User_Service.Dal;
 using User_Service.Dal.Interfaces;
 using User_Service.Logic;

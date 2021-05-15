@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Datepicker_Service.Dal.Interfaces;
+using Datepicker_Service.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Datepicker_Service.Dal.Interfaces;
-using Datepicker_Service.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Datepicker_Service.Dal
 {

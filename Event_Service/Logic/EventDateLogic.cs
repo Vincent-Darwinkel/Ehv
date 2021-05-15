@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Event_Service.Dal.Interfaces;
+﻿using Event_Service.Dal.Interfaces;
 using Event_Service.Models;
 using Event_Service.Models.HelperFiles;
+using System;
+using System.Threading.Tasks;
 
 namespace Event_Service.Logic
 {

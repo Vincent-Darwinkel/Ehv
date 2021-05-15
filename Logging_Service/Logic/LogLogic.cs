@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Logging_Service.CustomExceptions;
 using Logging_Service.Dal.Interfaces;
 using Logging_Service.Models;
 using Logging_Service.Models.RabbitMq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Logging_Service.Logic
 {

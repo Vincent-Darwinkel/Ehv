@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Event_Service.Logic;
 using Event_Service.Models;
 using Event_Service.Models.HelperFiles;
 using Event_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Event_Service.Controllers
 {

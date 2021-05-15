@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Event_Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Event_Service.Models;
 
 namespace Event_Service.Dal.Interfaces
 {

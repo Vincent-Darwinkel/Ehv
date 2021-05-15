@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using File_Service.CustomExceptions;
+﻿using File_Service.CustomExceptions;
 using File_Service.Enums;
 using Microsoft.IdentityModel.JsonWebTokens;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace File_Service.Logic
 {

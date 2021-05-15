@@ -1,6 +1,6 @@
-﻿using System;
-using Datepicker_Service.Enums;
+﻿using Datepicker_Service.Enums;
 using Datepicker_Service.Models.HelperFiles;
+using System;
 
 namespace Datepicker_Service.UnitTests.TestModels.FromFrontend
 {

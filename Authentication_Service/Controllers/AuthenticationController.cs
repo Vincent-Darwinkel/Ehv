@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.FromFrontend;
@@ -9,6 +7,8 @@ using Authentication_Service.Models.ToFrontend;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.Controllers
 {

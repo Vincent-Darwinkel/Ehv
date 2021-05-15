@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper.Mappers;
-using Datepicker_Service.Logic;
+﻿using Datepicker_Service.Logic;
 using Datepicker_Service.RabbitMq.Publishers;
 using Datepicker_Service.UnitTests.MockedDals;
 using Moq;

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Logging_Service.Dal.Interfaces;
+using Logging_Service.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Logging_Service.Dal.Interfaces;
-using Logging_Service.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logging_Service.Dal
 {

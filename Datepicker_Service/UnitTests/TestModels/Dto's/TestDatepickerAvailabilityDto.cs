@@ -1,5 +1,5 @@
-﻿using System;
-using Datepicker_Service.Models;
+﻿using Datepicker_Service.Models;
+using System;
 
 namespace Datepicker_Service.UnitTests.TestModels
 {

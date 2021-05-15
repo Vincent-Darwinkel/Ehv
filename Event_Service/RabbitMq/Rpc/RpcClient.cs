@@ -1,8 +1,8 @@
-﻿using System;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System;
 using System.Collections.Concurrent;
 using System.Text;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace Event_Service.RabbitMq.Rpc
 {

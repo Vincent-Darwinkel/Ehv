@@ -1,10 +1,10 @@
-﻿using System;
-using System.Text;
-using Event_Service.Logic;
+﻿using Event_Service.Logic;
 using Event_Service.Models.HelperFiles;
 using Event_Service.Models.RabbitMq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 
 namespace Event_Service.RabbitMq.Consumers
 {

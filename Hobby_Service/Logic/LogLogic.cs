@@ -1,7 +1,7 @@
-﻿using System;
-using Hobby_Service.Models.Helpers;
+﻿using Hobby_Service.Models.Helpers;
 using Hobby_Service.Models.RabbitMq;
 using Hobby_Service.RabbitMq.Publishers;
+using System;
 
 namespace Hobby_Service.Logic
 {

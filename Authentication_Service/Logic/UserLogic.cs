@@ -1,17 +1,13 @@
 ﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using Authentication_Service.Models.Dto;
-using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
 using AutoMapper;
+using System;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.Logic
 {

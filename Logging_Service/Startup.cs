@@ -1,19 +1,19 @@
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Text.Json.Serialization;
 using Logging_Service.Dal;
 using Logging_Service.Dal.Interfaces;
 using Logging_Service.Logic;
 using Logging_Service.Models.Helpers;
 using Logging_Service.RabbitMq;
 using Logging_Service.RabbitMq.Consumers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Logging_Service
 {

@@ -1,6 +1,5 @@
 ﻿using Authentication_Service.Logic;
 using Authentication_Service.UnitTests.MockDals;
-using Authentication_Service.UnitTests.MockedDotnetClasses;
 
 namespace Authentication_Service.UnitTests.MockedLogics
 {

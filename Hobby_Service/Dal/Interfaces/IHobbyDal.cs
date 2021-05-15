@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Hobby_Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Hobby_Service.Models;
 
 namespace Hobby_Service.Dal.Interfaces
 {

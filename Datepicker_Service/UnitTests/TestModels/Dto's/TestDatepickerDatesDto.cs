@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Datepicker_Service.Models;
+using System;
 using System.Collections.Generic;
-using Datepicker_Service.Models;
 
 namespace Datepicker_Service.UnitTests.TestModels
 {

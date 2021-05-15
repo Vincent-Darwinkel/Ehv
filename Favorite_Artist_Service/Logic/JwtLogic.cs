@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using Favorite_Artist_Service.CustomExceptions;
+﻿using Favorite_Artist_Service.CustomExceptions;
 using Favorite_Artist_Service.Enums;
 using Microsoft.IdentityModel.JsonWebTokens;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Favorite_Artist_Service.Logic
 {

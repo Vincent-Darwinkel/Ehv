@@ -1,8 +1,7 @@
-﻿using System;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
+using System;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
-using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
 
 namespace User_Service.Logic

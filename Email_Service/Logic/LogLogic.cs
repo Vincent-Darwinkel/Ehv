@@ -1,7 +1,7 @@
-﻿using System;
-using Email_Service.Models.Helpers;
+﻿using Email_Service.Models.Helpers;
 using Email_Service.Models.RabbitMq;
 using Email_Service.RabbitMq.Publishers;
+using System;
 
 namespace Email_Service.Logic
 {

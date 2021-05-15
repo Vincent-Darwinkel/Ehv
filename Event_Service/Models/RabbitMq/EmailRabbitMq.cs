@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Event_Service.Models.HelperFiles;
+﻿using Event_Service.Models.HelperFiles;
+using System.Collections.Generic;
 
 namespace Event_Service.Models.RabbitMq
 {

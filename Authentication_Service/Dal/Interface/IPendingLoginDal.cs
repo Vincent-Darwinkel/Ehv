@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Authentication_Service.Models.Dto;
+using System;
 using System.Threading.Tasks;
-using Authentication_Service.Models.Dto;
 
 namespace Authentication_Service.Dal.Interface
 {

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Authentication_Service.Enums;
+﻿using Authentication_Service.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Authentication_Service.Models.FromFrontend
 {

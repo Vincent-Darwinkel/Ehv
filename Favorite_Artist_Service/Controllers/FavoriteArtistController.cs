@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Favorite_Artist_Service.Logic;
 using Favorite_Artist_Service.Model;
 using Favorite_Artist_Service.Model.FromFrontend;
 using Favorite_Artist_Service.Model.ToFrontend;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Favorite_Artist_Service.Controllers
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Authentication_Service.CustomExceptions;
+﻿using Authentication_Service.CustomExceptions;
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
@@ -12,6 +8,10 @@ using Authentication_Service.Models.RabbitMq;
 using Authentication_Service.Models.ToFrontend;
 using Authentication_Service.RabbitMq.Publishers;
 using Authentication_Service.RabbitMq.Rpc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UserDto = Authentication_Service.Models.Dto.UserDto;
 
 namespace Authentication_Service.Logic

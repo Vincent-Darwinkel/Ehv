@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text;
-using Authentication_Service.Logic;
+﻿using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using Event_Service.CustomExceptions;
+﻿using Event_Service.CustomExceptions;
 using Event_Service.Enums;
 using Microsoft.IdentityModel.JsonWebTokens;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Event_Service.Logic
 {

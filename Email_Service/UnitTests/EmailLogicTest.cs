@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using Email_Service.Logic;
+﻿using Email_Service.Logic;
 using Email_Service.Models.Helpers;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Email_Service.UnitTests
 {

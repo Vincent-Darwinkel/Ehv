@@ -1,5 +1,3 @@
-using System.Text;
-using Gateway_Service.Middlewares;
 using Gateway_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using System.Text;
 
 namespace Gateway_Service
 {

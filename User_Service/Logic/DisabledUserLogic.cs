@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using User_Service.CustomExceptions;
 using User_Service.Dal;
 using User_Service.Dal.Interfaces;

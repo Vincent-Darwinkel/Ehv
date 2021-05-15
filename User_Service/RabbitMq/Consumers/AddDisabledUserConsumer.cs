@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 using User_Service.Logic;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;

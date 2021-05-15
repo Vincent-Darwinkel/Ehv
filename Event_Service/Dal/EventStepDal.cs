@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Event_Service.Dal.Interfaces;
+﻿using Event_Service.Dal.Interfaces;
 using Event_Service.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace Event_Service.Dal
 {

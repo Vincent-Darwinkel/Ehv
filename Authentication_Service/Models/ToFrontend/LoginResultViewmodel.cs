@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Authentication_Service.Enums;
+using System;
 using System.Collections.Generic;
-using Authentication_Service.Enums;
 
 namespace Authentication_Service.Models.ToFrontend
 {
