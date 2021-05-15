@@ -29,6 +29,9 @@ namespace Logging_Service.Migrations
                     b.Property<string>("FromMicroService")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("LogType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Message")
                         .HasColumnType("longtext");
 

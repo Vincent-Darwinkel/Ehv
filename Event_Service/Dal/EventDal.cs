@@ -26,6 +26,7 @@ namespace Event_Service.Dal
         {
             return await _context.Event
                     .Include(e => e.EventDates)
+                    .ThenInclude(e => e.EventDateUsers)
                     .Include(e => e.EventSteps)
                     .ThenInclude(e => e.EventStepUsers)
                     .ToListAsync();

@@ -92,6 +92,11 @@ namespace Authentication_Service.Logic
                 throw new UnauthorizedAccessException(nameof(login));
             }
 
+            if (login.SelectedAccountRole > user.AccountRole)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             user.AccountRole = login.SelectedAccountRole;
             await _pendingLoginDal.Remove(dbPendingLogin);
             await _pendingLoginDal.RemoveOutdated();

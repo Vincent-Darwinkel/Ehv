@@ -23,7 +23,7 @@ namespace Logging_Service.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("/microservice")]
+        [HttpGet("{microservice}")]
         public async Task<ActionResult<List<LogViewmodel>>> Find(string microService)
         {
             try

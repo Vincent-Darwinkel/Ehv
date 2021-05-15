@@ -127,7 +127,7 @@ namespace User_Service.Controllers
             }
         }
 
-        [HttpDelete("{uuid}")]
+        [HttpDelete]
         public async Task<ActionResult> Delete(Guid uuid)
         {
             try

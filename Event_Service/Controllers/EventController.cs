@@ -36,6 +36,10 @@ namespace Event_Service.Controllers
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
                 List<EventDto> events = await _eventLogic.All(requestingUser);
+                events.ForEach(e =>
+                    e.EventDates.ForEach(ed => ed.EventDateUsers
+                        .RemoveAll(edu => edu.UserUuid != requestingUser.Uuid)));
+
                 return _mapper.Map<List<EventViewmodel>>(events);
             }
             catch (Exception e)

@@ -116,6 +116,8 @@ services:
     build:
       context: .
       dockerfile: Favorite_Artist_Service/Dockerfile
+    ports:
+        - "5007:80"
     depends_on:
         - mariadb
         - rabbitmq
@@ -125,6 +127,8 @@ services:
     build:
       context: .
       dockerfile: Hobby_Service/Dockerfile
+    ports:
+        - "5008:80"
     depends_on:
         - mariadb
         - rabbitmq
@@ -134,6 +138,8 @@ services:
     build:
       context: .
       dockerfile: Logging_Service/Dockerfile
+    ports:
+        - "5009:80"
     depends_on:
         - mariadb
         - rabbitmq

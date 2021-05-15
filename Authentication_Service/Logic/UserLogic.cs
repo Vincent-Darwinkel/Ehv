@@ -15,17 +15,12 @@ namespace Authentication_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly SecurityLogic _securityLogic;
-        private readonly IPublisher _publisher;
-        private readonly RpcClient _rpcClient;
         private readonly IMapper _mapper;
 
-        public UserLogic(IUserDal userDal, SecurityLogic securityLogic, IPublisher publisher,
-            RpcClient rpcClient, IMapper mapper)
+        public UserLogic(IUserDal userDal, SecurityLogic securityLogic, IMapper mapper)
         {
             _userDal = userDal;
             _securityLogic = securityLogic;
-            _publisher = publisher;
-            _rpcClient = rpcClient;
             _mapper = mapper;
         }
 

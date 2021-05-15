@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Logging_Service.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210514152333_InitialCreate")]
+    [Migration("20210515191016_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace Logging_Service.Migrations
 
                     b.Property<string>("FromMicroService")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("LogType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .HasColumnType("longtext");
