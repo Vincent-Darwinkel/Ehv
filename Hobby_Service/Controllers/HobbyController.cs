@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Hobby_Service.CustomExceptions;
+using Hobby_Service.Enums;
 using Hobby_Service.Logic;
 using Hobby_Service.Models;
 using Hobby_Service.Models.FromFrontend;
@@ -8,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Hobby_Service.CustomExceptions;
-using Hobby_Service.Enums;
 
 namespace Hobby_Service.Controllers
 {

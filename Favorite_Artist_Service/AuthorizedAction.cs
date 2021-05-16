@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using Favorite_Artist_Service.Enums;
+﻿using Favorite_Artist_Service.Enums;
 using Favorite_Artist_Service.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 using RequestHeaders = Favorite_Artist_Service.Model.Helpers.RequestHeaders;
 
 namespace Favorite_Artist_Service

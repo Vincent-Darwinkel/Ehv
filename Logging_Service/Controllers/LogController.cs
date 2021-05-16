@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Logging_Service.Enums;
 using Logging_Service.Logic;
 using Logging_Service.Models;
 using Logging_Service.Models.ToFrontend;
@@ -8,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Logging_Service.Enums;
 
 namespace Logging_Service.Controllers
 {

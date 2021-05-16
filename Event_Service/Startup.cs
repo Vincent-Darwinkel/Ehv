@@ -59,16 +59,13 @@ namespace Event_Service
             services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IEventDal, EventDal>();
-            services.AddScoped<IEventDateDal, EventDateDal>();
             services.AddScoped<IEventDateUserDal, EventDateUserDal>();
             services.AddScoped<IEventStepDal, EventStepDal>();
             services.AddScoped<IEventStepUserDal, EventStepUserDal>();
 
             services.AddScoped<EventLogic>();
             services.AddScoped<JwtLogic>();
-            services.AddScoped<EventDateLogic>();
             services.AddScoped<EventDateUserLogic>();
-            services.AddScoped<EventStepLogic>();
             services.AddScoped<EventStepUserLogic>();
             services.AddScoped<EventDateUserLogic>();
             services.AddScoped<LogLogic>();

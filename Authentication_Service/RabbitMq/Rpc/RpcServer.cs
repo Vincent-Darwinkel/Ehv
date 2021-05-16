@@ -1,9 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Authentication_Service.Logic;
+﻿using Authentication_Service.Logic;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Authentication_Service.RabbitMq.Rpc
 {

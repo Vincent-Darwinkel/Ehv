@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Datepicker_Service.Enums;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.FromFrontend;
 using Datepicker_Service.Models.HelperFiles;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Datepicker_Service.Enums;
 
 namespace Datepicker_Service.Controllers
 {

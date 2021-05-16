@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Event_Service.Enums;
 using Event_Service.Logic;
 using Event_Service.Models;
 using Event_Service.Models.HelperFiles;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Event_Service.Enums;
 
 namespace Event_Service.Controllers
 {

@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models.HelperFiles;

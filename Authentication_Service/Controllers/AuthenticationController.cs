@@ -1,4 +1,5 @@
 ﻿using Authentication_Service.CustomExceptions;
+using Authentication_Service.Enums;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.FromFrontend;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
-using Authentication_Service.Enums;
 
 namespace Authentication_Service.Controllers
 {
