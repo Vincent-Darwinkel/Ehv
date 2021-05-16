@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using User_Service.Dal;
+using User_Service.Dal.Interfaces;
 using User_Service.Models;
 using User_Service.UnitTests.TestModels;
 

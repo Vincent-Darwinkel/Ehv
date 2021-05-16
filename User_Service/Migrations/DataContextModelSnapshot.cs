@@ -108,6 +108,9 @@ namespace User_Service.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<bool>("ReceiveEmail")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Username")
                         .HasColumnType("longtext");
 

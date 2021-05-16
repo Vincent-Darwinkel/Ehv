@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Datepicker_Service.Enums;
 
 namespace Datepicker_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
     [Route("datepicker")]
     [ApiController]
     public class DatepickerController : ControllerBase

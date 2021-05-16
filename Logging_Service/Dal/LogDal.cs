@@ -31,13 +31,6 @@ namespace Logging_Service.Dal
                 .ToListAsync();
         }
 
-        public async Task<List<LogDto>> Find(string microService)
-        {
-            return await _context.Log
-                .Where(l => l.FromMicroService == microService)
-                .ToListAsync();
-        }
-
         public async Task<List<LogDto>> All()
         {
             return await _context.Log.ToListAsync();

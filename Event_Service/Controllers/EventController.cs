@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Event_Service.Enums;
 
 namespace Event_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin })]
     [Route("event")]
     [ApiController]
     public class EventController : ControllerBase

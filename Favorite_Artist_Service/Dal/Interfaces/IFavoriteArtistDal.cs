@@ -26,9 +26,9 @@ namespace Favorite_Artist_Service.Dal.Interfaces
         Task Update(FavoriteArtistDto favoriteArtist);
 
         /// <summary>
-        /// Deletes the favoriteArtist that matches the uuid
+        /// Deletes the favoriteArtist that matches the uuidCollection
         /// </summary>
-        /// <param name="uuid">The uuid of the favoriteArtist to delete</param>
-        Task Delete(Guid uuid);
+        /// <param name="uuidCollection">The uuidCollection of the favoriteArtist to delete</param>
+        Task Delete(List<Guid> uuidCollection);
     }
 }

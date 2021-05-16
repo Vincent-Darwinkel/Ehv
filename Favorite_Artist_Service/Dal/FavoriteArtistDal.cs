@@ -3,6 +3,7 @@ using Favorite_Artist_Service.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Favorite_Artist_Service.Dal
@@ -33,11 +34,13 @@ namespace Favorite_Artist_Service.Dal
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Guid uuid)
+        public async Task Delete(List<Guid> uuidCollection)
         {
-            FavoriteArtistDto favoriteArtistToRemove = await _context.FavoriteArtist
-                .FindAsync(uuid);
-            _context.FavoriteArtist.Remove(favoriteArtistToRemove);
+            List<FavoriteArtistDto> favoriteArtistsToRemove = await _context.FavoriteArtist
+                .Where(a => uuidCollection.Contains(a.Uuid))
+                .ToListAsync();
+
+            _context.FavoriteArtist.RemoveRange(favoriteArtistsToRemove);
             await _context.SaveChangesAsync();
         }
     }

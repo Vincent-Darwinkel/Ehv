@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using User_Service.Enums;
 using User_Service.Models;
 
-namespace User_Service.Dal
+namespace User_Service.Dal.Interfaces
 {
     public interface IUserDal
     {
@@ -28,6 +29,13 @@ namespace User_Service.Dal
         Task<List<UserDto>> Find(List<Guid> uuidCollection);
 
         /// <summary>
+        /// Counts the users by account role
+        /// </summary>
+        /// <param name="accountRole">The role to search for</param>
+        /// <returns>The total amount of users with the specified role</returns>
+        Task<int> Count(AccountRole accountRole);
+
+        /// <summary>
         /// Checks if an account with the username or email exists
         /// </summary>
         /// <param name="username">The username to search for</param>
@@ -37,6 +45,8 @@ namespace User_Service.Dal
 
         /// <returns>All users in the database</returns>
         Task<List<UserDto>> All();
+
+        Task<bool> Any();
 
         /// <summary>
         /// Updates the existing user in the database

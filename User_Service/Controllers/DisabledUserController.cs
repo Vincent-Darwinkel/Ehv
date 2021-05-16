@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models.FromFrontend;
 
 namespace User_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
     [Route("user/disabled")]
     [ApiController]
     public class DisabledUserController : ControllerBase

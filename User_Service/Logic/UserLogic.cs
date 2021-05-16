@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
-using User_Service.Dal;
 using User_Service.Dal.Interfaces;
 using User_Service.Enums;
 using User_Service.Models;
@@ -13,6 +12,7 @@ using User_Service.Models.FromFrontend;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
 using User_Service.RabbitMq.Publishers;
+using User_Service.RabbitMq.Rpc;
 
 namespace User_Service.Logic
 {
@@ -23,23 +23,23 @@ namespace User_Service.Logic
         private readonly IActivationDal _activationDal;
         private readonly IMapper _mapper;
         private readonly IPublisher _publisher;
+        private readonly RpcClient _rpcClient;
 
         public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
-            IMapper mapper, IPublisher publisher)
+            IMapper mapper, IPublisher publisher, RpcClient rpcClient)
         {
             _userDal = userDal;
             _disabledUserDal = disabledUserDal;
             _activationDal = activationDal;
             _mapper = mapper;
             _publisher = publisher;
+            _rpcClient = rpcClient;
         }
 
         private bool UserModelValid(User user)
         {
             return !string.IsNullOrEmpty(user.Username) &&
                    !string.IsNullOrEmpty(user.Email) &&
-                   !string.IsNullOrEmpty(user.About) &&
-                   user.Gender != Gender.Undefined &&
                    EmailIsValid(user.Email);
         }
 
@@ -60,8 +60,9 @@ namespace User_Service.Logic
                 throw new DuplicateNameException();
             }
 
+            bool databaseContainsUsers = await _userDal.Any();
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.AccountRole = AccountRole.User;
+            userDto.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
             userDto.Uuid = Guid.NewGuid();
 
             var disabledUserDto = new DisabledUserDto
@@ -83,7 +84,7 @@ namespace User_Service.Logic
 
             var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
             userRabbitMq.Uuid = userDto.Uuid;
-            userRabbitMq.AccountRole = AccountRole.User;
+            userRabbitMq.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
             await _userDal.Add(userDto);
@@ -169,18 +170,29 @@ namespace User_Service.Logic
             }
 
             UserDto dbUser = await _userDal.Find(requestingUserUuid);
+            var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
+
+            userRabbitMq.Uuid = dbUser.Uuid;
+            userRabbitMq.AccountRole = dbUser.AccountRole;
+
+            var passwordValid = _rpcClient.Call<bool>(userRabbitMq, RabbitMqQueues.ValidateUserPasswordQueue);
+            if (!passwordValid)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             await CheckForDuplicatedUserData(user, dbUser);
 
             dbUser.Username = user.Username;
             dbUser.Email = user.Email;
             dbUser.About = user.About;
+            dbUser.ReceiveEmail = user.ReceiveEmail;
             dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
             dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
-            
+
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Username != user.Username)
             {
-                var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
-                userRabbitMq.Uuid = dbUser.Uuid;
+                userRabbitMq.Password = string.IsNullOrEmpty(user.NewPassword) ? user.Password : user.NewPassword;
                 _publisher.Publish(userRabbitMq, RabbitMqRouting.UpdateUser, RabbitMqExchange.UserExchange);
             }
 
@@ -221,6 +233,11 @@ namespace User_Service.Logic
             switch (requestingUser.AccountRole)
             {
                 case AccountRole.SiteAdmin:
+                    int totalSiteAdmins = await _userDal.Count(AccountRole.SiteAdmin);
+                    if (totalSiteAdmins <= 1)
+                    {
+                        throw new SiteAdminRequiredException();
+                    }
                     _publisher.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser, RabbitMqExchange.UserExchange);
                     await _userDal.Delete(userUuidToDeleteUuid);
                     break;

@@ -20,13 +20,6 @@ namespace Logging_Service.Dal.Interfaces
         /// <returns>The found logs</returns>
         Task<List<LogDto>> Find(List<Guid> uuidCollection);
 
-        /// <summary>
-        /// Finds the logs that matches the specified microService name
-        /// </summary>
-        /// <param name="microService">The name of the micro services to find the logs</param>
-        /// <returns>The found logs</returns>
-        Task<List<LogDto>> Find(string microService);
-
         /// <returns>All logs in the database</returns>
         Task<List<LogDto>> All();
 

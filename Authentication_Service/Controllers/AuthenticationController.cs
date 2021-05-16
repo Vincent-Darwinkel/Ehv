@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
+using Authentication_Service.Enums;
 
 namespace Authentication_Service.Controllers
 {
@@ -53,6 +54,7 @@ namespace Authentication_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpPost("refresh")]
         public async Task<ActionResult<AuthorizationTokensViewmodel>> RefreshJwt(Guid refreshToken)
         {

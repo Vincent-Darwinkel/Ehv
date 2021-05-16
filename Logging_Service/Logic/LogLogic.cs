@@ -86,26 +86,6 @@ namespace Logging_Service.Logic
             return await _logDal.All();
         }
 
-        public async Task<List<LogDto>> Find(List<Guid> uuidCollection)
-        {
-            if (!uuidCollection.Any())
-            {
-                throw new UnprocessableException();
-            }
-
-            return await _logDal.Find(uuidCollection);
-        }
-
-        public async Task<List<LogDto>> Find(string microService)
-        {
-            if (string.IsNullOrEmpty(microService))
-            {
-                throw new UnprocessableException();
-            }
-
-            return await _logDal.Find(microService);
-        }
-
         public async Task Delete(List<Guid> uuidCollection)
         {
             if (!uuidCollection.Any())

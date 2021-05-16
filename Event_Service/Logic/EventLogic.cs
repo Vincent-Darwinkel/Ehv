@@ -158,6 +158,8 @@ namespace Event_Service.Logic
         private void NotifyUsersAboutConversion(List<Guid> usersToNotifyUuidCollection, EventDto eventToInsert)
         {
             var usersRabbitMq = _rpcClient.Call<List<UserRabbitMq>>(usersToNotifyUuidCollection, RabbitMqQueues.FindUserQueue);
+            usersRabbitMq.RemoveAll(u => !u.ReceiveEmail);
+
             var emails = usersRabbitMq.Select(user => new EmailRabbitMq
             {
                 Subject = $"Datumprikker {eventToInsert.Title} is omgezet naar een evenement",
@@ -215,6 +217,8 @@ namespace Event_Service.Logic
         private void NotifyUsersAboutDeletedEvent(List<Guid> userUuidCollection, string eventName)
         {
             var usersRabbitMq = _rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqQueues.FindUserQueue);
+            usersRabbitMq.RemoveAll(u => !u.ReceiveEmail);
+
             var emails = usersRabbitMq.Select(user => new EmailRabbitMq
             {
                 TemplateName = "DeleteEvent",

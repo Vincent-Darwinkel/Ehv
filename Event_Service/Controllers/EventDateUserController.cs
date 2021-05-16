@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Data;
 using System.Threading.Tasks;
+using Event_Service.Enums;
 
 namespace Event_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User })]
     [Route("event/date/user")]
     [ApiController]
     public class EventDateUserController : ControllerBase

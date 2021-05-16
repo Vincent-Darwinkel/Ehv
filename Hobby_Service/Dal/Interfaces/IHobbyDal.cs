@@ -26,9 +26,9 @@ namespace Hobby_Service.Dal.Interfaces
         Task Update(HobbyDto hobby);
 
         /// <summary>
-        /// Deletes the hobby that matches the uuid
+        /// Deletes the hobby that matches the uuidCollection
         /// </summary>
-        /// <param name="uuid">The uuid of the hobby to delete</param>
-        Task Delete(Guid uuid);
+        /// <param name="uuidCollection">The uuidCollection of the hobby to delete</param>
+        Task Delete(List<Guid> uuidCollection);
     }
 }

@@ -153,8 +153,8 @@ namespace File_Service.Logic
         /// Removes a file by uuid if the user is owner and the file exists
         /// </summary>
         /// <param name="fileUuid">The uuid of the file to remove</param>
-        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
-        public async Task RemoveFile(Guid fileUuid, Guid requestingUserUuid)
+        /// <param name="requestingUser">The user that made the request</param>
+        public async Task Remove(Guid fileUuid, UserHelper requestingUser)
         {
             if (fileUuid == Guid.Empty)
             {
@@ -166,17 +166,17 @@ namespace File_Service.Logic
 
             DirectoryInfoFile infoFile = await DirectoryHelper.GetInfoFileFromDirectory(directoryPath);
             FileContentInfo fileContentInfo = infoFile.FileInfo
-                .Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+                .Find(fi => fi.FileOwnerUuid == requestingUser.Uuid);
 
-            bool fileIsOwnedByUser = fileContentInfo.FilesOwnedByUser
-                .Contains(fileUuid);
+            bool fileCanBeRemovedByRequestingUser = fileContentInfo.FilesOwnedByUser
+                .Contains(fileUuid) || requestingUser.AccountRole > AccountRole.User;
 
             if (!File.Exists(fullPath))
             {
                 throw new UnprocessableException();
             }
 
-            if (!fileIsOwnedByUser)
+            if (!fileCanBeRemovedByRequestingUser)
             {
                 throw new UnauthorizedAccessException();
             }

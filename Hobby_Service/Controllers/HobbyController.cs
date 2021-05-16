@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hobby_Service.CustomExceptions;
+using Hobby_Service.Enums;
 
 namespace Hobby_Service.Controllers
 {
@@ -27,6 +28,7 @@ namespace Hobby_Service.Controllers
             _mapper = mapper;
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpPost]
         public async Task<ActionResult> Add(string name)
         {
@@ -65,6 +67,7 @@ namespace Hobby_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpPut]
         public async Task<ActionResult> Update(Hobby hobby)
         {
@@ -81,13 +84,18 @@ namespace Hobby_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpDelete]
-        public async Task<ActionResult> Delete(Guid uuid)
+        public async Task<ActionResult> Delete([FromQuery(Name = "uuid-collection")] List<Guid> uuidCollection)
         {
             try
             {
-                await _hobbyLogic.Delete(uuid);
+                await _hobbyLogic.Delete(uuidCollection);
                 return Ok();
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
             }
             catch (Exception e)
             {

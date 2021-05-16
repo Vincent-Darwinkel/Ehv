@@ -198,6 +198,7 @@ namespace Datepicker_Service.Logic
             DatepickerDto dbDatepicker)
         {
             var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqQueues.FindUserQueue);
+            users.RemoveAll(u => !u.ReceiveEmail);
 
             var emails = users
                 .Select(user => new EmailRabbitMq
@@ -256,6 +257,7 @@ namespace Datepicker_Service.Logic
 
             var rpcClient = new RpcClient(_channel);
             var users = rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqRouting.FindUser);
+            users.RemoveAll(u => !u.ReceiveEmail);
 
             var emails = users
                 .Select(user => new EmailRabbitMq

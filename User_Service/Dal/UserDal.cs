@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using User_Service.Dal.Interfaces;
+using User_Service.Enums;
 using User_Service.Models;
 
 namespace User_Service.Dal
@@ -40,6 +42,12 @@ namespace User_Service.Dal
                 .ToListAsync();
         }
 
+        public async Task<int> Count(AccountRole accountRole)
+        {
+            return await _context.User
+                .CountAsync(u => u.AccountRole == accountRole);
+        }
+
         public async Task<bool> Exists(string username, string email)
         {
             return await _context.User
@@ -55,8 +63,19 @@ namespace User_Service.Dal
                 .ToListAsync();
         }
 
+        public async Task<bool> Any()
+        {
+            return await _context.User.AnyAsync();
+        }
+
         public async Task Update(UserDto user)
         {
+            _context.Hobby.RemoveRange(user.Hobbies);
+            _context.Artist.RemoveRange(user.FavoriteArtists);
+
+            await _context.Hobby.AddRangeAsync(user.Hobbies);
+            await _context.Artist.AddRangeAsync(user.FavoriteArtists);
+
             _context.User.Update(user);
             await _context.SaveChangesAsync();
         }

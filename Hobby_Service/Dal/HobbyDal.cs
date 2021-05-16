@@ -3,6 +3,7 @@ using Hobby_Service.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hobby_Service.Dal
@@ -33,10 +34,14 @@ namespace Hobby_Service.Dal
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Guid uuid)
+        public async Task Delete(List<Guid> uuidCollection)
         {
-            HobbyDto hobbyToDelete = await _context.Hobby.FindAsync(uuid);
-            _context.Hobby.Remove(hobbyToDelete);
+            List<HobbyDto> hobbiesToDelete = await _context.Hobby
+                .Where(h => uuidCollection
+                    .Contains(h.Uuid))
+                .ToListAsync();
+
+            _context.Hobby.RemoveRange(hobbiesToDelete);
             await _context.SaveChangesAsync();
         }
     }

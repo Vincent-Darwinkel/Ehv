@@ -3,6 +3,7 @@ using Hobby_Service.Dal.Interfaces;
 using Hobby_Service.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hobby_Service.Logic
@@ -46,9 +47,14 @@ namespace Hobby_Service.Logic
             await _hobbyDal.Update(hobby);
         }
 
-        public async Task Delete(Guid uuid)
+        public async Task Delete(List<Guid> uuidCollection)
         {
-            await _hobbyDal.Delete(uuid);
+            if (!uuidCollection.Any())
+            {
+                throw new UnprocessableException();
+            }
+
+            await _hobbyDal.Delete(uuidCollection);
         }
     }
 }

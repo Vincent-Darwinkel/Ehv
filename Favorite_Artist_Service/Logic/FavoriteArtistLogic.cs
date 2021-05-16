@@ -3,6 +3,7 @@ using Favorite_Artist_Service.Dal.Interfaces;
 using Favorite_Artist_Service.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Favorite_Artist_Service.Logic
@@ -48,9 +49,14 @@ namespace Favorite_Artist_Service.Logic
             await _favoriteArtistDal.Update(hobby);
         }
 
-        public async Task Delete(Guid uuid)
+        public async Task Delete(List<Guid> uuidCollection)
         {
-            await _favoriteArtistDal.Delete(uuid);
+            if (!uuidCollection.Any())
+            {
+                throw new UnprocessableException();
+            }
+
+            await _favoriteArtistDal.Delete(uuidCollection);
         }
     }
 }

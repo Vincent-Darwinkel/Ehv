@@ -9,7 +9,7 @@ using User_Service.Dal;
 namespace User_Service.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210515122415_InitialCreate")]
+    [Migration("20210516182321_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,9 @@ namespace User_Service.Migrations
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
+
+                    b.Property<bool>("ReceiveEmail")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Username")
                         .HasColumnType("longtext");

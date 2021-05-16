@@ -9,6 +9,7 @@ namespace User_Service.Models.RabbitMq
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
+        public bool ReceiveEmail { get; set; }
         public AccountRole AccountRole { get; set; }
     }
 }

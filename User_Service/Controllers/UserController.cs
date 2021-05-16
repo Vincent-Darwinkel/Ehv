@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
+using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
@@ -54,6 +55,7 @@ namespace User_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpGet("{uuid}")]
         public async Task<ActionResult<UserViewModel>> Find(Guid uuid)
         {
@@ -73,8 +75,9 @@ namespace User_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpGet("by-list")]
-        public async Task<ActionResult<List<UserViewModel>>> Find([FromQuery] List<Guid> uuidCollection)
+        public async Task<ActionResult<List<UserViewModel>>> Find([FromQuery(Name = "uuid-collection")] List<Guid> uuidCollection)
         {
             try
             {
@@ -92,6 +95,7 @@ namespace User_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpGet]
         public async Task<ActionResult<List<UserViewModel>>> All()
         {
@@ -107,6 +111,7 @@ namespace User_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] User user)
         {
@@ -120,6 +125,14 @@ namespace User_Service.Controllers
             {
                 return Unauthorized();
             }
+            catch (DuplicateNameException)
+            {
+                return StatusCode(StatusCodes.Status409Conflict);
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
+            }
             catch (Exception e)
             {
                 _logLogic.Log(e);
@@ -127,6 +140,7 @@ namespace User_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpDelete]
         public async Task<ActionResult> Delete(Guid uuid)
         {
@@ -143,6 +157,10 @@ namespace User_Service.Controllers
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
+            }
+            catch (SiteAdminRequiredException)
+            {
+                return UnprocessableEntity();
             }
             catch (Exception e)
             {

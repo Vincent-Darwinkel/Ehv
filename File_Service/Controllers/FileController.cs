@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using File_Service.Enums;
 
 namespace File_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
     [Route("file")]
     [ApiController]
     public class FileController : ControllerBase
@@ -55,12 +57,12 @@ namespace File_Service.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> RemoveFile(Guid uuid)
+        public async Task<ActionResult> Delete(Guid uuid)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _fileLogic.RemoveFile(uuid, requestingUser.Uuid);
+                await _fileLogic.Remove(uuid, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Favorite_Artist_Service.CustomExceptions;
+using Favorite_Artist_Service.Enums;
 
 namespace Favorite_Artist_Service.Controllers
 {
@@ -27,6 +28,7 @@ namespace Favorite_Artist_Service.Controllers
             _mapper = mapper;
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpPost]
         public async Task<ActionResult> Add(string name)
         {
@@ -66,6 +68,7 @@ namespace Favorite_Artist_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpPut]
         public async Task<ActionResult> Update(FavoriteArtist favoriteArtist)
         {
@@ -82,13 +85,18 @@ namespace Favorite_Artist_Service.Controllers
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
         [HttpDelete]
-        public async Task<ActionResult> Delete(Guid uuid)
+        public async Task<ActionResult> Delete([FromQuery(Name = "uuid-collection")] List<Guid> uuidCollection)
         {
             try
             {
-                await _favoriteArtistLogic.Delete(uuid);
+                await _favoriteArtistLogic.Delete(uuidCollection);
                 return Ok();
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
             }
             catch (Exception e)
             {

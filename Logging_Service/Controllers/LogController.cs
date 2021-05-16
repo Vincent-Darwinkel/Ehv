@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Logging_Service.Enums;
 
 namespace Logging_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.SiteAdmin })]
     [Route("log")]
     [ApiController]
     public class LogController : ControllerBase
@@ -21,21 +24,6 @@ namespace Logging_Service.Controllers
         {
             _logLogic = logLogic;
             _mapper = mapper;
-        }
-
-        [HttpGet("{microservice}")]
-        public async Task<ActionResult<List<LogViewmodel>>> Find(string microService)
-        {
-            try
-            {
-                List<LogDto> logCollection = await _logLogic.Find(microService);
-                return _mapper.Map<List<LogViewmodel>>(logCollection);
-            }
-            catch (Exception e)
-            {
-                await _logLogic.Log(e);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
         }
 
         [HttpGet]
@@ -54,11 +42,11 @@ namespace Logging_Service.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(List<Guid> uuidCollection)
+        public async Task<ActionResult> Delete([FromQuery(Name = "uuid-collection")] Guid[] uuidCollection)
         {
             try
             {
-                await _logLogic.Delete(uuidCollection);
+                await _logLogic.Delete(uuidCollection.ToList());
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception e)

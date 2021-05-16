@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Datepicker_Service.Enums;
 
 namespace Datepicker_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin })]
     [Route("datepicker/availability")]
     [ApiController]
     public class DatepickerAvailabilityController : ControllerBase

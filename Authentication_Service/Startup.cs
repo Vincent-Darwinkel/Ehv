@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Data;
 using System.Text.Json.Serialization;
+using RabbitMQ.Client;
 using DataContext = Authentication_Service.Dal.DataContext;
 using IUserDal = Authentication_Service.Dal.Interface.IUserDal;
 using UserDal = Authentication_Service.Dal.UserDal;
@@ -86,6 +87,12 @@ namespace Authentication_Service
                 app.ApplicationServices.GetService<DeleteUserConsumer>()
             }.ForEach(consumer => consumer.Consume());
 
+            var channel = app.ApplicationServices.GetService<IModel>();
+            var logLogic = app.ApplicationServices.GetService<LogLogic>();
+            var userLogic = app.ApplicationServices.GetService<UserLogic>();
+
+            // ReSharper disable once ObjectCreationAsStatement
+            new RpcServer(channel, RabbitMqQueues.ValidateUserPasswordQueue, userLogic.ValidateUserPassword, logLogic);
 
             app.UseRouting();
             app.UseCors(builder =>

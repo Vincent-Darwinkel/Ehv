@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Threading.Tasks;
+using File_Service.Enums;
 
 namespace File_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
     [Route("directory")]
     [ApiController]
     public class DirectoryController : ControllerBase
@@ -98,7 +100,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _directoryLogic.RemoveDirectory(path, requestingUser.Uuid);
+                await _directoryLogic.RemoveDirectory(path, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

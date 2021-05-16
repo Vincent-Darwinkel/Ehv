@@ -3,8 +3,6 @@ using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.RabbitMq;
-using Authentication_Service.RabbitMq.Publishers;
-using Authentication_Service.RabbitMq.Rpc;
 using AutoMapper;
 using System;
 using System.Threading.Tasks;
@@ -44,6 +42,15 @@ namespace Authentication_Service.Logic
             await _userDal.Add(userDto);
         }
 
+        public async Task<string> ValidateUserPassword(string user)
+        {
+            var userRabbitMq = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(user);
+            UserDto dbUser = await _userDal.Find(userRabbitMq.Username);
+
+            bool passwordCorrect = _securityLogic.VerifyPassword(userRabbitMq.Password, dbUser.Password);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(passwordCorrect);
+        }
+
         public async Task Update(UserDto user)
         {
             if (!UserModelValid(user))
@@ -53,8 +60,7 @@ namespace Authentication_Service.Logic
 
             UserDto dbUser = await _userDal.Find(user.Uuid);
             dbUser.Username = user.Username;
-            dbUser.AccountRole = user.AccountRole;
-            if (user.Password != dbUser.Password)
+            if (!_securityLogic.VerifyPassword(user.Password, dbUser.Password))
             {
                 dbUser.Password = _securityLogic.HashPassword(user.Password);
             }
