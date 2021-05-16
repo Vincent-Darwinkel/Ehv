@@ -1,5 +1,5 @@
-﻿using System;
-using Logging_Service.Enums;
+﻿using Logging_Service.Enums;
+using System;
 
 namespace Logging_Service.Models.RabbitMq
 {

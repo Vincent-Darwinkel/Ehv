@@ -1,4 +1,5 @@
 ﻿using File_Service.CustomExceptions;
+using File_Service.Enums;
 using File_Service.Logic;
 using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using File_Service.Enums;
 
 namespace File_Service.Controllers
 {

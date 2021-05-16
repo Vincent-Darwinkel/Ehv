@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using Authentication_Service.Enums;
+﻿using Authentication_Service.Enums;
 using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 
 namespace Authentication_Service
 {

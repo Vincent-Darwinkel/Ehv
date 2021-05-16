@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using Event_Service.Enums;
+﻿using Event_Service.Enums;
 using Event_Service.Logic;
 using Event_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 
 namespace Event_Service
 {

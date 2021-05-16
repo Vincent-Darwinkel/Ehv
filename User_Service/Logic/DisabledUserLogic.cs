@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
-using User_Service.Dal;
 using User_Service.Dal.Interfaces;
 using User_Service.Enums;
 using User_Service.Models;

@@ -1,4 +1,5 @@
 ﻿using File_Service.CustomExceptions;
+using File_Service.Enums;
 using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
 using System;
@@ -7,7 +8,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using File_Service.Enums;
 
 namespace File_Service.Logic
 {

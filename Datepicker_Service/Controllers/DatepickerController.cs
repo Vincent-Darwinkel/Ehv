@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Datepicker_Service.CustomExceptions;
+using Datepicker_Service.Enums;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models;
 using Datepicker_Service.Models.FromFrontend;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Datepicker_Service.Enums;
 
 namespace Datepicker_Service.Controllers
 {

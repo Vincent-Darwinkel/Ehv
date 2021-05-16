@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using Datepicker_Service.Enums;
+﻿using Datepicker_Service.Enums;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace Datepicker_Service
 {

@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using Hobby_Service.Enums;
+﻿using Hobby_Service.Enums;
 using Hobby_Service.Logic;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 using RequestHeaders = Hobby_Service.Models.Helpers.RequestHeaders;
 
 namespace Hobby_Service

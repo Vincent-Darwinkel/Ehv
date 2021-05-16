@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using Logging_Service.Enums;
+﻿using Logging_Service.Enums;
 using Logging_Service.Logic;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 using RequestHeaders = Logging_Service.Models.Helpers.RequestHeaders;
 
 namespace Logging_Service

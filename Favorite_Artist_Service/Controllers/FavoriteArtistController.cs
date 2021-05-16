@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Favorite_Artist_Service.CustomExceptions;
+using Favorite_Artist_Service.Enums;
 using Favorite_Artist_Service.Logic;
 using Favorite_Artist_Service.Model;
 using Favorite_Artist_Service.Model.FromFrontend;
@@ -8,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Favorite_Artist_Service.CustomExceptions;
-using Favorite_Artist_Service.Enums;
 
 namespace Favorite_Artist_Service.Controllers
 {

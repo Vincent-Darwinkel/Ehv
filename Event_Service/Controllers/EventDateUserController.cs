@@ -1,11 +1,11 @@
-﻿using Event_Service.Logic;
+﻿using Event_Service.Enums;
+using Event_Service.Logic;
 using Event_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using Event_Service.Enums;
 
 namespace Event_Service.Controllers
 {
