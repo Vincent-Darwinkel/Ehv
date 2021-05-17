@@ -15,6 +15,7 @@ namespace User_Service.Models.HelperFiles
                 cfg.CreateMap<UserDto, UserViewModel>();
                 cfg.CreateMap<UserDto, UserRabbitMq>();
                 cfg.CreateMap<UserDto, UserRabbitMqSensitiveInformation>();
+                cfg.CreateMap<DisabledUserRabbitMq, DisabledUser>();
                 cfg.CreateMap<FavoriteArtist, FavoriteArtistDto>();
                 cfg.CreateMap<UserHobby, UserHobbyDto>();
                 cfg.CreateMap<UserActivationRabbitMq, ActivationDto>();

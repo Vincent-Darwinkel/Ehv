@@ -52,7 +52,7 @@ namespace Event_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _eventStepUserLogic.Remove(uuid, requestingUser);
+                await _eventStepUserLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (Exception e)
