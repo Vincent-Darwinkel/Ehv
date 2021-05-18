@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Event_Service.Models;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Event_Service.Models;
 
 namespace Event_Service.Dal.Interfaces
 {
@@ -9,33 +10,36 @@ namespace Event_Service.Dal.Interfaces
         /// <summary>
         /// Adds the event to the database
         /// </summary>
-        /// <param name="eventToAdd">The event to add</param>
-        Task Add(EventDto eventToAdd);
+        /// <param name="eventDto"></param>
+        public Task Add(EventDto eventDto);
 
-        /// <summary>
-        /// Finds the event by uuid
-        /// </summary>
-        /// <param name="uuid">The uuid to search for</param>
-        /// <returns>The found event, null if nothing found</returns>
-        Task<EventDto> Find(Guid uuid);
+        /// <returns>All events</returns>
+        public Task<List<EventDto>> All();
 
         /// <summary>
         /// Checks if the event exists
         /// </summary>
-        /// <param name="title">The title to search for</param>
-        /// <returns>True if event with title exists, false if does not exists</returns>
-        Task<bool> Exists(string title);
+        /// <param name="eventName"></param>
+        /// <returns>True if found, false if not found</returns>
+        public Task<bool> Exists(string eventName);
 
         /// <summary>
-        /// Updates the event
+        /// Find event by uuid
         /// </summary>
-        /// <param name="eventToUpdate">The updated event</param>
-        Task Update(EventDto eventToUpdate);
+        /// <param name="uuid"></param>
+        /// <returns>The found event, null if nothing is found</returns>
+        public Task<EventDto> Find(Guid uuid);
 
         /// <summary>
-        /// Deletes the event by uuid
+        /// Updates the specified event
         /// </summary>
-        /// <param name="uuid">The uuid to delete</param>
-        Task Delete(Guid uuid);
+        /// <param name="eventToUpdate"></param>
+        public Task Update(EventDto eventToUpdate);
+
+        /// <summary>
+        /// Removes the event from the database
+        /// </summary>
+        /// <param name="eventToRemove"></param>
+        public Task Delete(EventDto eventToRemove);
     }
 }

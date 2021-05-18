@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Logging_Service.CustomExceptions;
 using Logging_Service.Dal.Interfaces;
 using Logging_Service.Models;
 using Logging_Service.Models.RabbitMq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Logging_Service.Logic
 {
@@ -31,11 +31,13 @@ namespace Logging_Service.Logic
         {
             foreach (var sensitiveExceptionKeyword in _sensitiveExceptionKeywords)
             {
-                if (exception.Message.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.Message) && exception.Message.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }
-                if (exception.StackTrace.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.StackTrace) && exception.StackTrace.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }
@@ -81,24 +83,9 @@ namespace Logging_Service.Logic
             await _logDal.Add(log);
         }
 
-        public async Task<List<LogDto>> Find(List<Guid> uuidCollection)
+        public async Task<List<LogDto>> All()
         {
-            if (!uuidCollection.Any())
-            {
-                throw new UnprocessableException();
-            }
-
-            return await _logDal.Find(uuidCollection);
-        }
-
-        public async Task<List<LogDto>> Find(string microService)
-        {
-            if (string.IsNullOrEmpty(microService))
-            {
-                throw new UnprocessableException();
-            }
-
-            return await _logDal.Find(microService);
+            return await _logDal.All();
         }
 
         public async Task Delete(List<Guid> uuidCollection)

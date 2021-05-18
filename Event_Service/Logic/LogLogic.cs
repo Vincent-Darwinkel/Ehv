@@ -1,8 +1,7 @@
-﻿using System;
-using Event_Service.Models.HelperFiles;
+﻿using Event_Service.Models.HelperFiles;
 using Event_Service.Models.RabbitMq;
 using Event_Service.RabbitMq.Publishers;
-using RabbitMQ.Client;
+using System;
 
 namespace Event_Service.Logic
 {
@@ -25,11 +24,13 @@ namespace Event_Service.Logic
         {
             foreach (var sensitiveExceptionKeyword in _sensitiveExceptionKeywords)
             {
-                if (exception.Message.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.Message) && exception.Message.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }
-                if (exception.StackTrace.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.StackTrace) && exception.StackTrace.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }

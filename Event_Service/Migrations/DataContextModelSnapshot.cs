@@ -14,8 +14,8 @@ namespace Event_Service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.14")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.6");
 
             modelBuilder.Entity("Event_Service.Models.EventDateDto", b =>
                 {
@@ -26,15 +26,12 @@ namespace Event_Service.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("EventDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("EventUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("EventDtoUuid");
+                    b.HasIndex("EventUuid");
 
                     b.ToTable("EventDate");
                 });
@@ -45,9 +42,6 @@ namespace Event_Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("EventDateDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("EventDateUuid")
                         .HasColumnType("char(36)");
 
@@ -56,7 +50,7 @@ namespace Event_Service.Migrations
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("EventDateDtoUuid");
+                    b.HasIndex("EventDateUuid");
 
                     b.ToTable("EventDateUser");
                 });
@@ -70,14 +64,20 @@ namespace Event_Service.Migrations
                     b.Property<Guid>("AuthorUuid")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Location")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasMaxLength(125)
+                        .HasColumnType("varchar(125)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.HasKey("Uuid");
 
@@ -90,21 +90,18 @@ namespace Event_Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid?>("EventDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("EventUuid")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("StepNr")
                         .HasColumnType("int");
 
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext");
+
                     b.HasKey("Uuid");
 
-                    b.HasIndex("EventDtoUuid");
+                    b.HasIndex("EventUuid");
 
                     b.ToTable("EventStep");
                 });
@@ -115,9 +112,6 @@ namespace Event_Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("EventStepDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("EventStepUuid")
                         .HasColumnType("char(36)");
 
@@ -126,7 +120,7 @@ namespace Event_Service.Migrations
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("EventStepDtoUuid");
+                    b.HasIndex("EventStepUuid");
 
                     b.ToTable("EventStepUser");
                 });
@@ -135,28 +129,53 @@ namespace Event_Service.Migrations
                 {
                     b.HasOne("Event_Service.Models.EventDto", null)
                         .WithMany("EventDates")
-                        .HasForeignKey("EventDtoUuid");
+                        .HasForeignKey("EventUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Event_Service.Models.EventDateUserDto", b =>
                 {
                     b.HasOne("Event_Service.Models.EventDateDto", null)
                         .WithMany("EventDateUsers")
-                        .HasForeignKey("EventDateDtoUuid");
+                        .HasForeignKey("EventDateUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Event_Service.Models.EventStepDto", b =>
                 {
                     b.HasOne("Event_Service.Models.EventDto", null)
                         .WithMany("EventSteps")
-                        .HasForeignKey("EventDtoUuid");
+                        .HasForeignKey("EventUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Event_Service.Models.EventStepUserDto", b =>
                 {
                     b.HasOne("Event_Service.Models.EventStepDto", null)
                         .WithMany("EventStepUsers")
-                        .HasForeignKey("EventStepDtoUuid");
+                        .HasForeignKey("EventStepUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Event_Service.Models.EventDateDto", b =>
+                {
+                    b.Navigation("EventDateUsers");
+                });
+
+            modelBuilder.Entity("Event_Service.Models.EventDto", b =>
+                {
+                    b.Navigation("EventDates");
+
+                    b.Navigation("EventSteps");
+                });
+
+            modelBuilder.Entity("Event_Service.Models.EventStepDto", b =>
+                {
+                    b.Navigation("EventStepUsers");
                 });
 #pragma warning restore 612, 618
         }

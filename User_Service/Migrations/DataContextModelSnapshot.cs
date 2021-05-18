@@ -14,8 +14,42 @@ namespace User_Service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.14")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.6");
+
+            modelBuilder.Entity("User_Service.Models.ActivationDto", b =>
+                {
+                    b.Property<Guid>("Uuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("UserUuid")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Uuid");
+
+                    b.ToTable("Activation");
+                });
+
+            modelBuilder.Entity("User_Service.Models.DisabledUserDto", b =>
+                {
+                    b.Property<Guid>("Uuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserUuid")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Uuid");
+
+                    b.ToTable("DisabledUser");
+                });
 
             modelBuilder.Entity("User_Service.Models.FavoriteArtistDto", b =>
                 {
@@ -24,19 +58,33 @@ namespace User_Service.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Artist")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid?>("UserDtoUuid")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("longtext");
 
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("UserDtoUuid");
+                    b.HasIndex("UserUuid");
 
                     b.ToTable("Artist");
+                });
+
+            modelBuilder.Entity("User_Service.Models.PasswordResetDto", b =>
+                {
+                    b.Property<Guid>("Uuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("UserUuid")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Uuid");
+
+                    b.ToTable("PasswordReset");
                 });
 
             modelBuilder.Entity("User_Service.Models.UserDto", b =>
@@ -46,7 +94,7 @@ namespace User_Service.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("About")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("AccountRole")
                         .HasColumnType("int");
@@ -55,13 +103,16 @@ namespace User_Service.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<bool>("ReceiveEmail")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Username")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Uuid");
 
@@ -75,17 +126,14 @@ namespace User_Service.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Hobby")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid?>("UserDtoUuid")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("longtext");
 
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("UserDtoUuid");
+                    b.HasIndex("UserUuid");
 
                     b.ToTable("Hobby");
                 });
@@ -94,14 +142,25 @@ namespace User_Service.Migrations
                 {
                     b.HasOne("User_Service.Models.UserDto", null)
                         .WithMany("FavoriteArtists")
-                        .HasForeignKey("UserDtoUuid");
+                        .HasForeignKey("UserUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("User_Service.Models.UserHobbyDto", b =>
                 {
                     b.HasOne("User_Service.Models.UserDto", null)
                         .WithMany("Hobbies")
-                        .HasForeignKey("UserDtoUuid");
+                        .HasForeignKey("UserUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("User_Service.Models.UserDto", b =>
+                {
+                    b.Navigation("FavoriteArtists");
+
+                    b.Navigation("Hobbies");
                 });
 #pragma warning restore 612, 618
         }

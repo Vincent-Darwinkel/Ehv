@@ -14,8 +14,8 @@ namespace Datepicker_Service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.14")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.6");
 
             modelBuilder.Entity("Datepicker_Service.Models.DatepickerAvailabilityDto", b =>
                 {
@@ -26,17 +26,14 @@ namespace Datepicker_Service.Migrations
                     b.Property<Guid>("DateUuid")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("DatepickerDateDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.HasIndex("DatepickerDateDtoUuid");
+                    b.HasIndex("DateUuid");
 
-                    b.ToTable("DatepickerAvailabilityDto");
+                    b.ToTable("DatepickerAvailability");
                 });
 
             modelBuilder.Entity("Datepicker_Service.Models.DatepickerDateDto", b =>
@@ -51,12 +48,9 @@ namespace Datepicker_Service.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("DatepickerDtoUuid")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Uuid");
 
-                    b.HasIndex("DatepickerDtoUuid");
+                    b.HasIndex("DatePickerUuid");
 
                     b.ToTable("DatepickerDate");
                 });
@@ -71,16 +65,16 @@ namespace Datepicker_Service.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Location")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Uuid");
 
@@ -91,14 +85,28 @@ namespace Datepicker_Service.Migrations
                 {
                     b.HasOne("Datepicker_Service.Models.DatepickerDateDto", null)
                         .WithMany("UserAvailabilities")
-                        .HasForeignKey("DatepickerDateDtoUuid");
+                        .HasForeignKey("DateUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Datepicker_Service.Models.DatepickerDateDto", b =>
                 {
                     b.HasOne("Datepicker_Service.Models.DatepickerDto", null)
                         .WithMany("Dates")
-                        .HasForeignKey("DatepickerDtoUuid");
+                        .HasForeignKey("DatePickerUuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Datepicker_Service.Models.DatepickerDateDto", b =>
+                {
+                    b.Navigation("UserAvailabilities");
+                });
+
+            modelBuilder.Entity("Datepicker_Service.Models.DatepickerDto", b =>
+                {
+                    b.Navigation("Dates");
                 });
 #pragma warning restore 612, 618
         }

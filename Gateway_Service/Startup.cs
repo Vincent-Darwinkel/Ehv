@@ -1,4 +1,3 @@
-using System.Text;
 using Gateway_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using System.Text;
 
 namespace Gateway_Service
 {
@@ -28,9 +28,9 @@ namespace Gateway_Service
             var jwtConfig = Configuration
                 .GetSection("JwtConfig")
                 .Get<JwtConfig>();
-
             string secret = jwtConfig.Secret;
             var key = Encoding.ASCII.GetBytes(secret);
+
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,8 +43,8 @@ namespace Gateway_Service
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
             services.AddCors(options =>
@@ -65,9 +65,10 @@ namespace Gateway_Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-            //app.UseAntiXssMiddleware(); TODO uncomment
             app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseRouting();
+            //app.UseAntiXssMiddleware(); TODO find out why this kicks in on file uploads
             app.UseCors("CorsPolicy");
             app.UseOcelot().Wait();
         }

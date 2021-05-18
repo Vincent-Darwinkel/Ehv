@@ -1,27 +1,22 @@
-﻿using System;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System;
 using System.Collections.Concurrent;
 using System.Text;
-using System.Text.Json.Serialization;
-using Event_Service.Models.HelperFiles;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
-namespace Event_Service.RabbitMq.RPC
+namespace Event_Service.RabbitMq.Rpc
 {
-    public class RpcClient
+    public class RpcClient : IRpcClient
     {
-        private readonly IConnection _connection;
         private readonly IModel _channel;
         private readonly string _replyQueueName;
         private readonly EventingBasicConsumer _consumer;
         private readonly BlockingCollection<string> _respQueue = new BlockingCollection<string>();
         private readonly IBasicProperties _props;
 
-        public RpcClient()
+        public RpcClient(IModel channel)
         {
-            var factory = new ConnectionFactory { HostName = "rabbitmq" };
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
+            _channel = channel;
             _replyQueueName = _channel.QueueDeclare().QueueName;
             _consumer = new EventingBasicConsumer(_channel);
 
@@ -41,13 +36,18 @@ namespace Event_Service.RabbitMq.RPC
             };
         }
 
-        public string Call(object objectToSend)
+        public T Call<T>(object objectToSend, string queue)
         {
+            if (objectToSend == null || string.IsNullOrEmpty(queue))
+            {
+                throw new NullReferenceException();
+            }
+
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
             var messageBytes = Encoding.UTF8.GetBytes(json);
             _channel.BasicPublish(
                 "",
-                RabbitMqRouting.EventExists,
+                queue, // this parameter name is routing key but needs the name of the queue, the name is probably wrong
                 _props,
                 messageBytes);
 
@@ -56,12 +56,7 @@ namespace Event_Service.RabbitMq.RPC
                 queue: _replyQueueName,
                 autoAck: true);
 
-            return _respQueue.Take();
-        }
-
-        public void Close()
-        {
-            _connection.Close();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(_respQueue.Take());
         }
     }
 }

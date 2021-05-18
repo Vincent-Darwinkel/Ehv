@@ -4,15 +4,14 @@ using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
 using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.Models.ToFrontend;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,10 +20,10 @@ namespace Authentication_Service.Logic
     public class JwtLogic
     {
         private readonly IRefreshTokenDal _refreshTokenDal;
-        private readonly IOptions<JwtConfig> _config;
+        private readonly JwtConfig _config;
         private readonly JsonWebTokenHandler _handler = new JsonWebTokenHandler();
 
-        public JwtLogic(IRefreshTokenDal refreshTokenDal, IOptions<JwtConfig> config)
+        public JwtLogic(IRefreshTokenDal refreshTokenDal, JwtConfig config)
         {
             _refreshTokenDal = refreshTokenDal;
             _config = config;
@@ -37,12 +36,18 @@ namespace Authentication_Service.Logic
         /// <returns>A security token descriptor</returns>
         private SecurityTokenDescriptor GetTokenDescriptor(UserDto user)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Value.Secret));
+            string secretKey = _config.Secret;
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new NoNullAllowedException();
+            }
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var expirationDate = DateTime.UtcNow.AddMinutes(15);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = "Auth",
-                Audience = _config.Value.FrontendUrl,
+                Audience = _config.FrontendUrl,
                 IssuedAt = DateTime.UtcNow,
                 NotBefore = DateTime.UtcNow,
                 Expires = expirationDate,
@@ -113,7 +118,7 @@ namespace Authentication_Service.Logic
                 throw new ArgumentNullException(nameof(jwt));
             }
 
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Value.Secret));
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.Secret));
             return _handler.ValidateToken(jwt,
                 new TokenValidationParameters
                 {
@@ -133,9 +138,9 @@ namespace Authentication_Service.Logic
         /// </summary>
         /// <param name="user">The db user</param>
         /// <returns>An jwt and refresh token object</returns>
-        public async Task<LoginResultViewmodel> CreateJwt(UserDto user, RefreshTokenDto oldRefreshToken = null)
+        public async Task<AuthorizationTokensViewmodel> CreateJwt(UserDto user, RefreshTokenDto oldRefreshToken = null)
         {
-            if (user?.Uuid == Guid.Empty || user?.AccountRole == AccountRole.Undefined || string.IsNullOrEmpty(user?.Username))
+            if (user == null || user.Uuid == Guid.Empty || user.AccountRole == AccountRole.Undefined)
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -145,7 +150,7 @@ namespace Authentication_Service.Logic
 
             var refreshTokenDto = new RefreshTokenDto
             {
-                RefreshToken = GenerateRefreshToken(),
+                RefreshToken = Guid.NewGuid(),
                 ExpirationDate = DateTime.Now.AddDays(7),
                 UserUuid = user.Uuid
             };
@@ -156,7 +161,7 @@ namespace Authentication_Service.Logic
             }
 
             await _refreshTokenDal.Add(refreshTokenDto);
-            return new LoginResultViewmodel
+            return new AuthorizationTokensViewmodel
             {
                 Jwt = jwt,
                 RefreshToken = refreshTokenDto.RefreshToken
@@ -170,7 +175,7 @@ namespace Authentication_Service.Logic
         /// <param name="refreshToken">The refresh token</param>
         /// <param name="requestingUser">The user that made the request</param>
         /// <returns>The refreshed jwt and refresh token</returns>
-        public async Task<LoginResultViewmodel> RefreshJwt(string expiredJwt, string refreshToken, UserDto requestingUser)
+        public async Task<AuthorizationTokensViewmodel> RefreshJwt(string expiredJwt, Guid refreshToken, UserDto requestingUser)
         {
             TokenValidationResult validationResult = ValidateJwt(expiredJwt, true);
             if (!validationResult.IsValid)
@@ -184,7 +189,7 @@ namespace Authentication_Service.Logic
                 UserUuid = requestingUser.Uuid
             }).Result;
 
-            if (refreshToken == null || savedRefreshToken?.RefreshToken != refreshToken)
+            if (refreshToken == Guid.Empty || savedRefreshToken?.RefreshToken != refreshToken)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
@@ -196,18 +201,6 @@ namespace Authentication_Service.Logic
             }
 
             return await CreateJwt(requestingUser, savedRefreshToken);
-        }
-
-        /// <summary>
-        /// Generates a refresh expiredJwt
-        /// </summary>
-        /// <returns>Th refresh expiredJwt</returns>
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
         }
     }
 }

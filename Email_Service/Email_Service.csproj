@@ -21,6 +21,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="EmailTemplates\DeleteEvent.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="EmailTemplates\DatepickerConversion.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="EmailTemplates\ActivateAccount.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="EmailTemplates\LoginMultiRole.html">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

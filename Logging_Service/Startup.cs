@@ -1,16 +1,18 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Linq;
 using Logging_Service.Dal;
 using Logging_Service.Dal.Interfaces;
 using Logging_Service.Logic;
 using Logging_Service.Models.Helpers;
 using Logging_Service.RabbitMq;
+using Logging_Service.RabbitMq.Consumers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Logging_Service
 {
@@ -28,9 +30,19 @@ namespace Logging_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -42,36 +54,44 @@ namespace Logging_Service
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<LogLogic>();
             services.AddScoped<ILogDal, LogDal>();
+            services.AddScoped<AddLogConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<AddLogConsumer>(),
+            }.ForEach(consumer => consumer.Consume());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseRouting();
-
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
 
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
+            UpdateDatabase(app);
         }
 
-        public void ApplyMigrations(DataContext context)
+        private static void UpdateDatabase(IApplicationBuilder app)
         {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

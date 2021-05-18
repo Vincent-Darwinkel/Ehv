@@ -4,6 +4,7 @@
     {
         public static readonly string AddLog = "add.log";
         public static readonly string EventExists = "exists.event";
+        public static readonly string ConvertDatepicker = "convert.event";
         public static readonly string FindUser = "find.user";
         public static readonly string SendMail = "send.mail";
     }

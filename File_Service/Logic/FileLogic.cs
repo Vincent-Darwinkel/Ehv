@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using File_Service.CustomExceptions;
+﻿using File_Service.CustomExceptions;
 using File_Service.Enums;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace File_Service.Logic
 {
@@ -23,9 +23,9 @@ namespace File_Service.Logic
         /// <summary>
         /// Finds the file by uuid
         /// </summary>
-        /// <param name="uuid"></param>
+        /// <param name="uuid">The uuid of the file to find</param>
         /// <returns>A FileContentResult which contains the file</returns>
-        public async Task<FileContentResult> FindAsync(Guid uuid)
+        public async Task<FileContentResult> Find(Guid uuid)
         {
             string foundFilePath = FileHelper.GetFilePathByUuid(uuid);
             if (string.IsNullOrEmpty(foundFilePath))
@@ -68,8 +68,13 @@ namespace File_Service.Logic
         /// <param name="userSpecifiedPath">The userSpecifiedPath to save the files in</param>
         /// <param name="requestingUserUuid">The uuid of the requesting user</param>
         /// <returns>A list of the name of the files that are saved</returns>
-        public async Task SaveFileAsync(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
+        public async Task SaveFile(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
         {
+            if (string.IsNullOrEmpty(userSpecifiedPath))
+            {
+                throw new UnprocessableException();
+            }
+
             userSpecifiedPath = FixPath(userSpecifiedPath);
             string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
 
@@ -80,6 +85,11 @@ namespace File_Service.Logic
             }
 
             List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
+            if (validFiles.Count == 0)
+            {
+                throw new UnprocessableException();
+            }
+
             var fileNameCollection = new List<Guid>();
             validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid()));
 
@@ -148,8 +158,8 @@ namespace File_Service.Logic
         /// Removes a file by uuid if the user is owner and the file exists
         /// </summary>
         /// <param name="fileUuid">The uuid of the file to remove</param>
-        /// <param name="requestingUserUuid">The uuid of the requesting user</param>
-        public async Task RemoveFile(Guid fileUuid, Guid requestingUserUuid)
+        /// <param name="requestingUser">The user that made the request</param>
+        public async Task Delete(Guid fileUuid, UserHelper requestingUser)
         {
             if (fileUuid == Guid.Empty)
             {
@@ -161,17 +171,17 @@ namespace File_Service.Logic
 
             DirectoryInfoFile infoFile = await DirectoryHelper.GetInfoFileFromDirectory(directoryPath);
             FileContentInfo fileContentInfo = infoFile.FileInfo
-                .Find(fi => fi.FileOwnerUuid == requestingUserUuid);
+                .Find(fi => fi.FileOwnerUuid == requestingUser.Uuid);
 
-            bool fileIsOwnedByUser = fileContentInfo.FilesOwnedByUser
-                .Contains(fileUuid);
+            bool fileCanBeRemovedByRequestingUser = fileContentInfo.FilesOwnedByUser
+                .Contains(fileUuid) || requestingUser.AccountRole > AccountRole.User;
 
             if (!File.Exists(fullPath))
             {
                 throw new UnprocessableException();
             }
 
-            if (!fileIsOwnedByUser)
+            if (!fileCanBeRemovedByRequestingUser)
             {
                 throw new UnauthorizedAccessException();
             }

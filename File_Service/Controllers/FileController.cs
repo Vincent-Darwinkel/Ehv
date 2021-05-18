@@ -1,40 +1,44 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using File_Service.CustomExceptions;
+using File_Service.Enums;
+using File_Service.Logic;
+using File_Service.Models.FromFrontend;
+using File_Service.Models.HelperFiles;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using File_Service.CustomExceptions;
-using File_Service.Logic;
 
 namespace File_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
     [Route("file")]
     [ApiController]
     public class FileController : ControllerBase
     {
         private readonly FileLogic _fileLogic;
         private readonly LogLogic _logLogic;
+        private readonly ControllerHelper _controllerHelper;
 
-        public FileController(FileLogic fileLogic, LogLogic logLogic)
+        public FileController(FileLogic fileLogic, LogLogic logLogic, ControllerHelper controllerHelper)
         {
             _fileLogic = fileLogic;
             _logLogic = logLogic;
+            _controllerHelper = controllerHelper;
         }
 
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            return await _fileLogic.FindAsync(uuid);
+            return await _fileLogic.Find(uuid);
         }
 
         [HttpPost]
-        public async Task<ActionResult> SaveFilesAsync([FromForm] List<IFormFile> files, string path)
+        public async Task<ActionResult> SaveFilesAsync([FromForm] FileUpload fileUpload)
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _fileLogic.SaveFileAsync(files, path, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _fileLogic.SaveFile(fileUpload.Files, fileUpload.Path, requestingUser.Uuid);
                 return Ok();
             }
             catch (DirectoryNotFoundException)
@@ -53,13 +57,12 @@ namespace File_Service.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> RemoveFile(Guid uuid)
+        public async Task<ActionResult> Delete(Guid uuid)
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _fileLogic.RemoveFile(uuid, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _fileLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

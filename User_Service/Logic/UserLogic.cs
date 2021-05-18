@@ -5,37 +5,41 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
-using User_Service.Dal;
+using User_Service.Dal.Interfaces;
 using User_Service.Enums;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
 using User_Service.Models.HelperFiles;
 using User_Service.Models.RabbitMq;
-using User_Service.RabbitMq;
 using User_Service.RabbitMq.Publishers;
+using User_Service.RabbitMq.Rpc;
 
 namespace User_Service.Logic
 {
     public class UserLogic
     {
         private readonly IUserDal _userDal;
+        private readonly IDisabledUserDal _disabledUserDal;
+        private readonly IActivationDal _activationDal;
         private readonly IMapper _mapper;
         private readonly IPublisher _publisher;
+        private readonly IRpcClient _rpcClient;
 
-        public UserLogic(IUserDal userDal, IMapper mapper, IPublisher publisher)
+        public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
+            IMapper mapper, IPublisher publisher, IRpcClient rpcClient)
         {
             _userDal = userDal;
+            _disabledUserDal = disabledUserDal;
+            _activationDal = activationDal;
             _mapper = mapper;
             _publisher = publisher;
+            _rpcClient = rpcClient;
         }
 
         private bool UserModelValid(User user)
         {
             return !string.IsNullOrEmpty(user.Username) &&
-                   user.AccountRole != AccountRole.Undefined &&
                    !string.IsNullOrEmpty(user.Email) &&
-                   !string.IsNullOrEmpty(user.About) &&
-                   user.Gender != Gender.Undefined &&
                    EmailIsValid(user.Email);
         }
 
@@ -50,21 +54,66 @@ namespace User_Service.Logic
                 throw new UnprocessableException();
             }
 
-            UserDto dbUser = await _userDal.Find(user.Username, user.Email);
-            if (dbUser != null)
+            bool usernameOrEmailInUse = await _userDal.Exists(user.Username, user.Email);
+            if (usernameOrEmailInUse)
             {
                 throw new DuplicateNameException();
             }
 
+            bool databaseContainsUsers = await _userDal.Any();
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.AccountRole = AccountRole.User;
+            userDto.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
             userDto.Uuid = Guid.NewGuid();
 
-            var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
+            var disabledUserDto = new DisabledUserDto
+            {
+                Reason = DisableReason.EmailVerificationRequired,
+                UserUuid = userDto.Uuid,
+                Uuid = Guid.NewGuid()
+            };
+
+            var activationDto = new ActivationDto()
+            {
+                Code = Guid.NewGuid().ToString(),
+                UserUuid = userDto.Uuid,
+                Uuid = Guid.NewGuid()
+            };
+
+            await _disabledUserDal.Add(disabledUserDto);
+            await _activationDal.Add(activationDto);
+
+            var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
             userRabbitMq.Uuid = userDto.Uuid;
+            userRabbitMq.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
             await _userDal.Add(userDto);
+            SendActivationEmail(userDto, activationDto);
+        }
+
+        private void SendActivationEmail(UserDto user, ActivationDto activation)
+        {
+            var email = new EmailRabbitMq
+            {
+                EmailAddress = user.Email,
+                TemplateName = "ActivateAccount",
+                Subject = "Activatie Eindhovense vriendjes",
+                KeyWordValues = new List<EmailKeyWordValue>
+                {
+                    new EmailKeyWordValue
+                    {
+                        Key = "Username",
+                        Value = user.Username
+                    },
+                    new EmailKeyWordValue
+                    {
+                        Key = "ActivationCode",
+                        Value = activation.Code
+                    }
+                }
+            };
+
+            _publisher.Publish(new List<EmailRabbitMq> { email }, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
         }
 
         /// <returns>All users in the database</returns>
@@ -81,6 +130,19 @@ namespace User_Service.Logic
         public async Task<List<UserDto>> Find(List<Guid> uuidCollection)
         {
             return await _userDal.Find(uuidCollection);
+        }
+
+        /// <summary>
+        /// Finds all users which match the uuid in the collection
+        /// </summary>
+        /// <param name="uuidCollectionJson">The uuid collection in json</param>
+        /// <returns>The found users, null if nothing is found</returns>
+        public async Task<string> Find(string uuidCollectionJson)
+        {
+            var uuidCollection = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(uuidCollectionJson);
+            List<UserDto> foundUsers = await _userDal.Find(uuidCollection);
+            var users = _mapper.Map<List<UserRabbitMq>>(foundUsers ?? new List<UserDto>());
+            return Newtonsoft.Json.JsonConvert.SerializeObject(users);
         }
 
         /// <summary>
@@ -108,18 +170,29 @@ namespace User_Service.Logic
             }
 
             UserDto dbUser = await _userDal.Find(requestingUserUuid);
+            var userRabbitMq = _mapper.Map<UserRabbitMqSensitiveInformation>(user);
+
+            userRabbitMq.Uuid = dbUser.Uuid;
+            userRabbitMq.AccountRole = dbUser.AccountRole;
+
+            var passwordValid = _rpcClient.Call<bool>(userRabbitMq, RabbitMqQueues.ValidateUserPasswordQueue);
+            if (!passwordValid)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             await CheckForDuplicatedUserData(user, dbUser);
 
             dbUser.Username = user.Username;
             dbUser.Email = user.Email;
             dbUser.About = user.About;
+            dbUser.ReceiveEmail = user.ReceiveEmail;
             dbUser.Hobbies = _mapper.Map<List<UserHobbyDto>>(user.Hobbies);
             dbUser.FavoriteArtists = _mapper.Map<List<FavoriteArtistDto>>(user.FavoriteArtists);
 
             if (!string.IsNullOrEmpty(user.NewPassword) || dbUser.Username != user.Username)
             {
-                var userRabbitMq = _mapper.Map<UserRabbitMq>(user);
-                userRabbitMq.Uuid = dbUser.Uuid;
+                userRabbitMq.Password = string.IsNullOrEmpty(user.NewPassword) ? user.Password : user.NewPassword;
                 _publisher.Publish(userRabbitMq, RabbitMqRouting.UpdateUser, RabbitMqExchange.UserExchange);
             }
 
@@ -160,6 +233,11 @@ namespace User_Service.Logic
             switch (requestingUser.AccountRole)
             {
                 case AccountRole.SiteAdmin:
+                    int totalSiteAdmins = await _userDal.Count(AccountRole.SiteAdmin);
+                    if (totalSiteAdmins <= 1)
+                    {
+                        throw new SiteAdminRequiredException();
+                    }
                     _publisher.Publish(userUuidToDeleteUuid, RabbitMqRouting.DeleteUser, RabbitMqExchange.UserExchange);
                     await _userDal.Delete(userUuidToDeleteUuid);
                     break;

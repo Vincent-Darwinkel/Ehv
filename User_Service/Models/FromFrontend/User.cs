@@ -9,6 +9,8 @@ namespace User_Service.Models.FromFrontend
     {
         [Required]
         public string Username { get; set; }
+        public string Avatar { get; set; }
+
         [Required]
         public string Password { get; set; }
         public string NewPassword { get; set; }
@@ -18,6 +20,8 @@ namespace User_Service.Models.FromFrontend
         public string Email { get; set; }
         [Required]
         public Gender Gender { get; set; }
+        public bool ReceiveEmail { get; set; }
+
         [Required]
         public AccountRole AccountRole { get; set; }
         [Required]

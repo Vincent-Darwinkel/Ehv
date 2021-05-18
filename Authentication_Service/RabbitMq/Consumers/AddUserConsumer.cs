@@ -1,11 +1,10 @@
-﻿using System;
-using System.Text;
-using Authentication_Service.Logic;
-using Authentication_Service.Models.Dto;
+﻿using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
-using Microsoft.Extensions.DependencyInjection;
+using Authentication_Service.Models.RabbitMq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 
 namespace Authentication_Service.RabbitMq.Consumers
 {
@@ -15,17 +14,16 @@ namespace Authentication_Service.RabbitMq.Consumers
         private readonly UserLogic _userLogic;
         private readonly LogLogic _logLogic;
 
-        public AddUserConsumer(IServiceProvider serviceProvider, IModel channel)
+        public AddUserConsumer(IModel channel, UserLogic userLogic, LogLogic logLogic)
         {
             _channel = channel;
-            using var scope = serviceProvider.CreateScope();
-            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
-            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
+            _userLogic = userLogic;
+            _logLogic = logLogic;
         }
 
         public void Consume()
         {
-            _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct);
+            _channel.ExchangeDeclare(RabbitMqExchange.UserExchange, ExchangeType.Direct);
             _channel.QueueDeclare(RabbitMqQueues.AddUserQueue, true, false, false, null);
             _channel.QueueBind(RabbitMqQueues.AddUserQueue, "user_exchange", RabbitMqRouting.AddUser);
             _channel.BasicQos(0, 10, false);
@@ -37,7 +35,7 @@ namespace Authentication_Service.RabbitMq.Consumers
                 {
                     byte[] body = e.Body.ToArray();
                     string json = Encoding.UTF8.GetString(body);
-                    var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(json);
+                    var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserRabbitMqSensitiveInformation>(json);
 
                     await _userLogic.Add(user);
                 }

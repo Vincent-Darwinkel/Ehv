@@ -3,10 +3,8 @@ using System;
 using User_Service.CustomExceptions;
 using User_Service.Enums;
 using User_Service.Logic;
-using User_Service.Models;
-using User_Service.Models.HelperFiles;
 
-namespace User_Service
+namespace User_Service.Models.HelperFiles
 {
     public class ControllerHelper
     {
@@ -19,7 +17,9 @@ namespace User_Service
 
         public UserDto GetRequestingUser(ControllerBase controllerBase)
         {
-            string jwt = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            string authorization = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            string jwt = authorization.Replace("Bearer ", "");
+
             if (jwt.Length < 25)
             {
                 throw new UnprocessableException();

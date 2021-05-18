@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
+using User_Service.Enums;
 using User_Service.Logic;
 using User_Service.Models;
 using User_Service.Models.FromFrontend;
+using User_Service.Models.HelperFiles;
 using User_Service.Models.ToFrontend;
 
 namespace User_Service.Controllers
@@ -20,12 +22,14 @@ namespace User_Service.Controllers
         private readonly UserLogic _userLogic;
         private readonly IMapper _mapper;
         private readonly ControllerHelper _helper;
+        private readonly LogLogic _logLogic;
 
-        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper)
+        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper, LogLogic logLogic)
         {
             _userLogic = userLogic;
             _mapper = mapper;
             _helper = helper;
+            _logLogic = logLogic;
         }
 
         [HttpPost]
@@ -44,12 +48,14 @@ namespace User_Service.Controllers
             {
                 return UnprocessableEntity();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpGet("{uuid}")]
         public async Task<ActionResult<UserViewModel>> Find(Guid uuid)
         {
@@ -62,14 +68,16 @@ namespace User_Service.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<UserViewModel>>> Find([FromBody] List<Guid> uuidCollection)
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
+        [HttpGet("by-list")]
+        public async Task<ActionResult<List<UserViewModel>>> Find([FromQuery(Name = "uuid-collection")] List<Guid> uuidCollection)
         {
             try
             {
@@ -80,12 +88,30 @@ namespace User_Service.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
+        [HttpGet]
+        public async Task<ActionResult<List<UserViewModel>>> All()
+        {
+            try
+            {
+                List<UserDto> users = await _userLogic.All();
+                return _mapper.Map<List<UserViewModel>>(users);
+            }
+            catch (Exception e)
+            {
+                _logLogic.Log(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] User user)
         {
@@ -99,13 +125,23 @@ namespace User_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (DuplicateNameException)
             {
+                return StatusCode(StatusCodes.Status409Conflict);
+            }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
+            }
+            catch (Exception e)
+            {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [HttpDelete("{uuid}")]
+        [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
+        [HttpDelete]
         public async Task<ActionResult> Delete(Guid uuid)
         {
             try
@@ -122,8 +158,13 @@ namespace User_Service.Controllers
             {
                 return Unauthorized();
             }
-            catch (Exception)
+            catch (SiteAdminRequiredException)
             {
+                return UnprocessableEntity();
+            }
+            catch (Exception e)
+            {
+                _logLogic.Log(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

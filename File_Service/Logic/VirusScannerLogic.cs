@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using File_Service.Models.HelperFiles;
+﻿using File_Service.Models.HelperFiles;
 using Microsoft.Extensions.Configuration;
 using nClam;
+using System.Threading.Tasks;
 
 namespace File_Service.Logic
 {

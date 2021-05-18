@@ -1,12 +1,12 @@
-﻿using System;
+﻿using File_Service.Enums;
+using File_Service.Logic;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using File_Service.Enums;
-using File_Service.Logic;
-using Microsoft.AspNetCore.Http;
 
 namespace File_Service.Models.HelperFiles
 {

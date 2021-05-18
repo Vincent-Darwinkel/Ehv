@@ -1,15 +1,17 @@
-using System.Linq;
-using Datepicker_Service.Dal;
+﻿using Datepicker_Service.Dal;
+using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.RabbitMq;
 using Datepicker_Service.RabbitMq.Publishers;
+using Datepicker_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace Datepicker_Service
 {
@@ -26,9 +28,20 @@ namespace Datepicker_Service
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddControllers();
             AddDependencies(ref services);
@@ -39,19 +52,20 @@ namespace Datepicker_Service
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<ControllerHelper>();
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
-            services.AddScoped<ControllerHelper>();
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
+            services.AddScoped<DatepickerLogic>();
+            services.AddScoped<DatepickerAvailabilityLogic>();
+            services.AddScoped<IRpcClient, RpcClient>();
+            services.AddScoped<IDatepickerDal, DatepickerDal>();
+            services.AddScoped<IDatepickerDateDal, DatepickerDateDal>();
+            services.AddScoped<IDatepickerAvailabilityDal, DatepickerAvailabilityDal>();
+            services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseRouting();
 
             app.UseAuthorization();
@@ -61,16 +75,16 @@ namespace Datepicker_Service
                 endpoints.MapControllers();
             });
 
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
+            UpdateDatabase(app);
         }
 
-        public void ApplyMigrations(DataContext context)
+        private static void UpdateDatabase(IApplicationBuilder app)
         {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

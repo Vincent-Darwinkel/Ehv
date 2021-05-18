@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using User_Service.Enums;
 using User_Service.Models;
 
-namespace User_Service.Dal
+namespace User_Service.Dal.Interfaces
 {
     public interface IUserDal
     {
@@ -21,19 +22,18 @@ namespace User_Service.Dal
         Task<UserDto> Find(Guid userUuid);
 
         /// <summary>
-        /// Finds the user by username or email
-        /// </summary>
-        /// <param name="username">The username to search for</param>
-        /// <param name="email">The email to search for</param>
-        /// <returns>The found user, null if not found</returns>
-        Task<UserDto> Find(string username, string email);
-
-        /// <summary>
         /// Finds all users which match the uuid in the collection
         /// </summary>
         /// <param name="uuidCollection">The uuid collection</param>
         /// <returns>The found users, null if nothing is found</returns>
         Task<List<UserDto>> Find(List<Guid> uuidCollection);
+
+        /// <summary>
+        /// Counts the users by account role
+        /// </summary>
+        /// <param name="accountRole">The role to search for</param>
+        /// <returns>The total amount of users with the specified role</returns>
+        Task<int> Count(AccountRole accountRole);
 
         /// <summary>
         /// Checks if an account with the username or email exists
@@ -45,6 +45,8 @@ namespace User_Service.Dal
 
         /// <returns>All users in the database</returns>
         Task<List<UserDto>> All();
+
+        Task<bool> Any();
 
         /// <summary>
         /// Updates the existing user in the database

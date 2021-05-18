@@ -5,48 +5,68 @@ using Authentication_Service.Models.HelperFiles;
 using Authentication_Service.RabbitMq;
 using Authentication_Service.RabbitMq.Consumers;
 using Authentication_Service.RabbitMq.Publishers;
+using Authentication_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System.Text.Json.Serialization;
+using DataContext = Authentication_Service.Dal.DataContext;
+using IUserDal = Authentication_Service.Dal.Interface.IUserDal;
+using UserDal = Authentication_Service.Dal.UserDal;
 
 namespace Authentication_Service
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IConfiguration _config;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException();
+            }
+
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
             services.AddControllers();
-            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             AddDependencyInjection(ref services);
         }
 
         private void AddDependencyInjection(ref IServiceCollection services)
         {
+            IConfigurationSection section = _config.GetSection(nameof(JwtConfig));
+
+            services.AddSingleton(section.Get<JwtConfig>());
             services.AddScoped<UserLogic>();
             services.AddScoped<AuthenticationLogic>();
             services.AddScoped<SecurityLogic>();
             services.AddScoped<JwtLogic>();
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
-            services.AddSingleton<AddUserConsumer>();
+            services.AddScoped<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
+            services.AddScoped<IRpcClient, RpcClient>();
+            services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<LogLogic>();
@@ -54,38 +74,49 @@ namespace Authentication_Service
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IRefreshTokenDal, RefreshTokenDal>();
-            services.AddScoped<IPasswordResetDal, PasswordResetDal>();
-            services.AddScoped<IDisabledUserDal, DisabledUserDal>();
-            services.AddScoped<IActivationDal, ActivationDal>();
+            services.AddScoped<IPendingLoginDal, PendingLoginDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var rabbitMqConsumers = new List<IConsumer>();
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<AddUserConsumer>());
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<UpdateUserConsumer>());
-            rabbitMqConsumers.Add(app.ApplicationServices.GetService<DeleteUserConsumer>());
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<AddUserConsumer>(),
+                app.ApplicationServices.GetService<UpdateUserConsumer>(),
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
+            }.ForEach(consumer => consumer.Consume());
 
-            rabbitMqConsumers.ForEach(consumer => consumer.Consume());
+            var channel = app.ApplicationServices.GetService<IModel>();
+            var logLogic = app.ApplicationServices.GetService<LogLogic>();
+            var userLogic = app.ApplicationServices.GetService<UserLogic>();
+
+            // ReSharper disable once ObjectCreationAsStatement
+            new RpcServer(channel, RabbitMqQueues.ValidateUserPasswordQueue, userLogic.ValidateUserPassword, logLogic);
 
             app.UseRouting();
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-            DataContext context = app.ApplicationServices.GetService<DataContext>();
-            ApplyMigrations(context);
+            UpdateDatabase(app);
         }
 
-        public void ApplyMigrations(DataContext context)
+        private static void UpdateDatabase(IApplicationBuilder app)
         {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                context.Database.Migrate();
-            }
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

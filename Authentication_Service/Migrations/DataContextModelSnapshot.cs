@@ -14,58 +14,27 @@ namespace Authentication_Service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.14")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.6");
 
-            modelBuilder.Entity("Authentication_Service.Models.Dto.ActivationDto", b =>
+            modelBuilder.Entity("Authentication_Service.Models.Dto.PendingLoginDto", b =>
                 {
                     b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<Guid>("UserUuid")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Uuid");
-
-                    b.ToTable("Activation");
-                });
-
-            modelBuilder.Entity("Authentication_Service.Models.Dto.DisabledUserDto", b =>
-                {
-                    b.Property<Guid>("Uuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("Reason")
+                    b.Property<int>("AccessCode")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserUuid")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Uuid");
-
-                    b.ToTable("DisabledUser");
-                });
-
-            modelBuilder.Entity("Authentication_Service.Models.Dto.PasswordResetDto", b =>
-                {
-                    b.Property<Guid>("Uuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("UserUuid")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Uuid");
 
-                    b.ToTable("PasswordReset");
+                    b.ToTable("PendingLogin");
                 });
 
             modelBuilder.Entity("Authentication_Service.Models.Dto.RefreshTokenDto", b =>
@@ -77,8 +46,8 @@ namespace Authentication_Service.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<Guid>("RefreshToken")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("UserUuid");
 
@@ -95,10 +64,10 @@ namespace Authentication_Service.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Username")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Uuid");
 

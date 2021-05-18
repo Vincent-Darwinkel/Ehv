@@ -1,35 +1,59 @@
-﻿using System;
-using System.Threading.Tasks;
-using Datepicker_Service.Dal.Interfaces;
+﻿using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Datepicker_Service.Dal
 {
     public class DatepickerDal : IDatepickerDal
     {
+        private readonly DataContext _context;
+
+        public DatepickerDal(DataContext context)
+        {
+            _context = context;
+        }
+
         public async Task Add(DatepickerDto datepicker)
         {
-            throw new NotImplementedException();
+            await _context.Datepicker.AddAsync(datepicker);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<DatepickerDto> Find(Guid uuid)
         {
-            throw new NotImplementedException();
+            return await _context.Datepicker
+                .Include(dp => dp.Dates)
+                .ThenInclude(dp => dp.UserAvailabilities)
+                .Where(dp => dp.Uuid == uuid)
+                .FirstAsync();
+        }
+
+        public async Task<List<DatepickerDto>> All()
+        {
+            return await _context.Datepicker.ToListAsync();
         }
 
         public async Task<bool> Exists(string title)
         {
-            throw new NotImplementedException();
+            return await _context.Datepicker
+                .AnyAsync(dp => dp.Title == title);
         }
 
         public async Task Update(DatepickerDto datepicker)
         {
-            throw new NotImplementedException();
+            _context.Datepicker.Update(datepicker);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(Guid uuid)
         {
-            throw new NotImplementedException();
+            DatepickerDto datepickerToRemove = await _context.Datepicker.FindAsync(uuid);
+            _context.Datepicker.Remove(datepickerToRemove);
+            await _context.SaveChangesAsync();
         }
     }
 }

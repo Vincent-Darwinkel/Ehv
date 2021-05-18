@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text;
-using Logging_Service.Logic;
+﻿using Logging_Service.Logic;
 using Logging_Service.Models.Helpers;
 using Logging_Service.Models.RabbitMq;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Text;
 
 namespace Logging_Service.RabbitMq.Consumers
 {

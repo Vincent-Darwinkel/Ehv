@@ -1,7 +1,6 @@
 ﻿using Datepicker_Service.CustomExceptions;
 using Datepicker_Service.Enums;
 using Datepicker_Service.Logic;
-using Datepicker_Service.Models.FromFrontend;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -16,15 +15,17 @@ namespace Datepicker_Service.Models.HelperFiles
             _jwtLogic = jwtLogic;
         }
 
-        public User GetRequestingUser(ControllerBase controllerBase)
+        public UserHelper GetRequestingUser(ControllerBase controllerBase)
         {
-            string jwt = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            string authorization = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            string jwt = authorization.Replace("Bearer ", "");
+
             if (jwt.Length < 25)
             {
                 throw new UnprocessableException();
             }
 
-            return new User
+            return new UserHelper
             {
                 Uuid = _jwtLogic.GetClaim<Guid>(jwt, JwtClaim.Uuid),
                 AccountRole = _jwtLogic.GetClaim<AccountRole>(jwt, JwtClaim.AccountRole)

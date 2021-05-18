@@ -2,6 +2,8 @@
 using Authentication_Service.Dal.Interface;
 using Authentication_Service.Enums;
 using Authentication_Service.Models.Dto;
+using Authentication_Service.Models.RabbitMq;
+using AutoMapper;
 using System;
 using System.Threading.Tasks;
 
@@ -11,11 +13,13 @@ namespace Authentication_Service.Logic
     {
         private readonly IUserDal _userDal;
         private readonly SecurityLogic _securityLogic;
+        private readonly IMapper _mapper;
 
-        public UserLogic(IUserDal userDal, SecurityLogic securityLogic)
+        public UserLogic(IUserDal userDal, SecurityLogic securityLogic, IMapper mapper)
         {
             _userDal = userDal;
             _securityLogic = securityLogic;
+            _mapper = mapper;
         }
 
         private bool UserModelValid(UserDto user)
@@ -26,15 +30,25 @@ namespace Authentication_Service.Logic
                    user.AccountRole != AccountRole.Undefined;
         }
 
-        public async Task Add(UserDto user)
+        public async Task Add(UserRabbitMqSensitiveInformation user)
         {
-            if (!UserModelValid(user))
+            var userDto = _mapper.Map<UserDto>(user);
+            if (!UserModelValid(userDto))
             {
                 throw new UnprocessableException();
             }
 
-            user.Password = _securityLogic.HashPassword(user.Password);
-            await _userDal.Add(user);
+            userDto.Password = _securityLogic.HashPassword(user.Password);
+            await _userDal.Add(userDto);
+        }
+
+        public async Task<string> ValidateUserPassword(string user)
+        {
+            var userRabbitMq = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(user);
+            UserDto dbUser = await _userDal.Find(userRabbitMq.Username);
+
+            bool passwordCorrect = _securityLogic.VerifyPassword(userRabbitMq.Password, dbUser.Password);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(passwordCorrect);
         }
 
         public async Task Update(UserDto user)
@@ -46,8 +60,7 @@ namespace Authentication_Service.Logic
 
             UserDto dbUser = await _userDal.Find(user.Uuid);
             dbUser.Username = user.Username;
-            dbUser.AccountRole = user.AccountRole;
-            if (user.Password != dbUser.Password)
+            if (!_securityLogic.VerifyPassword(user.Password, dbUser.Password))
             {
                 dbUser.Password = _securityLogic.HashPassword(user.Password);
             }

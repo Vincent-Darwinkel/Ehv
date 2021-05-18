@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Isopoh.Cryptography.Argon2;
+using Isopoh.Cryptography.SecureArray;
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using Isopoh.Cryptography.Argon2;
-using Isopoh.Cryptography.SecureArray;
 
 namespace Authentication_Service.Logic
 {

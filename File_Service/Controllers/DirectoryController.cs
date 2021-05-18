@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Threading.Tasks;
-using File_Service.CustomExceptions;
+﻿using File_Service.CustomExceptions;
+using File_Service.Enums;
 using File_Service.Logic;
 using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace File_Service.Controllers
 {
+    [AuthorizedAction(new[] { AccountRole.User, AccountRole.Admin, AccountRole.SiteAdmin })]
     [Route("directory")]
     [ApiController]
     public class DirectoryController : ControllerBase
     {
         private readonly DirectoryLogic _directoryLogic;
         private readonly LogLogic _logLogic;
+        private readonly ControllerHelper _controllerHelper;
 
-        public DirectoryController(DirectoryLogic directoryLogic, LogLogic logLogic)
+        public DirectoryController(DirectoryLogic directoryLogic, LogLogic logLogic, ControllerHelper controllerHelper)
         {
             _directoryLogic = directoryLogic;
             _logLogic = logLogic;
+            _controllerHelper = controllerHelper;
         }
 
         [HttpGet]
@@ -48,9 +52,8 @@ namespace File_Service.Controllers
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                return await _directoryLogic.GetDirectoryInfo(path, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                return await _directoryLogic.GetDirectoryInfo(path, requestingUser.Uuid);
             }
             catch (FileNotFoundException)
             {
@@ -72,9 +75,8 @@ namespace File_Service.Controllers
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _directoryLogic.CreateFolder(folder, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _directoryLogic.CreateFolder(folder, requestingUser.Uuid);
                 return Ok();
             }
             catch (DuplicateNameException)
@@ -97,9 +99,8 @@ namespace File_Service.Controllers
         {
             try
             {
-                var userUuid =
-                    Guid.Parse("091f31ae-a4e5-41b1-bb86-48dbfe40b839"); // TODO remove this temporary variable
-                await _directoryLogic.RemoveDirectory(path, userUuid);
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _directoryLogic.Delete(path, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

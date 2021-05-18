@@ -1,12 +1,13 @@
-﻿using System;
+﻿using File_Service.CustomExceptions;
+using File_Service.Enums;
+using File_Service.Models.FromFrontend;
+using File_Service.Models.HelperFiles;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using File_Service.CustomExceptions;
-using File_Service.Models.FromFrontend;
-using File_Service.Models.HelperFiles;
 
 namespace File_Service.Logic
 {
@@ -127,7 +128,7 @@ namespace File_Service.Logic
             await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
         }
 
-        public async Task RemoveDirectory(string path, Guid userUuid)
+        public async Task Delete(string path, UserHelper requestingUser)
         {
             string fullPath = $"{Environment.CurrentDirectory}/Media{path}";
             if (!DirectoryHelper.PathIsValid(path) || !Directory.Exists(fullPath))
@@ -140,8 +141,9 @@ namespace File_Service.Logic
             string parentFolder = path.Replace($"{folderName}", "");
 
             var directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory($"{Environment.CurrentDirectory}/Media{parentFolder}");
-            if (!directoryInfoFile.DirectoryContentInfo // check if user is owner of the directory to remove
-                .Find(dci => dci.OwnerUuid == userUuid).DirectoriesOwnedByUser
+            if (requestingUser.AccountRole == AccountRole.User &&
+                !directoryInfoFile.DirectoryContentInfo // check if user is owner of the directory to remove skip if user is admin or site admin
+                .Find(dci => dci.OwnerUuid == requestingUser.Uuid).DirectoriesOwnedByUser
                 .Contains(folderName))
             {
                 throw new UnauthorizedAccessException();
