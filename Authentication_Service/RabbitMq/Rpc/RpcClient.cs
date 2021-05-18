@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Authentication_Service.RabbitMq.Rpc
 {
-    public class RpcClient
+    public class RpcClient : IRpcClient
     {
         private readonly IModel _channel;
         private readonly string _replyQueueName;

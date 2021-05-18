@@ -61,7 +61,7 @@ namespace User_Service
             services.AddScoped<DisabledUserLogic>();
             services.AddScoped<ActivationLogic>();
             services.AddScoped<DisabledUserLogic>();
-            services.AddScoped<RpcClient>();
+            services.AddScoped<IRpcClient, RpcClient>();
 
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IActivationDal, ActivationDal>();

@@ -34,6 +34,8 @@ namespace User_Service.Logic
         public async Task Add(DisabledUser disabledUser)
         {
             var disabledUserDto = _mapper.Map<DisabledUserDto>(disabledUser);
+            disabledUserDto.Uuid = Guid.NewGuid();
+
             if (!DisabledUserModelValid(disabledUserDto))
             {
                 throw new UnprocessableException();
@@ -45,13 +47,8 @@ namespace User_Service.Logic
 
         public async Task Add(DisabledUserRabbitMq disabledUser)
         {
-            var disabledUserDto = _mapper.Map<DisabledUserDto>(disabledUser);
-            if (!DisabledUserModelValid(disabledUserDto))
-            {
-                throw new UnprocessableException();
-            }
-
-            await _disabledUserDal.Add(disabledUserDto);
+            var disabledUserDto = _mapper.Map<DisabledUser>(disabledUser);
+            await Add(disabledUserDto);
         }
 
         public async Task<List<UserDto>> All()

@@ -23,10 +23,10 @@ namespace User_Service.Logic
         private readonly IActivationDal _activationDal;
         private readonly IMapper _mapper;
         private readonly IPublisher _publisher;
-        private readonly RpcClient _rpcClient;
+        private readonly IRpcClient _rpcClient;
 
         public UserLogic(IUserDal userDal, IDisabledUserDal disabledUserDal, IActivationDal activationDal,
-            IMapper mapper, IPublisher publisher, RpcClient rpcClient)
+            IMapper mapper, IPublisher publisher, IRpcClient rpcClient)
         {
             _userDal = userDal;
             _disabledUserDal = disabledUserDal;

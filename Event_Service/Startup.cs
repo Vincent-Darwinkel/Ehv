@@ -55,7 +55,7 @@ namespace Event_Service
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped(service => new RabbitMqChannel().GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
-            services.AddScoped<RpcClient>();
+            services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IEventDal, EventDal>();

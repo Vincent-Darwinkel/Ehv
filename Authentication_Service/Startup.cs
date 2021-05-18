@@ -65,7 +65,7 @@ namespace Authentication_Service
             services.AddScoped<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();
-            services.AddScoped<RpcClient>();
+            services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<ControllerHelper>();
 
             services.AddScoped<IPublisher, Publisher>();

@@ -76,7 +76,7 @@ namespace Event_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _eventLogic.RemoveAsync(uuid, requestingUser);
+                await _eventLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (NullReferenceException)

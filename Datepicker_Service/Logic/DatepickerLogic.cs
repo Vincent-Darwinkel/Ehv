@@ -21,12 +21,12 @@ namespace Datepicker_Service.Logic
         private readonly IDatepickerDal _datepickerDal;
         private readonly IModel _channel;
         private readonly IPublisher _publisher;
-        private readonly RpcClient _rpcClient;
+        private readonly IRpcClient _rpcClient;
         private readonly IMapper _mapper;
         private readonly IDatepickerDateDal _datepickerDateDal;
 
         public DatepickerLogic(IDatepickerDal datepickerDal, IModel channel,
-            IPublisher publisher, RpcClient rpcClient, IMapper mapper, IDatepickerDateDal datepickerDateDal)
+            IPublisher publisher, IRpcClient rpcClient, IMapper mapper, IDatepickerDateDal datepickerDateDal)
         {
             _datepickerDal = datepickerDal;
             _channel = channel;

@@ -100,7 +100,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _directoryLogic.RemoveDirectory(path, requestingUser);
+                await _directoryLogic.Delete(path, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

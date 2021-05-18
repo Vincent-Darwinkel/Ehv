@@ -25,7 +25,7 @@ namespace Email_Service.Logic
         /// <param name="templateName">The path of the template</param>
         /// <param name="keyValueCollection">The key in the template to search and the value to replace it with</param>
         /// <returns>An string which contains HTML content</returns>
-        public string GetHtmlFormattedEmail(string templateName, List<EmailKeyWordValue> keyValueCollection)
+        private string GetHtmlFormattedEmail(string templateName, List<EmailKeyWordValue> keyValueCollection)
         {
             string templatePath = EmailTemplatePaths.GetTemplatePathByName(templateName);
             string filePath = Environment.CurrentDirectory + templatePath;

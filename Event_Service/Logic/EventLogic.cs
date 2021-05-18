@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Event_Service.CustomExceptions;
 using Event_Service.Dal.Interfaces;
 using Event_Service.Models;
 using Event_Service.Models.HelperFiles;
@@ -18,10 +19,10 @@ namespace Event_Service.Logic
     {
         private readonly IEventDal _eventDal;
         private readonly IMapper _mapper;
-        private readonly RpcClient _rpcClient;
+        private readonly IRpcClient _rpcClient;
         private readonly IPublisher _publisher;
 
-        public EventLogic(IEventDal eventDal, IMapper mapper, RpcClient rpcClient, IPublisher publisher)
+        public EventLogic(IEventDal eventDal, IMapper mapper, IRpcClient rpcClient, IPublisher publisher)
         {
             _eventDal = eventDal;
             _mapper = mapper;
@@ -34,7 +35,7 @@ namespace Event_Service.Logic
             List<EventDto> events = await _eventDal.All();
             if (events == null)
             {
-                throw new NoNullAllowedException(nameof(events));
+                return new List<EventDto>();
             }
 
             // remove the uuid of the users
@@ -64,6 +65,11 @@ namespace Event_Service.Logic
 
         public async Task<EventViewmodel> Find(Guid eventUuid, UserHelper requestingUser)
         {
+            if (eventUuid == Guid.Empty)
+            {
+                throw new UnprocessableException();
+            }
+
             EventDto dbEvent = await _eventDal.Find(eventUuid);
             if (dbEvent == null)
             {
@@ -91,8 +97,8 @@ namespace Event_Service.Logic
                 foreach (var eventStepUser in eventStep.EventStepUsers)
                 {
                     eventStepUser.Username = usersFromUserService
-                        .Find(u => u.Uuid == eventStepUser.UserUuid)
-                        .Username;
+                        ?.Find(u => u.Uuid == eventStepUser.UserUuid)
+                        ?.Username;
                 }
             }
         }
@@ -106,8 +112,8 @@ namespace Event_Service.Logic
                 foreach (var eventDateUser in eventDate.EventDateUsers)
                 {
                     eventDateUser.Username = usersFromUserService
-                        .Find(u => u.Uuid == eventDateUser.UserUuid)
-                        .Username;
+                        ?.Find(u => u.Uuid == eventDateUser.UserUuid)
+                        ?.Username;
                 }
             }
         }
@@ -193,12 +199,17 @@ namespace Event_Service.Logic
             _publisher.Publish(emails, RabbitMqRouting.SendMail, RabbitMqExchange.MailExchange);
         }
 
-        public async Task RemoveAsync(Guid eventToCancelUuid, UserHelper requestingUser)
+        public async Task Delete(Guid eventToCancelUuid, UserHelper requestingUser)
         {
+            if (eventToCancelUuid == Guid.Empty)
+            {
+                throw new NoNullAllowedException();
+            }
+
             EventDto dbEvent = await _eventDal.Find(eventToCancelUuid);
             if (dbEvent == null)
             {
-                throw new NoNullAllowedException(nameof(dbEvent));
+                throw new NoNullAllowedException();
             }
             if (dbEvent.AuthorUuid != requestingUser.Uuid)
             {
@@ -217,9 +228,9 @@ namespace Event_Service.Logic
         private void NotifyUsersAboutDeletedEvent(List<Guid> userUuidCollection, string eventName)
         {
             var usersRabbitMq = _rpcClient.Call<List<UserRabbitMq>>(userUuidCollection, RabbitMqQueues.FindUserQueue);
-            usersRabbitMq.RemoveAll(u => !u.ReceiveEmail);
+            usersRabbitMq?.RemoveAll(u => !u.ReceiveEmail);
 
-            var emails = usersRabbitMq.Select(user => new EmailRabbitMq
+            var emails = usersRabbitMq?.Select(user => new EmailRabbitMq
             {
                 TemplateName = "DeleteEvent",
                 EmailAddress = user.Email,
