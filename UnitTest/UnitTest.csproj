@@ -1,21 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="HobbyService - Copy\**" />
+	  <EmbeddedResource Remove="HobbyService - Copy\**" />
+	  <None Remove="HobbyService - Copy\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Authentication_Service\Authentication_Service.csproj" />
-    <ProjectReference Include="..\Datepicker_Service\Datepicker_Service.csproj" />
-    <ProjectReference Include="..\Email_Service\Email_Service.csproj" />
-    <ProjectReference Include="..\Event_Service\Event_Service.csproj" />
-    <ProjectReference Include="..\Logging_Service\Logging_Service.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+		<PackageReference Include="NUnit" Version="3.13.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Authentication_Service\Authentication_Service.csproj" />
+		<ProjectReference Include="..\Datepicker_Service\Datepicker_Service.csproj" />
+		<ProjectReference Include="..\Email_Service\Email_Service.csproj" />
+		<ProjectReference Include="..\Event_Service\Event_Service.csproj" />
+		<ProjectReference Include="..\Favorite_Artist_Service\Favorite_Artist_Service.csproj" />
+		<ProjectReference Include="..\File_Service\File_Service.csproj" />
+		<ProjectReference Include="..\Hobby_Service\Hobby_Service.csproj" />
+		<ProjectReference Include="..\Logging_Service\Logging_Service.csproj" />
+	</ItemGroup>
 
 </Project>

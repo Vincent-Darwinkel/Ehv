@@ -17,14 +17,14 @@ namespace Favorite_Artist_Service.Logic
             _favoriteArtistDal = favoriteArtistDal;
         }
 
-        public async Task Add(FavoriteArtistDto hobby)
+        public async Task Add(FavoriteArtistDto artist)
         {
-            if (string.IsNullOrEmpty(hobby.Name))
+            if (string.IsNullOrEmpty(artist.Name))
             {
                 throw new UnprocessableException();
             }
 
-            await _favoriteArtistDal.Add(hobby);
+            await _favoriteArtistDal.Add(artist);
         }
 
         public async Task<List<FavoriteArtistDto>> All()
@@ -39,14 +39,14 @@ namespace Favorite_Artist_Service.Logic
                 .StartNew(() => Newtonsoft.Json.JsonConvert.SerializeObject(result));
         }
 
-        public async Task Update(FavoriteArtistDto hobby)
+        public async Task Update(FavoriteArtistDto artist)
         {
-            if (hobby.Uuid == Guid.Empty || string.IsNullOrEmpty(hobby.Name))
+            if (artist.Uuid == Guid.Empty || string.IsNullOrEmpty(artist.Name))
             {
                 throw new UnprocessableException();
             }
 
-            await _favoriteArtistDal.Update(hobby);
+            await _favoriteArtistDal.Update(artist);
         }
 
         public async Task Delete(List<Guid> uuidCollection)

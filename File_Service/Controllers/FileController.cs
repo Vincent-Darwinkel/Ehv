@@ -29,7 +29,7 @@ namespace File_Service.Controllers
 
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            return await _fileLogic.FindAsync(uuid);
+            return await _fileLogic.Find(uuid);
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _fileLogic.SaveFileAsync(fileUpload.Files, fileUpload.Path, requestingUser.Uuid);
+                await _fileLogic.SaveFile(fileUpload.Files, fileUpload.Path, requestingUser.Uuid);
                 return Ok();
             }
             catch (DirectoryNotFoundException)
@@ -62,7 +62,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _fileLogic.Remove(uuid, requestingUser);
+                await _fileLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

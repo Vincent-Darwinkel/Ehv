@@ -23,9 +23,9 @@ namespace File_Service.Logic
         /// <summary>
         /// Finds the file by uuid
         /// </summary>
-        /// <param name="uuid"></param>
+        /// <param name="uuid">The uuid of the file to find</param>
         /// <returns>A FileContentResult which contains the file</returns>
-        public async Task<FileContentResult> FindAsync(Guid uuid)
+        public async Task<FileContentResult> Find(Guid uuid)
         {
             string foundFilePath = FileHelper.GetFilePathByUuid(uuid);
             if (string.IsNullOrEmpty(foundFilePath))
@@ -68,8 +68,13 @@ namespace File_Service.Logic
         /// <param name="userSpecifiedPath">The userSpecifiedPath to save the files in</param>
         /// <param name="requestingUserUuid">The uuid of the requesting user</param>
         /// <returns>A list of the name of the files that are saved</returns>
-        public async Task SaveFileAsync(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
+        public async Task SaveFile(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
         {
+            if (string.IsNullOrEmpty(userSpecifiedPath))
+            {
+                throw new UnprocessableException();
+            }
+
             userSpecifiedPath = FixPath(userSpecifiedPath);
             string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
 
@@ -154,7 +159,7 @@ namespace File_Service.Logic
         /// </summary>
         /// <param name="fileUuid">The uuid of the file to remove</param>
         /// <param name="requestingUser">The user that made the request</param>
-        public async Task Remove(Guid fileUuid, UserHelper requestingUser)
+        public async Task Delete(Guid fileUuid, UserHelper requestingUser)
         {
             if (fileUuid == Guid.Empty)
             {
