@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Email_Service.Models.Helpers
 {
     public class Email
     {
-        public Guid UserUuid { get; set; }
         public string Subject { get; set; }
         public string Message { get; set; }
         public string EmailAddress { get; set; }

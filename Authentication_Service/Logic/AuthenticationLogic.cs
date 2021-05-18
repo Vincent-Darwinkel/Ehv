@@ -23,10 +23,10 @@ namespace Authentication_Service.Logic
         private readonly IPendingLoginDal _pendingLoginDal;
         private readonly SecurityLogic _securityLogic;
         private readonly JwtLogic _jwtLogic;
-        private readonly RpcClient _rpcClient;
+        private readonly IRpcClient _rpcClient;
 
         public AuthenticationLogic(IUserDal userDal, IPublisher publisher, IPendingLoginDal pendingLoginDal,
-            SecurityLogic securityLogic, JwtLogic jwtLogic, RpcClient rpcClient)
+            SecurityLogic securityLogic, JwtLogic jwtLogic, IRpcClient rpcClient)
         {
             _userDal = userDal;
             _publisher = publisher;

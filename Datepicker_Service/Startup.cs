@@ -56,10 +56,10 @@ namespace Datepicker_Service
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
             services.AddScoped<DatepickerAvailabilityLogic>();
-            services.AddScoped<RpcClient>();
+            services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<IDatepickerDal, DatepickerDal>();
             services.AddScoped<IDatepickerDateDal, DatepickerDateDal>();
-            services.AddScoped<IDatepickerAvailabilityDal, DatepickerDatepickerAvailabilityDal>();
+            services.AddScoped<IDatepickerAvailabilityDal, DatepickerAvailabilityDal>();
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
         }
 

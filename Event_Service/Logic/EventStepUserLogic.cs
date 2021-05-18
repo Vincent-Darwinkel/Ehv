@@ -39,7 +39,7 @@ namespace Event_Service.Logic
             });
         }
 
-        public async Task Remove(Guid stepUuid, UserHelper requestingUser)
+        public async Task Delete(Guid stepUuid, UserHelper requestingUser)
         {
             EventStepDto dbEventStep = await _eventStepDal.Find(stepUuid);
             EventStepUserDto dbEventStepUser = dbEventStep.EventStepUsers

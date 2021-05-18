@@ -140,7 +140,7 @@ namespace Authentication_Service.Logic
         /// <returns>An jwt and refresh token object</returns>
         public async Task<AuthorizationTokensViewmodel> CreateJwt(UserDto user, RefreshTokenDto oldRefreshToken = null)
         {
-            if (user?.Uuid == Guid.Empty || user?.AccountRole == AccountRole.Undefined)
+            if (user == null || user.Uuid == Guid.Empty || user.AccountRole == AccountRole.Undefined)
             {
                 throw new ArgumentNullException(nameof(user));
             }

@@ -13,13 +13,6 @@ namespace Logging_Service.Dal.Interfaces
         /// <param name="log">The log to add</param>
         Task Add(LogDto log);
 
-        /// <summary>
-        /// Finds the logs that matches the uuidCollection in the collection
-        /// </summary>
-        /// <param name="uuidCollection">The uuidCollection to find</param>
-        /// <returns>The found logs</returns>
-        Task<List<LogDto>> Find(List<Guid> uuidCollection);
-
         /// <returns>All logs in the database</returns>
         Task<List<LogDto>> All();
 

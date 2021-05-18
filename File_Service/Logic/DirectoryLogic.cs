@@ -128,7 +128,7 @@ namespace File_Service.Logic
             await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
         }
 
-        public async Task RemoveDirectory(string path, UserHelper requestingUser)
+        public async Task Delete(string path, UserHelper requestingUser)
         {
             string fullPath = $"{Environment.CurrentDirectory}/Media{path}";
             if (!DirectoryHelper.PathIsValid(path) || !Directory.Exists(fullPath))

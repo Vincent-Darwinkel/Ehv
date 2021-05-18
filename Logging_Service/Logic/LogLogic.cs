@@ -31,11 +31,13 @@ namespace Logging_Service.Logic
         {
             foreach (var sensitiveExceptionKeyword in _sensitiveExceptionKeywords)
             {
-                if (exception.Message.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.Message) && exception.Message.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }
-                if (exception.StackTrace.Contains(sensitiveExceptionKeyword))
+                if (!string.IsNullOrEmpty(exception.StackTrace) && exception.StackTrace.ToLower()
+                    .Contains(sensitiveExceptionKeyword))
                 {
                     return true;
                 }
