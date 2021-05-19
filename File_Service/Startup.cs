@@ -26,7 +26,7 @@ namespace File_Service
         {
 
             services.AddControllers();
-            services.AddMemoryCache();
+
 
             // allow big files to be uploaded
             services.Configure<KestrelServerOptions>(options =>

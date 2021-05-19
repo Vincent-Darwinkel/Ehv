@@ -14,7 +14,6 @@ namespace User_Service.Models.FromFrontend
         [Required]
         public string Password { get; set; }
         public string NewPassword { get; set; }
-        [Required]
         public string About { get; set; }
         [Required]
         public string Email { get; set; }
@@ -22,7 +21,6 @@ namespace User_Service.Models.FromFrontend
         public Gender Gender { get; set; }
         public bool ReceiveEmail { get; set; }
 
-        [Required]
         public AccountRole AccountRole { get; set; }
         [Required]
         public DateTime BirthDate { get; set; }

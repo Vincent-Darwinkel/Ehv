@@ -1,5 +1,5 @@
-﻿using System;
-using Favorite_Artist_Service.Model;
+﻿using Favorite_Artist_Service.Model;
+using System;
 
 namespace UnitTest.ArtistService.TestModels
 {

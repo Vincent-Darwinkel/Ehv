@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,7 +25,8 @@ namespace User_Service.Controllers
         private readonly ControllerHelper _helper;
         private readonly LogLogic _logLogic;
 
-        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper, LogLogic logLogic)
+        public UserController(UserLogic userLogic, IMapper mapper, ControllerHelper helper,
+            LogLogic logLogic)
         {
             _userLogic = userLogic;
             _mapper = mapper;
@@ -39,6 +41,10 @@ namespace User_Service.Controllers
             {
                 await _userLogic.Register(user);
                 return Ok();
+            }
+            catch (AlreadyClosedException)
+            {
+                return StatusCode(StatusCodes.Status202Accepted);
             }
             catch (DuplicateNameException)
             {
