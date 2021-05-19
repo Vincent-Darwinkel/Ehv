@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using File_Service.Logic;
+﻿using File_Service.Logic;
 using NUnit.Framework;
+using System;
+using System.Data;
 using UnitTest.FileService.MockedLogics;
 
 namespace UnitTest.FileService.Tests

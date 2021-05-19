@@ -39,6 +39,7 @@ namespace User_Service.Logic
         private bool UserModelValid(User user)
         {
             return !string.IsNullOrEmpty(user.Username) &&
+                   user.Username.Length >= 4 &&
                    !string.IsNullOrEmpty(user.Email) &&
                    EmailIsValid(user.Email);
         }
@@ -49,7 +50,7 @@ namespace User_Service.Logic
         /// <param name="user">The form data the user send</param>
         public async Task Register(User user)
         {
-            if (!UserModelValid(user))
+            if (!UserModelValid(user) || user.Password.Length < 8)
             {
                 throw new UnprocessableException();
             }
@@ -72,7 +73,7 @@ namespace User_Service.Logic
                 Uuid = Guid.NewGuid()
             };
 
-            var activationDto = new ActivationDto()
+            var activationDto = new ActivationDto
             {
                 Code = Guid.NewGuid().ToString(),
                 UserUuid = userDto.Uuid,
@@ -87,6 +88,7 @@ namespace User_Service.Logic
             userRabbitMq.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
 
             _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
+
             await _userDal.Add(userDto);
             SendActivationEmail(userDto, activationDto);
         }

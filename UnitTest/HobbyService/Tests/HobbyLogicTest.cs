@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Hobby_Service.CustomExceptions;
+﻿using Hobby_Service.CustomExceptions;
 using Hobby_Service.Logic;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using UnitTest.HobbyService.MockedLogics;
 using UnitTest.HobbyService.TestModels;
 

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Logging_Service.Dal.Interfaces;
+﻿using Logging_Service.Dal.Interfaces;
 using Logging_Service.Models;
 using Moq;
+using System.Collections.Generic;
 using UnitTest.LoggingService.TestModels;
 
 namespace UnitTest.LoggingService.MockedDals

@@ -1,8 +1,8 @@
-﻿using System;
-using Favorite_Artist_Service.CustomExceptions;
+﻿using Favorite_Artist_Service.CustomExceptions;
 using Favorite_Artist_Service.Enums;
 using Favorite_Artist_Service.Logic;
 using NUnit.Framework;
+using System;
 
 namespace UnitTest.ArtistService.Tests
 {

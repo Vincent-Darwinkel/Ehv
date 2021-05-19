@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Favorite_Artist_Service.Logic;
+﻿using Favorite_Artist_Service.Logic;
 using NUnit.Framework;
+using System;
+using System.Data;
 using UnitTest.ArtistService.MockedLogics;
 
 namespace UnitTest.ArtistService.Tests

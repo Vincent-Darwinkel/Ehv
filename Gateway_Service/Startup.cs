@@ -35,7 +35,9 @@ namespace Gateway_Service
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            })
+                .AddCookie()
+                .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -43,8 +45,8 @@ namespace Gateway_Service
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuerSigningKey = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidateAudience = true
                 };
             });
             services.AddCors(options =>
@@ -66,7 +68,6 @@ namespace Gateway_Service
             }
 
             app.UseAuthentication();
-            app.UseAuthorization();
             app.UseRouting();
             //app.UseAntiXssMiddleware(); TODO find out why this kicks in on file uploads
             app.UseCors("CorsPolicy");

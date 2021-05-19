@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Hobby_Service.Logic;
+﻿using Hobby_Service.Logic;
 using NUnit.Framework;
+using System;
+using System.Data;
 using UnitTest.HobbyService.MockedLogics;
 
 namespace UnitTest.HobbyService.Tests

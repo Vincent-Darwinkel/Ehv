@@ -1,8 +1,8 @@
-﻿using System;
-using Hobby_Service.CustomExceptions;
+﻿using Hobby_Service.CustomExceptions;
 using Hobby_Service.Enums;
 using Hobby_Service.Logic;
 using NUnit.Framework;
+using System;
 
 namespace UnitTest.HobbyService.Tests
 {

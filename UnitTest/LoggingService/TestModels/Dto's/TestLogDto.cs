@@ -1,6 +1,6 @@
-﻿using System;
-using Logging_Service.Enums;
+﻿using Logging_Service.Enums;
 using Logging_Service.Models;
+using System;
 
 namespace UnitTest.LoggingService.TestModels
 {

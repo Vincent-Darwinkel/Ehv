@@ -1,5 +1,5 @@
-﻿using System;
-using Hobby_Service.Models;
+﻿using Hobby_Service.Models;
+using System;
 
 namespace UnitTest.HobbyService.TestModels
 {

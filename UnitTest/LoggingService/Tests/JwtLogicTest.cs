@@ -1,8 +1,8 @@
-﻿using System;
-using Logging_Service.CustomExceptions;
+﻿using Logging_Service.CustomExceptions;
 using Logging_Service.Enums;
 using Logging_Service.Logic;
 using NUnit.Framework;
+using System;
 
 namespace UnitTest.LoggingService.Tests
 {

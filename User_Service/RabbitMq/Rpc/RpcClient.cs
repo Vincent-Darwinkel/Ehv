@@ -9,14 +9,18 @@ namespace User_Service.RabbitMq.Rpc
     public class RpcClient : IRpcClient
     {
         private readonly IModel _channel;
-        private readonly string _replyQueueName;
-        private readonly EventingBasicConsumer _consumer;
+        private string _replyQueueName;
+        private EventingBasicConsumer _consumer;
         private readonly BlockingCollection<string> _respQueue = new BlockingCollection<string>();
-        private readonly IBasicProperties _props;
+        private IBasicProperties _props;
 
         public RpcClient(IModel channel)
         {
             _channel = channel;
+        }
+
+        private void Configure()
+        {
             _replyQueueName = _channel.QueueDeclare().QueueName;
             _consumer = new EventingBasicConsumer(_channel);
 
@@ -41,6 +45,11 @@ namespace User_Service.RabbitMq.Rpc
             if (objectToSend == null || string.IsNullOrEmpty(queue))
             {
                 throw new NullReferenceException();
+            }
+
+            if (string.IsNullOrEmpty(_replyQueueName))
+            {
+                Configure();
             }
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSend);
