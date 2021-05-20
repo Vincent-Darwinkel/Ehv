@@ -6,8 +6,6 @@ name: Docker hub email service
 on:
   push:
     branches: [main]
-    paths:
-      - ./Email_Service/**
 
 jobs:
   push_to_registry:
