@@ -5,6 +5,8 @@ name: Docker hub datepicker service
 
 on:
   push:
+  paths:
+      - './Datepicker_Service/**'
     branches: [main]
 
 jobs:
