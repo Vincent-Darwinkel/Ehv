@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ./Gateway_Service/
+      - ./Gateway_Service/**
 
 jobs:
   push_to_registry:

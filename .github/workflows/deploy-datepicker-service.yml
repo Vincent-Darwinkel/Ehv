@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ./Datepicker_Service/
+      - ./Datepicker_Service/**
 
 jobs:
   push_to_registry:
