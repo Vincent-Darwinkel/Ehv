@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ./Authentication_Service/**
+      - './Authentication_Service/**'
 
 jobs:
   push_to_registry:
