@@ -6,8 +6,6 @@ name: Docker hub gateway service
 on:
   push:
     branches: [main]
-    paths:
-      - ./Gateway_Service/**
 
 jobs:
   push_to_registry:
