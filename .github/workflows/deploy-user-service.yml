@@ -5,9 +5,9 @@ name: Docker hub user service
 
 on:
   push:
-  paths:
-      - ./User_Service/**
     branches: [main]
+  paths:
+    - ./User_Service/**
 
 jobs:
   push_to_registry:

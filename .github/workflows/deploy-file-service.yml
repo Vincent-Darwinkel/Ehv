@@ -5,9 +5,9 @@ name: Docker hub file service
 
 on:
   push:
-  paths:
-      - ./File_Service/**
     branches: [main]
+  paths:
+    - ./File_Service/**
 
 jobs:
   push_to_registry:

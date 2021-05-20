@@ -5,9 +5,9 @@ name: Docker hub logging service
 
 on:
   push:
-  paths:
-      - ./Logging_Service/**
     branches: [main]
+  paths:
+    - ./Logging_Service/**
 
 jobs:
   push_to_registry:
