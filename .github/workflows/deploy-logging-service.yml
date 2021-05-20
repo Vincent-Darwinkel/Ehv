@@ -6,7 +6,7 @@ name: Docker hub logging service
 on:
   push:
   paths:
-      - 'Logging_Service/**'
+      - ./Logging_Service/**
     branches: [main]
 
 jobs:

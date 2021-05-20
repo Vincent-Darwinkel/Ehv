@@ -6,7 +6,7 @@ name: Docker hub favorite artist service
 on:
   push:
   paths:
-      - './Favorite_Artist_Service/**'
+      - ./Favorite_Artist_Service/**
     branches: [main]
 
 jobs:
