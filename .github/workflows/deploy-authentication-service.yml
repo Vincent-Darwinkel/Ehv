@@ -6,8 +6,8 @@ name: Docker hub authentication service
 on:
   push:
     branches: [main]
-  paths:
-    - ./Authentication_Service/**
+    paths:
+      - ./Authentication_Service/**
 
 jobs:
   push_to_registry:
