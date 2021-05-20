@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ./File_Service/
+      - ./File_Service/**
 
 jobs:
   push_to_registry:

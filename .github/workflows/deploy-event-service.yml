@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ./Event_Service/
+      - ./Event_Service/**
 
 jobs:
   push_to_registry:
