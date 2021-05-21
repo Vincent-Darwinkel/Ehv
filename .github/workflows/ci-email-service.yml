@@ -2,6 +2,8 @@ name: CI email service
 
 on:
   pull_request:
+    paths:
+      - "Email_Service/**"
     branches: [main]
 
 jobs:

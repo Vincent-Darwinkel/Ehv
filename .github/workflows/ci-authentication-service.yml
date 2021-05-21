@@ -2,6 +2,8 @@ name: CI authentication service
 
 on:
   pull_request:
+    paths:
+      - "Authentication_Service/**"
     branches: [main]
 
 jobs:
