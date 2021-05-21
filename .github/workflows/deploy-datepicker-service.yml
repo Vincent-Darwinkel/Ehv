@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/datepicker-service
+          repository: vincentdarwinkel/ehv-datepicker-service
           tag_with_ref: true
           file: ./Datepicker_Service/Dockerfile

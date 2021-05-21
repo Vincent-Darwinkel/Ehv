@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/favorite-artist-service
+          repository: vincentdarwinkel/ehv-artist-service
           tag_with_ref: true
           file: ./Favorite_Artist_Service/Dockerfile

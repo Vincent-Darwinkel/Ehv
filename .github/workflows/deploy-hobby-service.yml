@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/hobby-service
+          repository: vincentdarwinkel/ehv-hobby-service
           tag_with_ref: true
           file: ./Hobby_Service/Dockerfile

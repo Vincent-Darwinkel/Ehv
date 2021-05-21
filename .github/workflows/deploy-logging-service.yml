@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/logging-service
+          repository: vincentdarwinkel/ehv-logging-service
           tag_with_ref: true
           file: ./Logging_Service/Dockerfile
