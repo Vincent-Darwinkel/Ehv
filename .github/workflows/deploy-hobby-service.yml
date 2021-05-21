@@ -5,6 +5,8 @@ name: Docker hub hobby service
 
 on:
   push:
+    paths:
+      - "Hobby_Service/**"
     branches: [main]
 
 jobs:

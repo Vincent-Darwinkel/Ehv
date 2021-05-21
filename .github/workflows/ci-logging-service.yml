@@ -2,6 +2,8 @@ name: CI logging service
 
 on:
   pull_request:
+    paths:
+      - "Logging_Service/**"
     branches: [main]
 
 jobs:

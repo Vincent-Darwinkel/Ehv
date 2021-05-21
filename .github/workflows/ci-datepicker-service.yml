@@ -2,6 +2,8 @@ name: CI datepicker service
 
 on:
   pull_request:
+    paths:
+      - "Datepicker_Service/**"
     branches: [main]
 
 jobs:

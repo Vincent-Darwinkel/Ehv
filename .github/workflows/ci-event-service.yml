@@ -2,6 +2,8 @@ name: CI event service
 
 on:
   pull_request:
+    paths:
+      - "Event_Service/**"
     branches: [main]
 
 jobs:

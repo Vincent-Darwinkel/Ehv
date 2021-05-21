@@ -2,6 +2,8 @@ name: CI favorite artist service
 
 on:
   pull_request:
+    paths:
+      - "Favorite_Artist_Service/**"
     branches: [main]
 
 jobs:

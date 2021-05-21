@@ -2,6 +2,8 @@ name: CI hobby service
 
 on:
   pull_request:
+    paths:
+      - "Hobby_Service/**"
     branches: [main]
 
 jobs:
