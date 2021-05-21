@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/email-service
+          repository: vincentdarwinkel/ehv-email-service
           tag_with_ref: true
           file: ./Email_Service/Dockerfile

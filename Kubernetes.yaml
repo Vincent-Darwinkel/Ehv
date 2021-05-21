@@ -1,35 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ehv-website
+  name: ehv-auth-service
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ehv-website
+      app: ehv-auth-service
   template:
     metadata:
       labels:
-        app: ehv-website
+        app: ehv-auth-service
     spec:
       containers:
-        - name: ehv-website
-          image: vincentdarwinkel/ehv-website
+        - name: ehv-auth-service
+          image: vincentdarwinkel/authentication-service
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ehv-website
+  name: ehv-auth-service
 spec:
   type: LoadBalancer
   ports:
-    - name: ehv-website
+    - name: ehv-auth-service
       port: 80
       targetPort: 80
   selector:
-    app: ehv-website
+    app: ehv-auth-service

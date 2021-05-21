@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/authentication-service
+          repository: vincentdarwinkel/ehv-auth-service
           tag_with_ref: true
           file: ./Authentication_Service/Dockerfile

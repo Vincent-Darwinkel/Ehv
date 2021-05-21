@@ -21,6 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: vincentdarwinkel/gateway-service
+          repository: vincentdarwinkel/ehv-gateway-service
           tag_with_ref: true
           file: ./Gateway_Service/Dockerfile
