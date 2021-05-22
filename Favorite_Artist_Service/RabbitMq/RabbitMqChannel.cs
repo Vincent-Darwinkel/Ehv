@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Connections;
+﻿using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
+using System;
 
 namespace Favorite_Artist_Service.RabbitMq
 {

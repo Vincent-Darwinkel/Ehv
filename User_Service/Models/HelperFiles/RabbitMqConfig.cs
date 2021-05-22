@@ -1,4 +1,4 @@
-﻿namespace Authentication_Service.Models.HelperFiles
+﻿namespace User_Service.Models.HelperFiles
 {
     public class RabbitMqConfig
     {

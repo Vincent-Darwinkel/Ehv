@@ -11,9 +11,6 @@
     "Docker": {
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": ".Development"
-      },
       "publishAllPorts": true,
       "httpPort": 5000
     }

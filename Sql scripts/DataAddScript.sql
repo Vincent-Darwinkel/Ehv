@@ -185,7 +185,7 @@ INSERT INTO `Hobby` (`Uuid`, `Name`) VALUES
 ('fb99cc99-1e81-498a-b0fe-3b8ac42a99f4', 'Astrologie'),
 ('fbe2fa05-da61-4a51-9a51-49c74d08d5ab', 'Kajakken');
 
-USE ehv_favorite_artist;
+USE ehv_artist;
 
 INSERT INTO `FavoriteArtist` (`Uuid`, `Name`) VALUES
 ('0035f263-5d13-4a60-b6d0-6c833bb55277', 'Bombay Bicycle Club'),

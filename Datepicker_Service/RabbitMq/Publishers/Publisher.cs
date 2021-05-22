@@ -1,9 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using Datepicker_Service.Logic;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Datepicker_Service.Logic;
 
 namespace Datepicker_Service.RabbitMq.Publishers
 {

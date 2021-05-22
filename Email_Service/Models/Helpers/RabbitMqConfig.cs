@@ -1,4 +1,4 @@
-﻿namespace Authentication_Service.Models.HelperFiles
+﻿namespace Email_Service.Models.Helpers
 {
     public class RabbitMqConfig
     {

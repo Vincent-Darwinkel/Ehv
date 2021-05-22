@@ -1,9 +1,7 @@
 ﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Authentication_Service.Logic;
-using RabbitMQ.Client.Exceptions;
 using QueuedTasks = User_Service.Logic.QueuedTasks;
 
 namespace Authentication_Service.RabbitMq.Publishers

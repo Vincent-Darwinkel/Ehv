@@ -1,9 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using File_Service.Logic;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using File_Service.Logic;
 
 namespace File_Service.RabbitMq.Publishers
 {

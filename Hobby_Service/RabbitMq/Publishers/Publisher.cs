@@ -1,8 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using Hobby_Service.Logic;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using Hobby_Service.Logic;
 
 namespace Hobby_Service.RabbitMq.Publishers
 {
