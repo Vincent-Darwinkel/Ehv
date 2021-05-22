@@ -17,7 +17,7 @@ namespace Datepicker_Service.Models.HelperFiles
 
         public UserHelper GetRequestingUser(ControllerBase controllerBase)
         {
-            string authorization = controllerBase.HttpContext.Request.Headers[RequestHeaders.Jwt];
+            string authorization = controllerBase.HttpContext.Request.Headers[RequestHeaders.Authorization];
             string jwt = authorization.Replace("Bearer ", "");
 
             if (jwt.Length < 25)
