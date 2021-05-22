@@ -14,19 +14,17 @@ namespace File_Service
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IConfiguration _config;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-
 
             // allow big files to be uploaded
             services.Configure<KestrelServerOptions>(options =>
@@ -44,6 +42,9 @@ namespace File_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
+            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
+
+            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddSingleton(service => new RabbitMqChannel().GetChannel());
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<FileLogic>();

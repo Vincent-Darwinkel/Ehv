@@ -56,6 +56,7 @@ namespace Authentication_Service
         {
             IConfigurationSection section = _config.GetSection(nameof(JwtConfig));
 
+            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddSingleton(section.Get<JwtConfig>());
             services.AddScoped<UserLogic>();
             services.AddScoped<AuthenticationLogic>();

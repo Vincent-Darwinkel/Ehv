@@ -1,4 +1,4 @@
-﻿namespace Authentication_Service.Models.HelperFiles
+﻿namespace Favorite_Artist_Service.Model.Helpers
 {
     public class RabbitMqConfig
     {

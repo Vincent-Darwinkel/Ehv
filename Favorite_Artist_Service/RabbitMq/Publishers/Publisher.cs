@@ -1,9 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using Favorite_Artist_Service.Logic;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Favorite_Artist_Service.Logic;
 
 namespace Favorite_Artist_Service.RabbitMq.Publishers
 {

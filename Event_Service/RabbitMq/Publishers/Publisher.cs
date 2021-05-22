@@ -1,9 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using Event_Service.Logic;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Event_Service.Logic;
 
 namespace Event_Service.RabbitMq.Publishers
 {

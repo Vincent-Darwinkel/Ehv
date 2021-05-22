@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Connections;
+﻿using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
+using System;
 
 namespace Authentication_Service.RabbitMq
 {
@@ -8,7 +8,7 @@ namespace Authentication_Service.RabbitMq
     {
         public IModel GetChannel()
         {
-            var rabbitMqFactory = new ConnectionFactory { HostName = "rabbitmq", UserName = "guest", Password = "guest" };
+            var rabbitMqFactory = new ConnectionFactory { HostName = Environment.GetEnvironmentVariable("rabbitmq"), UserName = "guest", Password = "guest" };
             IConnection connection = null;
 
             var attempts = 0;

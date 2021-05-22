@@ -367,3 +367,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 SQLTableGenerationScript.Development.sql
+Kubernetes.yaml
+Kubernetes.yaml
+Kubernetes.yaml

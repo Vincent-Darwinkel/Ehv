@@ -20,7 +20,7 @@ namespace Hobby_Service
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             bool allowAnonymous = context.ActionDescriptor.EndpointMetadata
-                .Any(em => em.GetType() == typeof(AllowAnonymousAttribute)); //< -- Here it is
+                .Any(em => em.GetType() == typeof(AllowAnonymousAttribute));
 
             if (allowAnonymous) // skip authorization if allow anonymous attribute is used
             {
@@ -28,7 +28,8 @@ namespace Hobby_Service
             }
 
             JwtLogic jwtLogic = (JwtLogic)context.HttpContext.RequestServices.GetService(typeof(JwtLogic));
-            string jwt = context.HttpContext.Request.Headers[RequestHeaders.Authorization];
+            string authorization = context.HttpContext.Request.Headers[RequestHeaders.Authorization];
+            string jwt = authorization.Replace("Bearer ", "");
 
             var role = jwtLogic.GetClaim<AccountRole>(jwt, JwtClaim.AccountRole);
             if (!_requiredRoles.Contains(role))

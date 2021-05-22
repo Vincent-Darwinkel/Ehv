@@ -1,37 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ehv-auth-service
+  name: ehv-gateway-service
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ehv-auth-service
+      app: ehv-gateway-service
   template:
     metadata:
       labels:
-        app: ehv-auth-service
+        app: ehv-gateway-service
     spec:
       containers:
         - name: ehv-auth-service
-          image: vincentdarwinkel/authentication-service
+          image: vincentdarwinkel/ehv-auth-service
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always
+      volumes:
+        - name: config
+          secret:
+            secretName: ehv-auth-appsettings
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: ehv-auth-service
+  namespace: default
 spec:
-  type: LoadBalancer
   ports:
     - name: ehv-auth-service
-      port: 80
+      port: 8080
       targetPort: 80
   selector:
     app: ehv-auth-service

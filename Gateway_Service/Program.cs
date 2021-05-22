@@ -1,7 +1,7 @@
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Gateway_Service
 {
@@ -16,15 +16,16 @@ namespace Gateway_Service
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureAppConfiguration((builder) =>
+                    {
+                        builder.SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.Development.json", true)
+                            .AddJsonFile("config/appsettings.json", true)
+                            .AddJsonFile("ocelot.json", true, false)
+                            .AddJsonFile("config/ocelot.json", true)
+                            .AddEnvironmentVariables();
+                    });
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureAppConfiguration(config =>
-                        config.AddJsonFile("ocelot.Development.json")); // TODO remove .Development in production builds
-
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
                 });
     }
 }
