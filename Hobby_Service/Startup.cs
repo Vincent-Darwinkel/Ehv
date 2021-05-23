@@ -51,14 +51,14 @@ namespace Hobby_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
+            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
 
-            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<LogLogic>();
             services.AddScoped<IHobbyDal, HobbyDal>();
             services.AddScoped<HobbyLogic>();
             services.AddScoped<JwtLogic>();
-            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
             services.AddScoped<IPublisher, Publisher>();
         }
 

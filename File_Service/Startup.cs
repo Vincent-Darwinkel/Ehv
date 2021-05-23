@@ -43,9 +43,9 @@ namespace File_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
+            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
 
-            services.AddSingleton(section.Get<RabbitMqConfig>());
-            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<FileLogic>();
             services.AddScoped<LogLogic>();

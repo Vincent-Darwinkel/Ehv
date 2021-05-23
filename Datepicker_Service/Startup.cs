@@ -33,7 +33,6 @@ namespace Datepicker_Service
                 throw new NoNullAllowedException();
             }
 
-
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -50,11 +49,11 @@ namespace Datepicker_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
+            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
 
-            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<ControllerHelper>();
-            services.AddScoped(service => new RabbitMqChannel().GetChannel());
+            services.AddScoped(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();

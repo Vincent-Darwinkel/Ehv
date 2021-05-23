@@ -53,10 +53,10 @@ namespace Event_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
+            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
 
-            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddScoped<IPublisher, Publisher>();
-            services.AddScoped(service => new RabbitMqChannel().GetChannel());
+            services.AddScoped(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<ControllerHelper>();
