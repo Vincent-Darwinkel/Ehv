@@ -49,11 +49,11 @@ namespace Datepicker_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
-            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
+            IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddScoped<IPublisher, Publisher>();
             services.AddScoped<ControllerHelper>();
-            services.AddScoped(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
+            services.AddScoped(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
