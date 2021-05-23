@@ -55,14 +55,14 @@ namespace Authentication_Service
         private void AddDependencyInjection(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(JwtConfig));
-            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
+            IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddSingleton(section.Get<JwtConfig>());
             services.AddScoped<UserLogic>();
             services.AddScoped<AuthenticationLogic>();
             services.AddScoped<SecurityLogic>();
             services.AddScoped<JwtLogic>();
-            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddScoped<AddUserConsumer>();
             services.AddSingleton<UpdateUserConsumer>();
             services.AddSingleton<DeleteUserConsumer>();

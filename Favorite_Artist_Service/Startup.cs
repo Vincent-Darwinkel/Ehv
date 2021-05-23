@@ -51,14 +51,14 @@ namespace Favorite_Artist_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
-            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
+            IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<LogLogic>();
             services.AddScoped<IFavoriteArtistDal, FavoriteArtistDal>();
             services.AddScoped<FavoriteArtistLogic>();
             services.AddScoped<JwtLogic>();
-            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddScoped<IPublisher, Publisher>();
         }
 

@@ -51,9 +51,9 @@ namespace Logging_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
-            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
+            IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
-            services.AddScoped(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
+            services.AddScoped(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
             services.AddScoped<LogLogic>();
             services.AddScoped<ILogDal, LogDal>();

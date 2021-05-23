@@ -50,12 +50,12 @@ namespace User_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
-            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
+            IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddScoped<ControllerHelper>();
             services.AddScoped<IPublisher, Publisher>();
 
-            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddSingleton(service => AutoMapperConfig.Config.CreateMapper());
 
             services.AddScoped<UserLogic>();
