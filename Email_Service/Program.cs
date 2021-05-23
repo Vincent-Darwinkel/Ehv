@@ -20,7 +20,7 @@ namespace Email_Service
                     {
                         builder.SetBasePath(Directory.GetCurrentDirectory())
                             .AddJsonFile("appsettings.Development.json", true)
-                            .AddJsonFile("config/appsettings.json", true)
+                            .AddJsonFile("config/appsettings.Kubernetes.json", true)
                             .AddEnvironmentVariables();
                     });
                     webBuilder.UseStartup<Startup>();
