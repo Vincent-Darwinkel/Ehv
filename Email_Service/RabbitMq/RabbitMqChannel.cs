@@ -26,7 +26,7 @@ namespace Email_Service.RabbitMq
             IConnection connection = null;
 
             var attempts = 0;
-            while (attempts < 100)
+            while (attempts < 10)
             {
                 try
                 {
