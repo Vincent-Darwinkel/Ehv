@@ -23,3 +23,6 @@
 **/values.dev.yaml
 LICENSE
 README.md
+appsetting.json
+appsetting.Development.json
+appsetting.Kubernetes.json

@@ -15,6 +15,9 @@
 !/Media/public/gallery/.gitkeep
 !/Media/public/avatar/.gitkeep
 info.json
+appsettings.json
+appsettings.Development.json
+appsettings.Kubernetes.json
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -370,3 +373,5 @@ SQLTableGenerationScript.Development.sql
 Kubernetes.yaml
 Kubernetes.yaml
 Kubernetes.yaml
+Authentication_Service/appsettings.Kubernetes.json
+Authentication_Service/appsettings.Kubernetes.json
