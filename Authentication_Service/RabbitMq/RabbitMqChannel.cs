@@ -11,6 +11,10 @@ namespace Authentication_Service.RabbitMq
 
         public RabbitMqChannel(RabbitMqConfig config)
         {
+            Console.WriteLine("RabbitMq config data");
+            Console.WriteLine(Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"));
+            Console.WriteLine(config.Username);
+            Console.WriteLine(config.Password);
             _config = config;
         }
 
