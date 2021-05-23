@@ -30,12 +30,12 @@ namespace Email_Service
         public void AddDependencies(ref IServiceCollection services)
         {
             IConfigurationSection section = _config.GetSection(nameof(EmailConfig));
+            RabbitMqConfig rabbitMqConfig = section.Get<RabbitMqConfig>();
 
-            services.AddSingleton(section.Get<RabbitMqConfig>());
             services.AddSingleton(section.Get<EmailConfig>());
             services.AddScoped<IPublisher, Publisher>();
             services.AddSingleton<SendMailConsumer>();
-            services.AddSingleton(service => new RabbitMqChannel().GetChannel());
+            services.AddSingleton(service => new RabbitMqChannel(rabbitMqConfig).GetChannel());
             services.AddScoped<LogLogic>();
             services.AddScoped<EmailLogic>();
         }
