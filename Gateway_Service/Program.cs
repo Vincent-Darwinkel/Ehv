@@ -21,8 +21,8 @@ namespace Gateway_Service
                         builder.SetBasePath(Directory.GetCurrentDirectory())
                             .AddJsonFile("appsettings.Development.json", true)
                             .AddJsonFile("config/appsettings.Kubernetes.json", true)
-                            .AddJsonFile("ocelot.json", true, false)
-                            .AddJsonFile("config/ocelot.json", true)
+                            .AddJsonFile("config/ocelot.Kubernetes.json", true)
+                            .AddJsonFile("ocelot.Development.json", true)
                             .AddEnvironmentVariables();
                     });
                     webBuilder.UseStartup<Startup>();
