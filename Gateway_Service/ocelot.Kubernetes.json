@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/authenticate/refresh",
-      "UpstreamHttpMethod": ["POST"],
+      "UpstreamHttpMethod": [ "POST" ],
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -29,7 +29,7 @@
         }
       ],
       "UpstreamPathTemplate": "/authenticate",
-      "UpstreamHttpMethod": ["POST"],
+      "UpstreamHttpMethod": [ "POST" ],
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -48,7 +48,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -63,7 +63,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": ["Post"]
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/user/by-list",
@@ -75,7 +75,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user/by-list",
-      "UpstreamHttpMethod": ["GET"],
+      "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -90,7 +90,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user/disabled",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -105,19 +105,19 @@
         }
       ],
       "UpstreamPathTemplate": "/user/activate",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"]
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ]
     },
     {
       "DownstreamPathTemplate": "/hobby",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "hobby_service",
+          "Host": "ehv-hobby-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/hobby",
-      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -127,24 +127,24 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "hobby_service",
+          "Host": "ehv-hobby-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/hobby",
-      "UpstreamHttpMethod": ["GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/favorite-artist",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "favorite_artist_service",
+          "Host": "ehv-artist-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/favorite-artist",
-      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -154,24 +154,24 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "favorite_artist_service",
+          "Host": "ehv-artist-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/favorite-artist",
-      "UpstreamHttpMethod": ["GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/datepicker",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "datepicker_service",
+          "Host": "ehv-datepicker-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/datepicker",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -181,12 +181,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "datepicker_service",
+          "Host": "ehv-datepicker-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/datepicker/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -196,12 +196,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "logging_service",
+          "Host": "ehv-log-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/log/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -211,12 +211,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "logging_service",
+          "Host": "ehv-log-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/log",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -226,12 +226,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "event_service",
+          "Host": "log-event-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/event/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
@@ -248,12 +248,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "event_service",
+          "Host": "log-event-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/event",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
@@ -270,12 +270,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "file_service",
+          "Host": "ehv-file-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/directory",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -285,12 +285,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "file_service",
+          "Host": "ehv-file-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/directory/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -300,12 +300,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "file_service",
+          "Host": "ehv-file-service",
           "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/file",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
