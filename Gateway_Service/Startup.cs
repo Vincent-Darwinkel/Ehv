@@ -27,7 +27,7 @@ namespace Gateway_Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory() + "config");
+            var files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/config");
             foreach (var file in files)
             {
                 Console.WriteLine($"File: {file}");
