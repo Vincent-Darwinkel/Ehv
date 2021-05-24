@@ -112,7 +112,7 @@ namespace Datepicker_Service.Logic
                 .RemoveAll(d => !datePickerConversion.SelectedDates
                     .Contains(d.Uuid));
 
-            _publisher.Publish(datepickerRabbitMq, RabbitMqRouting.ConvertDatepicker, RabbitMqExchange.ConvertDatepicker);
+            _publisher.Publish(datepickerRabbitMq, RabbitMqRouting.ConvertDatepicker, RabbitMqExchange.EventExchange);
             await _datepickerDal.Delete(datePickerConversion.DatepickerUuid);
         }
 

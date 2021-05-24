@@ -26,9 +26,9 @@ namespace Event_Service.RabbitMq.Consumers
         /// </summary>
         public void Consume()
         {
-            _channel.ExchangeDeclare(RabbitMqExchange.ConvertDatepicker, ExchangeType.Direct);
+            _channel.ExchangeDeclare(RabbitMqExchange.EventExchange, ExchangeType.Direct);
             _channel.QueueDeclare(RabbitMqQueues.ConvertDatepickerQueue, true, false, false, null);
-            _channel.QueueBind(RabbitMqQueues.ConvertDatepickerQueue, RabbitMqExchange.ConvertDatepicker, RabbitMqRouting.ConvertDatepicker);
+            _channel.QueueBind(RabbitMqQueues.ConvertDatepickerQueue, RabbitMqExchange.EventExchange, RabbitMqRouting.ConvertDatepicker);
             _channel.BasicQos(0, 10, false);
 
             var consumer = new EventingBasicConsumer(_channel);

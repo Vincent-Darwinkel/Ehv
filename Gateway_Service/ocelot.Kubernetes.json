@@ -1,0 +1,314 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/authenticate/refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-auth-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/authenticate/refresh",
+      "UpstreamHttpMethod": ["POST"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 10,
+        "Limit": 1
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/authenticate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-auth-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/authenticate",
+      "UpstreamHttpMethod": ["POST"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 10,
+        "Limit": 1
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/user",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-user-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/user",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-user-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user",
+      "UpstreamHttpMethod": ["Post"]
+    },
+    {
+      "DownstreamPathTemplate": "/user/by-list",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-user-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user/by-list",
+      "UpstreamHttpMethod": ["GET"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/user/disabled",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-user-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user/disabled",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/user/activate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-user-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user/activate",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/hobby",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "hobby_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/hobby",
+      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/hobby",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "hobby_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/hobby",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/favorite-artist",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "favorite_artist_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/favorite-artist",
+      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/favorite-artist",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "favorite_artist_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/favorite-artist",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/datepicker",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "datepicker_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/datepicker",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/datepicker/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "datepicker_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/datepicker/{everything}",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/log/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "logging_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/log/{everything}",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/log",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "logging_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/log",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/event/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "event_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/event/{everything}",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 2
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/event",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "event_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/event",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 2
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/directory",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "file_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/directory",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/directory/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "file_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/directory/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/file",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "file_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/file",
+      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}
