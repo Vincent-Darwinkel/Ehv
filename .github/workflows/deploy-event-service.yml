@@ -6,7 +6,7 @@ name: Docker hub event service
 on:
   push:
     paths:
-      - "Email_Service/**"
+      - "Event_Service/**"
     branches: [main]
 
 jobs:
