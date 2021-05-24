@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +10,11 @@ namespace Gateway_Service
     {
         public static void Main(string[] args)
         {
+            string[] files = Directory.GetFiles(Environment.CurrentDirectory);
+            foreach (var file in files)
+            {
+                Console.WriteLine("File: " + file);
+            }
             CreateHostBuilder(args).Build().Run();
         }
 
