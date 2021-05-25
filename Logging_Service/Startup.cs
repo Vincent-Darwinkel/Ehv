@@ -50,7 +50,6 @@ namespace Logging_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
-            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
             IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddScoped(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());

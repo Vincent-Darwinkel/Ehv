@@ -29,16 +29,9 @@ namespace Logging_Service.Controllers
         [HttpGet]
         public async Task<ActionResult<List<LogViewmodel>>> All()
         {
-            try
-            {
-                List<LogDto> logCollection = await _logLogic.All();
-                return _mapper.Map<List<LogViewmodel>>(logCollection);
-            }
-            catch (Exception e)
-            {
-                await _logLogic.Log(e);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+
+            List<LogDto> logCollection = await _logLogic.All();
+            return _mapper.Map<List<LogViewmodel>>(logCollection);
         }
 
         [HttpDelete]
