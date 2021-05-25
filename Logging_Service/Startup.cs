@@ -57,6 +57,7 @@ namespace Logging_Service
             services.AddScoped<LogLogic>();
             services.AddScoped<ILogDal, LogDal>();
             services.AddScoped<AddLogConsumer>();
+            services.AddScoped<JwtLogic>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
