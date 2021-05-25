@@ -45,9 +45,9 @@ namespace Authentication_Service.Logic
         public async Task<string> ValidateUserPassword(string user)
         {
             var userRabbitMq = Newtonsoft.Json.JsonConvert.DeserializeObject<UserDto>(user);
-            UserDto dbUser = await _userDal.Find(userRabbitMq.Username);
+            UserDto dbUser = await _userDal.Find(userRabbitMq.Uuid);
 
-            bool passwordCorrect = _securityLogic.VerifyPassword(userRabbitMq.Password, dbUser.Password);
+            bool passwordCorrect = _securityLogic.VerifyPassword(userRabbitMq.Password, dbUser?.Password);
             return Newtonsoft.Json.JsonConvert.SerializeObject(passwordCorrect);
         }
 
