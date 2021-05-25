@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Connections;
+﻿using Logging_Service.Models.Helpers;
+using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
 using System;
-using Logging_Service.Models.Helpers;
 
 namespace Logging_Service.RabbitMq
 {

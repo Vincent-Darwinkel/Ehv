@@ -52,7 +52,6 @@ namespace Event_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
-            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
             IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddScoped<IPublisher, Publisher>();
