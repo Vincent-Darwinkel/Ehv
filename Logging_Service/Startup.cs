@@ -29,7 +29,7 @@ namespace Logging_Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = "database=ehv_log;keepalive=5;server=log-db;port=3306;user id=ehv_log;password=jfoweijf323r889shdfhasdfh;connectiontimeout=5"; //_config.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();

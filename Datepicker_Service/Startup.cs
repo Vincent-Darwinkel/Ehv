@@ -27,8 +27,7 @@ namespace Datepicker_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString =
-                "database=ehv_datepicker;keepalive=5;server=datepicker-db;port=3306;user id=ehv_datepicker;password=hf9hjkweahgbfuhf34uifhasuifh;connectiontimeout=5";  //_config.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();

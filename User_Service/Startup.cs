@@ -28,7 +28,7 @@ namespace User_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = "database=ehv_user;keepalive=5;server=user-db;port=3306;user id=ehv_user;password=fj09fjaklj23kfjapdokhrth50;connectiontimeout=5"; //_config.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();

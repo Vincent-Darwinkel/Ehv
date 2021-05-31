@@ -29,8 +29,7 @@ namespace Favorite_Artist_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString =
-                "database=ehv_artist;keepalive=5;server=artist-db;port=3306;user id=ehv_artist;password=fheu37fh47h47dh3khhg;connectiontimeout=5"; // _config.GetConnectionString("DefaultConnection");
+            string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();
