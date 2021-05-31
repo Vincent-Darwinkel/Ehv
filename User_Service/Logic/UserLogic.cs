@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Net.Http;
 using System.Threading.Tasks;
 using User_Service.CustomExceptions;
 using User_Service.Dal.Interfaces;
@@ -36,12 +37,20 @@ namespace User_Service.Logic
             _rpcClient = rpcClient;
         }
 
-        private bool UserModelValid(User user)
+        private static async Task<bool> EmailIsValid(string email)
+        {
+            var url = new Uri("https://ehvemailvalidator.azurewebsites.net/api/emailvalidator?email=" + email);
+            var httpClient = new HttpClient();
+            var result = await httpClient.GetStringAsync(url);
+            return Convert.ToBoolean(result);
+        }
+
+        private async Task<bool> UserModelValid(User user)
         {
             return !string.IsNullOrEmpty(user.Username) &&
                    user.Username.Length >= 4 &&
                    !string.IsNullOrEmpty(user.Email) &&
-                   EmailIsValid(user.Email);
+                   await EmailIsValid(user.Email);
         }
 
         /// <summary>
@@ -50,7 +59,7 @@ namespace User_Service.Logic
         /// <param name="user">The form data the user send</param>
         public async Task Register(User user)
         {
-            if (!UserModelValid(user) || user.Password.Length < 8)
+            if (!await UserModelValid(user) || user.Password.Length < 8)
             {
                 throw new UnprocessableException();
             }
@@ -157,8 +166,6 @@ namespace User_Service.Logic
             return await _userDal.Find(uuid);
         }
 
-        public static bool EmailIsValid(string address) => address != null && new EmailAddressAttribute().IsValid(address);
-
         /// <summary>
         /// Updates the user
         /// </summary>
@@ -166,7 +173,7 @@ namespace User_Service.Logic
         /// <param name="requestingUserUuid">the uuid of the user that made the request</param>
         public async Task Update(User user, Guid requestingUserUuid)
         {
-            if (!UserModelValid(user))
+            if (!await UserModelValid(user))
             {
                 throw new UnprocessableException();
             }
