@@ -39,7 +39,6 @@ namespace Authentication_Service
                 throw new NoNullAllowedException();
             }
 
-            Console.WriteLine("Config: " + connectionString);
             services.AddDbContextPool<DataContext>(
                 dbContextOptions => dbContextOptions
                                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
