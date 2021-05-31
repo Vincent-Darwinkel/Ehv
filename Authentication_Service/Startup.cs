@@ -33,7 +33,8 @@ namespace Authentication_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = _config.GetConnectionString("DefaultConnection");
+            string connectionString =
+                "database=ehv_auth;keepalive=5;server=auth-db;port=3306;user id=ehv_auth;password=fwef09j2390rfjffasf23fs;connectiontimeout=5"; // TODO remove in production temp used for azure  _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();

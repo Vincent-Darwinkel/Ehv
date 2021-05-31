@@ -31,7 +31,7 @@ namespace Event_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = _config.GetConnectionString("DefaultConnection");
+            string connectionString = "database=ehv_event;keepalive=5;server=log-db;port=3306;user id=ehv_event;password=j09j4klja0943u09jgpokjgerg;connectiontimeout=5"; //_config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new NoNullAllowedException();
