@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hobby_Service", "Hobby_Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Favorite_Artist_Service", "Favorite_Artist_Service\Favorite_Artist_Service.csproj", "{6092138B-A075-4523-9198-5734B60EF9FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{6601D810-80DC-46BC-82EA-D44AE1236278}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{6601D810-80DC-46BC-82EA-D44AE1236278}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Account_Removal_Service", "Account_Removal_Service\Account_Removal_Service.csproj", "{6F765C5A-3DDD-49F9-ACD5-8E3B954ACEDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{6601D810-80DC-46BC-82EA-D44AE1236278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6601D810-80DC-46BC-82EA-D44AE1236278}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6601D810-80DC-46BC-82EA-D44AE1236278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F765C5A-3DDD-49F9-ACD5-8E3B954ACEDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F765C5A-3DDD-49F9-ACD5-8E3B954ACEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F765C5A-3DDD-49F9-ACD5-8E3B954ACEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F765C5A-3DDD-49F9-ACD5-8E3B954ACEDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

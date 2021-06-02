@@ -52,5 +52,15 @@ namespace Datepicker_Service.Dal
             _context.DatepickerAvailability.RemoveRange(availabilitiesToRemove);
             await _context.SaveChangesAsync();
         }
+
+        public async Task Delete(Guid userUuid)
+        {
+            List<DatepickerAvailabilityDto> availabilitiesToRemove = await _context.DatepickerAvailability
+                .Where(dpa => dpa.UserUuid == userUuid)
+                .ToListAsync();
+
+            _context.DatepickerAvailability.RemoveRange(availabilitiesToRemove);
+            await _context.SaveChangesAsync();
+        }
     }
 }

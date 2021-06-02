@@ -36,7 +36,7 @@ namespace Authentication_Service
             string connectionString = _config.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new NoNullAllowedException();
+                throw new NoNullAllowedException("Connectionstring is empty");
             }
 
             services.AddDbContextPool<DataContext>(
@@ -64,8 +64,8 @@ namespace Authentication_Service
             services.AddScoped<JwtLogic>();
             services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
             services.AddScoped<AddUserConsumer>();
-            services.AddSingleton<UpdateUserConsumer>();
-            services.AddSingleton<DeleteUserConsumer>();
+            services.AddScoped<UpdateUserConsumer>();
+            services.AddScoped<DeleteUserConsumer>();
             services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<ControllerHelper>();
 

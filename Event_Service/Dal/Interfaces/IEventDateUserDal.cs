@@ -19,5 +19,11 @@ namespace Event_Service.Dal.Interfaces
         /// </summary>
         /// <param name="eventDateUserToRemove"></param>
         public Task Remove(EventDateUserDto eventDateUserToRemove);
+
+        /// <summary>
+        /// Removes the user from the event date
+        /// </summary>
+        /// <param name="userUuid">The uuid of the user</param>
+        public Task Remove(Guid userUuid);
     }
 }

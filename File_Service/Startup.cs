@@ -1,6 +1,7 @@
 using File_Service.Logic;
 using File_Service.Models.HelperFiles;
 using File_Service.RabbitMq;
+using File_Service.RabbitMq.Consumers;
 using File_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace File_Service
 {
@@ -59,6 +61,11 @@ namespace File_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
+            }.ForEach(consumer => consumer.Consume());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

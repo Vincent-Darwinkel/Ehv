@@ -80,6 +80,7 @@ namespace Event_Service
             new List<IConsumer>
             {
                 app.ApplicationServices.GetService<ConvertToEventConsumer>(),
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
             }.ForEach(consumer => consumer.Consume());
 
             var channel = app.ApplicationServices.GetService<IModel>();

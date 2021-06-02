@@ -1,6 +1,5 @@
 ﻿using Authentication_Service.Logic;
 using Authentication_Service.Models.HelperFiles;
-using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -14,19 +13,18 @@ namespace Authentication_Service.RabbitMq.Consumers
         private readonly UserLogic _userLogic;
         private readonly LogLogic _logLogic;
 
-        public DeleteUserConsumer(IServiceProvider serviceProvider, IModel channel)
+        public DeleteUserConsumer(IModel channel, UserLogic userLogic, LogLogic logLogic)
         {
             _channel = channel;
-            using var scope = serviceProvider.CreateScope();
-            _userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
-            _logLogic = scope.ServiceProvider.GetRequiredService<LogLogic>();
+            _userLogic = userLogic;
+            _logLogic = logLogic;
         }
 
         public void Consume()
         {
-            _channel.ExchangeDeclare("user_exchange", ExchangeType.Direct);
+            _channel.ExchangeDeclare(RabbitMqExchange.AuthenticationExchange, ExchangeType.Direct);
             _channel.QueueDeclare(RabbitMqQueues.DeleteUserQueue, true, false, false, null);
-            _channel.QueueBind(RabbitMqQueues.DeleteUserQueue, "user_exchange", RabbitMqRouting.DeleteUser);
+            _channel.QueueBind(RabbitMqQueues.DeleteUserQueue, RabbitMqExchange.AuthenticationExchange, RabbitMqRouting.DeleteUser);
             _channel.BasicQos(0, 10, false);
 
             var consumer = new EventingBasicConsumer(_channel);

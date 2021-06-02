@@ -3,6 +3,7 @@ using Datepicker_Service.Dal.Interfaces;
 using Datepicker_Service.Logic;
 using Datepicker_Service.Models.HelperFiles;
 using Datepicker_Service.RabbitMq;
+using Datepicker_Service.RabbitMq.Consumers;
 using Datepicker_Service.RabbitMq.Publishers;
 using Datepicker_Service.RabbitMq.Rpc;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Data;
 using System.Text.Json.Serialization;
 
@@ -48,7 +50,6 @@ namespace Datepicker_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
-            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
             IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddScoped<IPublisher, Publisher>();
@@ -57,6 +58,7 @@ namespace Datepicker_Service
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
+            services.AddScoped<DatepickerDateLogic>();
             services.AddScoped<DatepickerAvailabilityLogic>();
             services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<IDatepickerDal, DatepickerDal>();
@@ -68,6 +70,11 @@ namespace Datepicker_Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
+            }.ForEach(consumer => consumer.Consume());
+
             app.UseRouting();
 
             app.UseAuthorization();

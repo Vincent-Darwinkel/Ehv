@@ -7,8 +7,5 @@
         public static readonly string UpdateUser = "update.user";
         public static readonly string DeleteUser = "delete.user";
         public static readonly string SendMail = "send.mail";
-        public static readonly string FindUsers = "find.user";
-        public static readonly string AddActivation = "activation.user";
-        public static readonly string AddDisabledUser = "disable.user";
     }
 }

@@ -2,6 +2,6 @@
 {
     public static class RabbitMqQueues
     {
-        public static readonly string AddFileQueue = "add_file_queue";
+        public static readonly string DeleteUserQueue = "delete_user_file_queue";
     }
 }

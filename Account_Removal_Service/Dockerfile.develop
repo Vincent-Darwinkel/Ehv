@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:5.0
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:80
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 80
+
+WORKDIR /src
+COPY ["Account_Removal_Service/Account_Removal_Service.csproj", "Account_Removal_Service/"]
+
+RUN dotnet restore "Account_Removal_Service/Account_Removal_Service.csproj"
+COPY . .
+WORKDIR "/src/Account_Removal_Service"
+RUN dotnet build --no-restore "Account_Removal_Service.csproj" -c $BUILD_CONFIGURATION
+
+RUN echo "exec dotnet run --no-build --no-launch-profile -c $BUILD_CONFIGURATION --" > /entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
