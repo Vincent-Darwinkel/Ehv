@@ -11,15 +11,13 @@ namespace Datepicker_Service.RabbitMq.Consumers
     {
         private readonly IModel _channel;
         private readonly DatepickerAvailabilityLogic _datepickerAvailabilityLogic;
-        private readonly DatepickerDateLogic _datepickerDateLogic;
         private readonly LogLogic _logLogic;
 
         public DeleteUserConsumer(IModel channel, DatepickerAvailabilityLogic datepickerAvailabilityLogic,
-            DatepickerDateLogic datepickerDateLogic, LogLogic logLogic)
+            LogLogic logLogic)
         {
             _channel = channel;
             _datepickerAvailabilityLogic = datepickerAvailabilityLogic;
-            _datepickerDateLogic = datepickerDateLogic;
             _logLogic = logLogic;
         }
 
@@ -40,7 +38,6 @@ namespace Datepicker_Service.RabbitMq.Consumers
                     var userUuid = Newtonsoft.Json.JsonConvert.DeserializeObject<Guid>(json);
 
                     await _datepickerAvailabilityLogic.DeleteUserFromAvailability(userUuid);
-                    await _datepickerDateLogic.DeleteUserFromDate(userUuid);
                 }
                 catch (Exception exception)
                 {

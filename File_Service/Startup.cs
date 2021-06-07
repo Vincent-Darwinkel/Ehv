@@ -44,7 +44,6 @@ namespace File_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
-            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
             IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
@@ -55,6 +54,7 @@ namespace File_Service
             services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();
+            services.AddScoped<DeleteUserConsumer>();
             services.AddScoped<ControllerHelper>();
         }
 

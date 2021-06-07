@@ -25,11 +25,5 @@ namespace Datepicker_Service.Dal.Interfaces
         /// </summary>
         /// <param name="dates">The dates to delete</param>
         Task Delete(List<DatepickerDateDto> dates);
-
-        /// <summary>
-        /// Deletes the user from the dates
-        /// </summary>
-        /// <param name="userUuid">The user uuid</param>
-        Task Delete(Guid userUuid);
     }
 }

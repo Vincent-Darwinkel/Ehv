@@ -72,6 +72,7 @@ namespace Event_Service
             services.AddScoped<EventDateUserLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<ConvertToEventConsumer>();
+            services.AddScoped<DeleteUserConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

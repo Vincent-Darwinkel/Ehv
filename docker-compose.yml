@@ -163,7 +163,14 @@ services:
         - rabbitmq
     environment:
       RABBITMQ_HOSTNAME : rabbitmq
+
+  account_removal_service:
+    image: ${DOCKER_REGISTRY-}accountremovalservice
+    build:
+      context: .
+      dockerfile: Account_Removal_Service/Dockerfile
+    environment:
+      RABBITMQ_HOSTNAME : rabbitmq
+
 volumes:
   mariadb-data:
-
-

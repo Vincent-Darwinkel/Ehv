@@ -24,7 +24,7 @@ namespace Account_Removal_Service.Controllers
             _controllerHelper = controllerHelper;
         }
 
-        [HttpPost]
+        [HttpDelete]
         public ActionResult RemoveUserData([FromQuery(Name = "options")] List<RemovableOptions> options)
         {
             try

@@ -70,6 +70,8 @@ namespace User_Service
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IActivationDal, ActivationDal>();
             services.AddScoped<IDisabledUserDal, DisabledUserDal>();
+
+            services.AddScoped<DeleteUserConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

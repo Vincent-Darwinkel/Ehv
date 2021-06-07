@@ -26,7 +26,7 @@ namespace User_Service.RabbitMq.Consumers
         public void Consume()
         {
             _channel.ExchangeDeclare(RabbitMqExchange.UserExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(RabbitMqQueues.AddActivationQueue, true, false, false, null);
+            _channel.QueueDeclare(RabbitMqQueues.DeleteUserQueue, true, false, false, null);
             _channel.QueueBind(RabbitMqQueues.DeleteUserQueue, RabbitMqExchange.UserExchange, RabbitMqRouting.DeleteUser);
             _channel.BasicQos(0, 10, false);
 
@@ -47,7 +47,7 @@ namespace User_Service.RabbitMq.Consumers
                 }
             };
 
-            _channel.BasicConsume(RabbitMqQueues.AddActivationQueue, true, consumer);
+            _channel.BasicConsume(RabbitMqQueues.DeleteUserQueue, true, consumer);
         }
     }
 }

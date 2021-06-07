@@ -58,8 +58,8 @@ namespace Datepicker_Service
             services.AddScoped<JwtLogic>();
             services.AddScoped<LogLogic>();
             services.AddScoped<DatepickerLogic>();
-            services.AddScoped<DatepickerDateLogic>();
             services.AddScoped<DatepickerAvailabilityLogic>();
+            services.AddScoped<DeleteUserConsumer>();
             services.AddScoped<IRpcClient, RpcClient>();
             services.AddScoped<IDatepickerDal, DatepickerDal>();
             services.AddScoped<IDatepickerDateDal, DatepickerDateDal>();
