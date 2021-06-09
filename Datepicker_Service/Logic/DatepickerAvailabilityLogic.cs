@@ -35,5 +35,10 @@ namespace Datepicker_Service.Logic
             await _datepickerAvailabilityDal.Delete(availabilitiesToRemove, requestingUser.Uuid);
             await _datepickerAvailabilityDal.Add(availabilitiesToAdd);
         }
+
+        public async Task DeleteUserFromAvailability(Guid userUuid)
+        {
+            await _datepickerAvailabilityDal.Delete(userUuid);
+        }
     }
 }

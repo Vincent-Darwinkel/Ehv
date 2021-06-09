@@ -25,5 +25,11 @@ namespace Event_Service.Dal.Interfaces
         /// </summary>
         /// <param name="eventStepUser">The event step user to remove</param>
         public Task Remove(EventStepUserDto eventStepUser);
+
+        /// <summary>
+        /// Removes the user from the event step
+        /// </summary>
+        /// <param name="userUuid">The uuid of the user</param>
+        public Task Remove(Guid userUuid);
     }
 }

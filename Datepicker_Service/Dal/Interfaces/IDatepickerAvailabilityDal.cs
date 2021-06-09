@@ -29,5 +29,11 @@ namespace Datepicker_Service.Dal.Interfaces
         /// <param name="dateUuidCollection">The uuid of the availabilities to remove</param>
         /// <param name="userUuid">The uuid of the user</param>
         public Task Delete(IEnumerable<Guid> dateUuidCollection, Guid userUuid);
+
+        /// <summary>
+        /// Deletes all availabilities which contains the user uuid
+        /// </summary>
+        /// <param name="userUuid">The uuid of the user</param>
+        public Task Delete(Guid userUuid);
     }
 }

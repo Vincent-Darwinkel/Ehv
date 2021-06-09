@@ -52,5 +52,10 @@ namespace Event_Service.Logic
 
             await _eventStepUserDal.Remove(dbEventStepUser);
         }
+
+        public async Task DeleteUserFromSteps(Guid userUuid)
+        {
+            await _eventStepUserDal.Remove(userUuid);
+        }
     }
 }

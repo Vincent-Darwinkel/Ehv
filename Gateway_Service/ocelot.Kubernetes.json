@@ -305,7 +305,22 @@
         }
       ],
       "UpstreamPathTemplate": "/file",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/account-removal",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "account-removal-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/account-removal",
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

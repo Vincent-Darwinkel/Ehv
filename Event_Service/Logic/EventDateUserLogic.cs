@@ -32,5 +32,10 @@ namespace Event_Service.Logic
 
             await _eventDateUserDal.Remove(dbEventDateUser);
         }
+
+        public async Task DeleteUserFromEventDate(Guid userUuid)
+        {
+            await _eventDateUserDal.Remove(userUuid);
+        }
     }
 }

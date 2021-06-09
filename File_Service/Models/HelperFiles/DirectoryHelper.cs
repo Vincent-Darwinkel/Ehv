@@ -1,6 +1,7 @@
 ﻿using File_Service.CustomExceptions;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -209,6 +210,56 @@ namespace File_Service.Models.HelperFiles
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets all directory info files which contains the user uuid
+        /// </summary>
+        /// <returns></returns>
+        public static async Task DeleteFilesOwnedByUser(Guid userUuid)
+        {
+            string fullPath = $"{Environment.CurrentDirectory}/Media";
+            string[] directoryInfoPathCollection = Directory.GetFiles(fullPath, "info.json");
+
+            var directoryInfoFileCollection = new ConcurrentDictionary<string, DirectoryInfoFile>();
+            var fileTasks = directoryInfoPathCollection.Select(directoryInfoPath => new Task(async () =>
+                {
+                    if (!File.Exists(directoryInfoPath)) return;
+                    string json = await File.ReadAllTextAsync(directoryInfoPath);
+                    var directoryInfoFile = await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<DirectoryInfoFile>(json));
+
+                    directoryInfoFileCollection.TryAdd(directoryInfoPath, directoryInfoFile);
+                }))
+                .ToList();
+
+            await Task.WhenAll(fileTasks);
+            await DeleteFilesOwnedByUser(userUuid, directoryInfoFileCollection);
+        }
+
+        private static async Task DeleteFilesOwnedByUser(Guid userUuid, ConcurrentDictionary<string, DirectoryInfoFile> directoryInfoFileCollection)
+        {
+            var allFilesOwnedByUser = new ConcurrentBag<Guid>();
+            var updateInfoFileTasks = directoryInfoFileCollection.Select(directoryInfoFileKeyValue => new Task(async () =>
+                {
+                    string path = directoryInfoFileKeyValue.Key;
+                    DirectoryInfoFile directoryInfoFile = directoryInfoFileKeyValue.Value;
+                    FileContentInfo fileContentInfo = directoryInfoFile.FileInfo.Find(fi => fi.FileOwnerUuid == userUuid);
+
+                    fileContentInfo.FilesOwnedByUser.ForEach(uuid => allFilesOwnedByUser.Add(uuid));
+
+                    directoryInfoFile.FileInfo.Remove(fileContentInfo);
+                    directoryInfoFile.DirectoryContentInfo.RemoveAll(dci => dci.OwnerUuid == userUuid);
+
+                    if (directoryInfoFile.DirectoryOwnerUuid == userUuid)
+                    {
+                        directoryInfoFile.DirectoryOwnerUuid = Guid.Empty;
+                    }
+
+                    await UpdateInfoFile(path, directoryInfoFile);
+                }))
+                .ToList();
+
+            await Task.WhenAll(updateInfoFileTasks);
         }
     }
 }

@@ -1,6 +1,8 @@
+using System;
 using File_Service.Logic;
 using File_Service.Models.HelperFiles;
 using File_Service.RabbitMq;
+using File_Service.RabbitMq.Consumers;
 using File_Service.RabbitMq.Publishers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +11,8 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.IO;
 
 namespace File_Service
 {
@@ -24,6 +28,8 @@ namespace File_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string mediaDirectory = Environment.CurrentDirectory + "/Media";
+            Directory.CreateDirectory(mediaDirectory + "/Test");
             services.AddControllers();
 
             // allow big files to be uploaded
@@ -42,7 +48,6 @@ namespace File_Service
 
         public void AddDependencies(ref IServiceCollection services)
         {
-            IConfigurationSection section = _config.GetSection(nameof(RabbitMqConfig));
             IConfigurationSection rabbitMqSection = _config.GetSection(nameof(RabbitMqConfig));
 
             services.AddSingleton(service => new RabbitMqChannel(rabbitMqSection.Get<RabbitMqConfig>()).GetChannel());
@@ -53,12 +58,18 @@ namespace File_Service
             services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();
+            services.AddScoped<DeleteUserConsumer>();
             services.AddScoped<ControllerHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            new List<IConsumer>
+            {
+                app.ApplicationServices.GetService<DeleteUserConsumer>()
+            }.ForEach(consumer => consumer.Consume());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

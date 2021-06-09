@@ -37,12 +37,24 @@ namespace User_Service.Logic
             _rpcClient = rpcClient;
         }
 
+        private static bool EmailIsValidLocal(string email)
+        {
+            return new EmailAddressAttribute().IsValid(email);
+        }
+
         private static async Task<bool> EmailIsValid(string email)
         {
-            var url = new Uri("https://ehvemailvalidator.azurewebsites.net/api/emailvalidator?email=" + email);
-            var httpClient = new HttpClient();
-            var result = await httpClient.GetStringAsync(url);
-            return Convert.ToBoolean(result);
+            try
+            {
+                var url = new Uri("https://ehvemailvalidator.azurewebsites.net/api/emailvalidator?email=" + email);
+                var httpClient = new HttpClient();
+                var result = await httpClient.GetStringAsync(url);
+                return Convert.ToBoolean(result);
+            }
+            catch (Exception)
+            {
+                return EmailIsValidLocal(email);
+            }
         }
 
         private async Task<bool> UserModelValid(User user)
@@ -96,7 +108,7 @@ namespace User_Service.Logic
             userRabbitMq.Uuid = userDto.Uuid;
             userRabbitMq.AccountRole = databaseContainsUsers ? AccountRole.User : AccountRole.SiteAdmin;
 
-            _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.UserExchange);
+            _publisher.Publish(userRabbitMq, RabbitMqRouting.AddUser, RabbitMqExchange.AuthenticationExchange);
 
             await _userDal.Add(userDto);
             SendActivationEmail(userDto, activationDto);
@@ -263,6 +275,11 @@ namespace User_Service.Logic
                 default:
                     throw new UnauthorizedAccessException();
             }
+        }
+
+        public async Task Delete(Guid userUuid)
+        {
+            await _userDal.Delete(userUuid);
         }
     }
 }

@@ -3,6 +3,6 @@
     public static class RabbitMqRouting
     {
         public static readonly string AddLog = "add.log";
-        public static readonly string AddFile = "add.file";
+        public static readonly string DeleteUser = "delete.user.file";
     }
 }

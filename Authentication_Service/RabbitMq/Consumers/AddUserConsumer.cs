@@ -23,9 +23,9 @@ namespace Authentication_Service.RabbitMq.Consumers
 
         public void Consume()
         {
-            _channel.ExchangeDeclare(RabbitMqExchange.UserExchange, ExchangeType.Direct);
+            _channel.ExchangeDeclare(RabbitMqExchange.AuthenticationExchange, ExchangeType.Direct);
             _channel.QueueDeclare(RabbitMqQueues.AddUserQueue, true, false, false, null);
-            _channel.QueueBind(RabbitMqQueues.AddUserQueue, "user_exchange", RabbitMqRouting.AddUser);
+            _channel.QueueBind(RabbitMqQueues.AddUserQueue, RabbitMqExchange.AuthenticationExchange, RabbitMqRouting.AddUser);
             _channel.BasicQos(0, 10, false);
 
             var consumer = new EventingBasicConsumer(_channel);
