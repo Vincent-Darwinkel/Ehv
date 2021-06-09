@@ -29,6 +29,13 @@ namespace File_Service
 
             JwtLogic jwtLogic = (JwtLogic)context.HttpContext.RequestServices.GetService(typeof(JwtLogic));
             string authorization = context.HttpContext.Request.Headers[RequestHeaders.Authorization];
+            if (string.IsNullOrEmpty(authorization))
+            {
+                context.Result = new UnauthorizedResult();
+                base.OnActionExecuting(context);
+                return;
+            }
+
             string jwt = authorization.Replace("Bearer ", "");
 
             var role = jwtLogic.GetClaim<AccountRole>(jwt, JwtClaim.AccountRole);
