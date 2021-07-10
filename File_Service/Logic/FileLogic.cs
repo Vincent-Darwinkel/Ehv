@@ -1,10 +1,10 @@
 ﻿using File_Service.CustomExceptions;
-using File_Service.Enums;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,29 +39,6 @@ namespace File_Service.Logic
         }
 
         /// <summary>
-        /// Adds / to the start and or end of the userSpecifiedPath if it does not exists
-        /// </summary>
-        /// <param name="path">The userSpecifiedPath to check and fix</param>
-        /// <returns>A userSpecifiedPath with / at beginning and end</returns>
-        private string FixPath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return path;
-            }
-            if (!path.EndsWith("/"))
-            {
-                path += "/";
-            }
-            if (!path.StartsWith("/"))
-            {
-                path = "/" + path;
-            }
-
-            return path;
-        }
-
-        /// <summary>
         /// Saves the file on the file system if the provided userSpecifiedPath is valid, the file is an webp image or mp4 video and the file does not contain viruses
         /// </summary>
         /// <param name="files">The files to save</param>
@@ -70,88 +47,43 @@ namespace File_Service.Logic
         /// <returns>A list of the name of the files that are saved</returns>
         public async Task SaveFile(List<IFormFile> files, string userSpecifiedPath, Guid requestingUserUuid)
         {
-            if (string.IsNullOrEmpty(userSpecifiedPath))
-            {
-                throw new UnprocessableException();
-            }
-
-            userSpecifiedPath = FixPath(userSpecifiedPath);
             string fullPath = $"{Environment.CurrentDirectory}/Media{userSpecifiedPath}";
-
-            if (files?.Count == 0 ||
-                !await DirectoryHelper.CanUploadFilesInDirectory(userSpecifiedPath, fullPath, requestingUserUuid))
-            {
-                throw new UnprocessableException();
-            }
-
             List<IFormFile> validFiles = await _fileHelper.FilterFiles(files);
             if (validFiles.Count == 0)
             {
                 throw new UnprocessableException();
             }
 
-            var fileNameCollection = new List<Guid>();
-            validFiles.ForEach(file => fileNameCollection.Add(Guid.NewGuid()));
+            string[] supportedImageFileTypes = { ".webp", ".png", ".jpeg", ".jpg" };
+            List<IFormFile> imageCollection = validFiles
+                .FindAll(file => supportedImageFileTypes
+                .Any(sift => file.FileName
+                    .EndsWith(sift)));
 
-            var fileTasks = validFiles.Select((file, index) =>
-                _fileHelper.GetFileTypeFromFile(file) == FileType.Image
-                    ? SaveImageAsync($"{fullPath}/{fileNameCollection[index]}{_fileHelper.GetExtension(file)}", file)
-
-                    : SaveVideoAsync($"{fullPath}/{fileNameCollection[index]}{_fileHelper.GetExtension(file)}", file));
-
-            await Task.WhenAll(fileTasks);
-            await UpdateInfoFileAfterFileUpload(requestingUserUuid, fullPath, fileNameCollection);
-        }
-
-        private static async Task UpdateInfoFileAfterFileUpload(Guid requestingUserUuid, string fullPath,
-            List<Guid> fileNameCollection)
-        {
-            DirectoryInfoFile directoryInfoFile = await DirectoryHelper.GetInfoFileFromDirectory(fullPath);
-            FileContentInfo fileInfo = directoryInfoFile.FileInfo.Find(fi => fi.FileOwnerUuid == requestingUserUuid);
-            if (fileInfo != null)
+            string[] supportedVideoFileTypes = { ".webm", ".mp4", ".mov", ".avi" };
+            List<IFormFile> videoCollection = validFiles
+                .FindAll(file => supportedVideoFileTypes
+                    .Any(sift => file.FileName
+                        .EndsWith(sift)));
+            foreach (var video in videoCollection)
             {
-                fileInfo.FilesOwnedByUser.AddRange(fileNameCollection);
-            }
-            else
-            {
-                directoryInfoFile.FileInfo.Add(new FileContentInfo
-                {
-                    FileOwnerUuid = requestingUserUuid,
-                    FilesOwnedByUser = fileNameCollection
-                });
-            }
-
-            await DirectoryHelper.UpdateInfoFile(fullPath, directoryInfoFile);
-        }
-
-        private async Task SaveVideoAsync(string fullPath, IFormFile video)
-        {
-            await using var ms = new MemoryStream();
-            try
-            {
-                await video.OpenReadStream().CopyToAsync(ms);
-                byte[] fileBytes = ms.ToArray();
-                await File.WriteAllBytesAsync(fullPath, fileBytes);
-            }
-            finally
-            {
-                ms.Close();
+                await CompressVideo(video, fullPath);
             }
         }
 
-        private async Task SaveImageAsync(string fullPath, IFormFile image)
+        private async Task CompressVideo(IFormFile video, string path)
         {
-            await using var ms = new MemoryStream();
-            try
+            string fileExtension = video.ContentType.Replace("video/", ".");
+            string tempFileName = Guid.NewGuid().ToString();
+            string newFileName = Guid.NewGuid().ToString();
+            string tempPath = $"{Environment.CurrentDirectory}/Media/TempFiles/";
+            await using (Stream fileStream = new FileStream(tempPath + tempFileName + fileExtension, FileMode.Create))
             {
-                await image.OpenReadStream().CopyToAsync(ms);
-                byte[] fileBytes = ms.ToArray();
-                await File.WriteAllBytesAsync(fullPath, fileBytes);
+                await video.CopyToAsync(fileStream);
             }
-            finally
-            {
-                ms.Close();
-            }
+
+            SystemHelper.ExecuteOsCommand($"ffmpeg -i {tempPath + tempFileName + fileExtension} -b:a 800k {tempPath + newFileName}.mp4");
+            File.Delete(tempPath + tempFileName + fileExtension);
         }
 
         /// <summary>
@@ -169,26 +101,10 @@ namespace File_Service.Logic
             string directoryPath = FileHelper.GetDirectoryPathByFileUuid(fileUuid);
             string fullPath = FileHelper.GetFilePathByUuid(fileUuid);
 
-            DirectoryInfoFile infoFile = await DirectoryHelper.GetInfoFileFromDirectory(directoryPath);
-            FileContentInfo fileContentInfo = infoFile.FileInfo
-                .Find(fi => fi.FileOwnerUuid == requestingUser.Uuid);
-
-            bool fileCanBeRemovedByRequestingUser = fileContentInfo.FilesOwnedByUser
-                .Contains(fileUuid) || requestingUser.AccountRole > AccountRole.User;
-
             if (!File.Exists(fullPath))
             {
                 throw new UnprocessableException();
             }
-
-            if (!fileCanBeRemovedByRequestingUser)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
-            File.Delete(fullPath);
-            fileContentInfo.FilesOwnedByUser.Remove(fileUuid);
-            await DirectoryHelper.UpdateInfoFile(directoryPath, infoFile);
         }
     }
 }

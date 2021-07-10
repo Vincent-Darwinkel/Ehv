@@ -3,23 +3,22 @@ using File_Service.Models.HelperFiles;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
-using System.Text;
 
 namespace File_Service.RabbitMq.Consumers
 {
-    public class DeleteUserConsumer : IConsumer
+    public class DeleteUserFilesConsumer : IConsumer
     {
         private readonly IModel _channel;
         private readonly LogLogic _logLogic;
 
-        public DeleteUserConsumer(IModel channel, LogLogic logLogic)
+        public DeleteUserFilesConsumer(IModel channel, LogLogic logLogic)
         {
             _channel = channel;
             _logLogic = logLogic;
         }
 
         /// <summary>
-        /// This method listens for email messages on the message queue and sends an email if it receives a message
+        /// This method listens for user file removal messages on the message and removes all files owned by the user
         /// </summary>
         public void Consume()
         {
@@ -34,10 +33,7 @@ namespace File_Service.RabbitMq.Consumers
                 try
                 {
                     byte[] body = e.Body.ToArray();
-                    string json = Encoding.UTF8.GetString(body);
-                    var userUuid = Newtonsoft.Json.JsonConvert.DeserializeObject<Guid>(json);
-
-                    await DirectoryHelper.DeleteFilesOwnedByUser(userUuid);
+                    //todo add files
                 }
                 catch (Exception exception)
                 {

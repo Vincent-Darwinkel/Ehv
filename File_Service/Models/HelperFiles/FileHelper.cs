@@ -47,8 +47,10 @@ namespace File_Service.Models.HelperFiles
         public async Task<List<IFormFile>> FilterFiles(List<IFormFile> files)
         {
             // remove invalid file types
-            string[] allowedFileTypes = { "video/mp4", "image/webp" };
-            files.RemoveAll(file => !allowedFileTypes.Contains(file.ContentType.ToLower()));
+            string[] allowedFileTypes = { ".webp", ".png", ".jpeg", ".jpg", ".webm", ".mp4", ".mov", ".avi" };
+            files.RemoveAll(file => allowedFileTypes
+                .Any(aft => aft
+                    .EndsWith(file.FileName)));
 
             // remove infected files
             var fileTasks = files.Select(FileContainsVirus);

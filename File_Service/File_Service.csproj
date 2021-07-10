@@ -8,16 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Media\public\gallery\2021\**" />
+	  <Compile Remove="Media\Public\Gallery\2021\**" />
 	  <Compile Remove="Media\Videos\**" />
 	  <Compile Remove="UnitTests\**" />
-	  <Content Remove="Media\public\gallery\2021\**" />
+	  <Content Remove="Media\Public\Gallery\2021\**" />
 	  <Content Remove="Media\Videos\**" />
 	  <Content Remove="UnitTests\**" />
-	  <EmbeddedResource Remove="Media\public\gallery\2021\**" />
+	  <EmbeddedResource Remove="Media\Public\Gallery\2021\**" />
 	  <EmbeddedResource Remove="Media\Videos\**" />
 	  <EmbeddedResource Remove="UnitTests\**" />
-	  <None Remove="Media\public\gallery\2021\**" />
+	  <None Remove="Media\Public\Gallery\2021\**" />
 	  <None Remove="Media\Videos\**" />
 	  <None Remove="UnitTests\**" />
 	</ItemGroup>
@@ -27,10 +27,15 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
-		<PackageReference Include="nClam" Version="5.0.1" />
+		<PackageReference Include="nClam" Version="6.0.0" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
-		<PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-		<PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+		<PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Media\TempFiles\" />
+	  <Folder Include="Media\Public\Gallery\" />
 	</ItemGroup>
 
 </Project>

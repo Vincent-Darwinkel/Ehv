@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace File_Service.Controllers
@@ -47,36 +46,12 @@ namespace File_Service.Controllers
             }
         }
 
-        [HttpGet("info")]
-        public async Task<ActionResult<DirectoryInfoFile>> GetDirectoryInfo(string path)
-        {
-            try
-            {
-                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                return await _directoryLogic.GetDirectoryInfo(path, requestingUser.Uuid);
-            }
-            catch (FileNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnprocessableException)
-            {
-                return StatusCode(StatusCodes.Status422UnprocessableEntity);
-            }
-            catch (Exception e)
-            {
-                _logLogic.Log(e);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
         [HttpPost]
         public async Task<ActionResult> CreateFolder([FromForm] FolderUpload folder)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _directoryLogic.CreateFolder(folder, requestingUser.Uuid);
                 return Ok();
             }
             catch (DuplicateNameException)

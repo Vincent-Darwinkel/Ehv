@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System.Text;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Gateway_Service
 {
@@ -25,6 +27,17 @@ namespace Gateway_Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // allow big files to be uploaded
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = int.MaxValue;
+            });
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = 26214400; // max allowed size for clamav
+                x.MultipartBodyLengthLimit = 26214400;
+            });
+
             var jwtConfig = Configuration
                 .GetSection("JwtConfig")
                 .Get<JwtConfig>();

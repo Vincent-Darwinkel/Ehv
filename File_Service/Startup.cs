@@ -1,4 +1,3 @@
-using System;
 using File_Service.Logic;
 using File_Service.Models.HelperFiles;
 using File_Service.RabbitMq;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -28,8 +28,6 @@ namespace File_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string mediaDirectory = Environment.CurrentDirectory + "/Media";
-            Directory.CreateDirectory(mediaDirectory + "/Test");
             services.AddControllers();
 
             // allow big files to be uploaded
@@ -58,7 +56,7 @@ namespace File_Service
             services.AddScoped<DirectoryLogic>();
             services.AddScoped<VirusScannerLogic>();
             services.AddScoped<FileHelper>();
-            services.AddScoped<DeleteUserConsumer>();
+            services.AddScoped<DeleteUserFilesConsumer>();
             services.AddScoped<ControllerHelper>();
         }
 
@@ -67,7 +65,7 @@ namespace File_Service
         {
             new List<IConsumer>
             {
-                app.ApplicationServices.GetService<DeleteUserConsumer>()
+                app.ApplicationServices.GetService<DeleteUserFilesConsumer>()
             }.ForEach(consumer => consumer.Consume());
 
             if (env.IsDevelopment())
@@ -88,6 +86,8 @@ namespace File_Service
             {
                 endpoints.MapControllers();
             });
+
+            SystemHelper.ExecuteOsCommand("apt update && apt install -y ffmpeg");
         }
     }
 }
