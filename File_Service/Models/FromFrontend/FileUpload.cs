@@ -12,6 +12,7 @@ namespace File_Service.Models.FromFrontend
         [MustHaveOneElement]
         public List<IFormFile> Files { get; set; }
         [Required]
+        [PathIsValid]
         public string Path { get; set; }
     }
 }

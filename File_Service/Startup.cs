@@ -87,7 +87,18 @@ namespace File_Service
                 endpoints.MapControllers();
             });
 
-            SystemHelper.ExecuteOsCommand("apt update && apt install -y ffmpeg");
+            Console.WriteLine("Install required apt packages via apt install, this can take a while");
+            SystemHelper.ExecuteOsCommand("apt-get update && apt-get upgrade -y");
+            SystemHelper.ExecuteOsCommand("apt-get install -y apt-utils");
+            SystemHelper.ExecuteOsCommand("apt-get install software-properties-common -y");
+            SystemHelper.ExecuteOsCommand("apt install -y ffmpeg");
+            SystemHelper.ExecuteOsCommand("add-apt-repository ppa:deadsnakes/ppa");
+            SystemHelper.ExecuteOsCommand("apt-get update");
+            SystemHelper.ExecuteOsCommand("apt-get install -y python3");
+            SystemHelper.ExecuteOsCommand("apt-get install -y python3-pip");
+            SystemHelper.ExecuteOsCommand("python3 -m pip install --upgrade pip");
+            SystemHelper.ExecuteOsCommand("python3 -m pip install --upgrade Pillow");
+            Console.WriteLine("Finished installing required packages");
         }
     }
 }
