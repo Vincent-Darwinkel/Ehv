@@ -33,7 +33,8 @@ namespace File_Service.Controllers
         {
             try
             {
-                return _directoryLogic.GetItems(path);
+                //todo add logic to this method
+                return null;
             }
             catch (UnprocessableException)
             {
@@ -75,7 +76,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _directoryLogic.Delete(path, requestingUser);
+                //todo add logic to this method
                 return Ok();
             }
             catch (UnprocessableException)

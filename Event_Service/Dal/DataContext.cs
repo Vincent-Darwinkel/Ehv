@@ -7,7 +7,6 @@ namespace Event_Service.Dal
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public virtual DbSet<EventDto> Event { get; set; }
-        public virtual DbSet<EventDateDto> EventDate { get; set; }
         public virtual DbSet<EventStepDto> EventStep { get; set; }
         public virtual DbSet<EventStepUserDto> EventStepUser { get; set; }
         public virtual DbSet<EventDateUserDto> EventDateUser { get; set; }

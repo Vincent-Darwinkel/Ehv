@@ -6,6 +6,7 @@ using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -29,7 +30,8 @@ namespace File_Service.Controllers
 
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            return await _fileLogic.Find(uuid);
+            //todo add logic to this method
+            return null;
         }
 
         [HttpPost]
@@ -57,12 +59,12 @@ namespace File_Service.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(Guid uuid)
+        public async Task<ActionResult> Delete(List<Guid> uuidCollection)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _fileLogic.Delete(uuid, requestingUser);
+                await _fileLogic.Delete(uuidCollection, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

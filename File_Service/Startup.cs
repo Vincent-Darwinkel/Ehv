@@ -12,7 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Data;
+using File_Service.Dal;
+using Microsoft.EntityFrameworkCore;
 
 namespace File_Service
 {
@@ -28,6 +30,16 @@ namespace File_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString = _config.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new NoNullAllowedException("Connectionstring is empty");
+            }
+
+            services.AddDbContextPool<DataContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
             services.AddControllers();
 
             // allow big files to be uploaded

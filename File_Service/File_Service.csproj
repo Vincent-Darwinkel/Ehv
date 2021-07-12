@@ -23,6 +23,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.7">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.11.1" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
@@ -30,6 +34,7 @@
 		<PackageReference Include="nClam" Version="6.0.0" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
 		<PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
 	</ItemGroup>
 

@@ -42,5 +42,20 @@ namespace File_Service.Models.HelperFiles
 
             return FilterFiles(foundFiles);
         }
+
+        public static void DeleteDirectory(string fullPath)
+        {
+            DirectoryInfo di = new DirectoryInfo(fullPath);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            Directory.Delete(fullPath);
+        }
     }
 }

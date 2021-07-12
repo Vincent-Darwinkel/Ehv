@@ -1,6 +1,9 @@
-﻿using File_Service.Models.HelperFiles;
+﻿using File_Service.Dal.Interfaces;
+using File_Service.Models;
+using File_Service.Models.HelperFiles;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,29 +11,36 @@ namespace File_Service.Logic
 {
     public class DirectoryLogic
     {
-        /// <summary>
-        /// Returns an IEnumerable of the name of all folders in a userSpecifiedPath
-        /// </summary>
-        /// <param name="path">The userSpecifiedPath to the directory to get the folders from</param>
-        /// <returns>An IEnumerable of the name of all folders</returns>
-        public List<string> GetItems(string path)
+        private readonly IDirectoryDal _directoryDal;
+
+        public DirectoryLogic(IDirectoryDal directoryDal)
         {
-
-            string fullPath = $"{Environment.CurrentDirectory}/Media{path}";
-            IEnumerable<string> folders = DirectoryHelper.GetFoldersInDirectory(fullPath)
-                .ToList();
-            IEnumerable<string> files = DirectoryHelper.GetFilesInDirectory(fullPath);
-
-            var items = new List<string>();
-            items.AddRange(folders);
-            items.AddRange(files);
-            return items;
+            _directoryDal = directoryDal;
         }
 
-        public async Task Delete(string path, UserHelper requestingUser)
+        /// <summary>
+        /// Creates a directory and saves it to the database
+        /// </summary>
+        /// <param name="userSpecifiedPath"></param>
+        /// <param name="requestingUserUuid"></param>
+        public async Task CreateDirectory(string userSpecifiedPath, Guid requestingUserUuid)
         {
-            string fullPath = $"{Environment.CurrentDirectory}/Media{path}";
+            int index = userSpecifiedPath.LastIndexOf("/", StringComparison.Ordinal);
+            string directoryName = userSpecifiedPath.Substring(index, userSpecifiedPath.Length);
+            string fullPath = $"{Environment.CurrentDirectory}{userSpecifiedPath}";
+            Directory.CreateDirectory(fullPath);
+            await _directoryDal.Add(new DirectoryDto
+            {
+                Uuid = Guid.NewGuid(),
+                Name = directoryName,
+                OwnerUuid = requestingUserUuid,
+                Path = userSpecifiedPath
+            });
+        }
 
+        public async Task<DirectoryDto> Find(string path)
+        {
+            return await _directoryDal.Find(path);
         }
     }
 }
