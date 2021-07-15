@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 currentPath = os.path.dirname(os.path.realpath(__file__)) + "/"
-supportedFileTypes = [".webp", ".jpg", "jpeg", ".png"]
+supportedFileTypes = [".webp", ".jpg", ".jpeg", ".png"]
 fileName = ""
 
 for type in supportedFileTypes:
@@ -9,5 +9,8 @@ for type in supportedFileTypes:
         fileName = "input" + type
         break
 
-im = Image.open(currentPath + fileName).convert("RGB")
-im.save(currentPath + "output.webp", "webp", quality=65)
+if (fileName != ""):
+    im = Image.open(currentPath + fileName).convert("RGB")
+    im.save(currentPath + "output.webp", "webp", quality=15)
+else:
+    raise FileNotFoundError("Filename was empty, no supported files found")

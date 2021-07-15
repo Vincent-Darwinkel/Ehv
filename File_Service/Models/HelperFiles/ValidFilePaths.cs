@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace File_Service.Models.HelperFiles
@@ -18,8 +19,9 @@ namespace File_Service.Models.HelperFiles
         public static bool FilePathIsValid(string path)
         {
             return ValidPaths
-                .Any(vfp => vfp.StartsWith(path)) &&
-                !path.Contains(".");
+                .Any(vfp => path.StartsWith(vfp, StringComparison.Ordinal)) &&
+                !path.Contains(".") &&
+                path.EndsWith("/");
         }
     }
 }

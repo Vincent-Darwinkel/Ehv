@@ -35,6 +35,7 @@ namespace Event_Service.Dal
                 entity.HasMany(e => e.EventDateUsers)
                     .WithOne()
                     .HasForeignKey(e => e.EventDateUuid);
+                entity.ToTable("EventDate");
             });
 
             modelBuilder.Entity<EventStepDto>(entity =>

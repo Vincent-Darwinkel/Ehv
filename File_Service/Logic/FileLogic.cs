@@ -10,6 +10,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace File_Service.Logic
 {
@@ -68,33 +69,46 @@ namespace File_Service.Logic
             var filesToAdd = new List<FileDto>();
             foreach (var video in videoCollection)
             {
-                string fileName = await CompressAndSaveVideo(video, fullPath);
-                filesToAdd.Add(new FileDto
+                bool success = await CompressAndSaveVideo(video, fullPath);
+                if (success)
                 {
-                    Uuid = Guid.NewGuid(),
-                    FileName = fileName,
-                    FilePath = userSpecifiedPath,
-                    FileType = FileType.Video,
-                    OwnerUuid = requestingUserUuid,
-                    ParentDirectoryUuid = parentDirectory.Uuid
-                });
+                    var fileUuid = Guid.NewGuid();
+                    filesToAdd.Add(new FileDto
+                    {
+                        Uuid = fileUuid,
+                        FullPath = fullPath + fileUuid + ".mp4",
+                        FileType = FileType.Video,
+                        OwnerUuid = requestingUserUuid,
+                        ParentDirectoryUuid = parentDirectory.Uuid
+                    });
+                }
             }
 
             foreach (var image in imageCollection)
             {
-                string fileName = await CompressAndSaveImage(image, fullPath);
-                filesToAdd.Add(new FileDto
+                bool success = await CompressAndSaveImage(image, fullPath);
+                if (success)
                 {
-                    Uuid = Guid.NewGuid(),
-                    FileName = fileName,
-                    FilePath = userSpecifiedPath,
-                    FileType = FileType.Image,
-                    OwnerUuid = requestingUserUuid,
-                    ParentDirectoryUuid = parentDirectory.Uuid
-                });
+                    var fileUuid = Guid.NewGuid();
+                    filesToAdd.Add(new FileDto
+                    {
+                        Uuid = Guid.NewGuid(),
+                        FullPath = fullPath + fileUuid + ".webp",
+                        FileType = FileType.Image,
+                        OwnerUuid = requestingUserUuid,
+                        ParentDirectoryUuid = parentDirectory.Uuid
+                    });
+                }
             }
 
             await _fileDal.Add(filesToAdd);
+        }
+
+        public async Task<FileContentResult> Find(Guid uuid)
+        {
+            FileDto file = await _fileDal.Find(uuid);
+            byte[] fileBytes = await File.ReadAllBytesAsync(file.FullPath);
+            return new FileContentResult(fileBytes, file.FileType == FileType.Image ? "image/webp" : "video/mp4");
         }
 
         /// <summary>
@@ -103,23 +117,32 @@ namespace File_Service.Logic
         /// <param name="image">The image to compress</param>
         /// <param name="path">The path to save the image to</param>
         /// <returns>The path of the compressed image</returns>
-        private static async Task<string> CompressAndSaveImage(IFormFile image, string path)
+        private static async Task<bool> CompressAndSaveImage(IFormFile image, string path)
         {
             string fileExtension = image.ContentType.Replace("image/", ".");
             var newFileName = Guid.NewGuid().ToString();
             var tempPath = $"{Environment.CurrentDirectory}/Media/TempFiles/{Guid.NewGuid()}/";
-            Directory.CreateDirectory(tempPath);
-            File.Copy($"{Environment.CurrentDirectory}/Media/TempFiles/ImageConverter.py", $"{tempPath}ImageConverter.py");
-            await using (Stream fileStream = new FileStream($"{tempPath}input{fileExtension}", FileMode.Create))
+
+            try
             {
-                await image.CopyToAsync(fileStream);
+                Directory.CreateDirectory(tempPath);
+                File.Copy($"{Environment.CurrentDirectory}/Media/TempFiles/ImageConverter.py", $"{tempPath}ImageConverter.py");
+                await using (Stream fileStream = new FileStream($"{tempPath}input{fileExtension}", FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+
+                SystemHelper.ExecuteOsCommand($"python3 {tempPath}ImageConverter.py");
+                File.Move($"{tempPath}output.webp", $"{path}/{newFileName}.webp");
+                DirectoryHelper.DeleteDirectory(tempPath);
+                return true;
             }
-
-            SystemHelper.ExecuteOsCommand($"python3 {tempPath}ImageConverter.py");
-            File.Move($"{tempPath}output.webp", $"{path}{newFileName}.webp");
-            DirectoryHelper.DeleteDirectory(tempPath);
-
-            return newFileName;
+            catch (Exception)
+            {
+                DirectoryHelper.DeleteDirectory(tempPath);
+                File.Delete($"{path}/{newFileName}.webp");
+                return false;
+            }
         }
 
         /// <summary>
@@ -128,20 +151,30 @@ namespace File_Service.Logic
         /// <param name="video">The video to compress</param>
         /// <param name="path">The path to save the video to</param>
         /// <returns>The path of the compressed video</returns>
-        private static async Task<string> CompressAndSaveVideo(IFormFile video, string path)
+        private static async Task<bool> CompressAndSaveVideo(IFormFile video, string path)
         {
             string fileExtension = video.ContentType.Replace("video/", ".");
             var tempFileName = Guid.NewGuid().ToString();
             var newFileName = Guid.NewGuid().ToString();
             var tempPath = $"{Environment.CurrentDirectory}/Media/TempFiles/";
-            await using (Stream fileStream = new FileStream(tempPath + tempFileName + fileExtension, FileMode.Create))
-            {
-                await video.CopyToAsync(fileStream);
-            }
 
-            SystemHelper.ExecuteOsCommand($"ffmpeg -i {tempPath + tempFileName + fileExtension} -b:a 300k {path}{newFileName}.mp4");
-            File.Delete(tempPath + tempFileName + fileExtension);
-            return newFileName;
+            try
+            {
+                await using (Stream fileStream = new FileStream(tempPath + tempFileName + fileExtension, FileMode.Create))
+                {
+                    await video.CopyToAsync(fileStream);
+                }
+
+                SystemHelper.ExecuteOsCommand($"ffmpeg -i {tempPath + tempFileName + fileExtension} -b:a 300k -vcodec libx265 -crf 26 -filter:v fps=24 {path}/{newFileName}.mp4");
+                File.Delete(tempPath + tempFileName + fileExtension);
+                return true;
+            }
+            catch (Exception)
+            {
+                File.Delete(tempPath + tempFileName + fileExtension);
+                File.Delete($"{path}/{newFileName}.mp4");
+                return false;
+            }
         }
 
         /// <summary>
@@ -159,8 +192,7 @@ namespace File_Service.Logic
             List<FileDto> filesToDelete = await _fileDal.Find(fileUuidCollection);
             foreach (var file in filesToDelete)
             {
-                string fullPath = $"{Environment.CurrentDirectory}{file.FilePath}";
-                File.Delete(fullPath);
+                File.Delete(file.FullPath);
             }
 
             await _fileDal.Delete(filesToDelete);

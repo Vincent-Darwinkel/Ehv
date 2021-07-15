@@ -30,7 +30,7 @@ namespace File_Service.Models.HelperFiles
         }
 
         /// <summary>
-        /// Find all the files in a fullPath
+        /// FindInDirectory all the files in a fullPath
         /// </summary>
         /// <param name="fullPath">The fullPath to search the files in</param>
         /// <returns></returns>

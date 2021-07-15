@@ -8,9 +8,7 @@ namespace File_Service.Models
         public Guid Uuid { get; set; }
         public Guid OwnerUuid { get; set; }
         public Guid ParentDirectoryUuid { get; set; }
-        public string FileName { get; set; }
-        public string FilePath { get; set; }
-        public string Description { get; set; }
+        public string FullPath { get; set; }
         public FileType FileType { get; set; }
     }
 }

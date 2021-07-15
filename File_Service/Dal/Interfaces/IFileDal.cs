@@ -21,10 +21,18 @@ namespace File_Service.Dal.Interfaces
         Task<List<FileDto>> Find(List<Guid> uuidCollection);
 
         /// <summary>
-        /// Updates an existing file
+        /// Finds the file which matches the uuid
         /// </summary>
-        /// <param name="file">The file to update</param
-        Task Update(FileDto file);
+        /// <param name="uuid">The uuid of the file to search from</param>
+        /// <returns>The found file, null if non is found</returns>
+        Task<FileDto> Find(Guid uuid);
+
+        /// <summary>
+        /// Finds the files which matches the specified directory uuid
+        /// </summary>
+        /// <param name="directoryUuid">The uuid directory</param>
+        /// <returns>The found files, null if non is found</returns>
+        Task<List<FileDto>> FindInDirectory(Guid directoryUuid);
 
         /// <summary>
         /// Deletes the specified files

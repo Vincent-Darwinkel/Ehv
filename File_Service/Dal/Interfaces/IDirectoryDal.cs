@@ -13,6 +13,13 @@ namespace File_Service.Dal.Interfaces
         Task<DirectoryDto> Find(string path);
 
         /// <summary>
+        /// Checks if an directory with this path already exists
+        /// </summary>
+        /// <param name="path">The path to search for</param>
+        /// <returns>True if directory exists, false if non exists</returns>
+        Task<bool> Exists(string path);
+
+        /// <summary>
         /// Adds the directory to the database
         /// </summary>
         /// <param name="directory">The directory to add</param

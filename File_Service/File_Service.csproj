@@ -41,6 +41,7 @@
 	<ItemGroup>
 	  <Folder Include="Media\TempFiles\" />
 	  <Folder Include="Media\Public\Gallery\" />
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 
 </Project>

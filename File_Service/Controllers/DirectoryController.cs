@@ -29,16 +29,15 @@ namespace File_Service.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<string>> GetItemsInFolder(string path)
+        public async Task<ActionResult<List<Guid>>> GetItemsInFolder(string path)
         {
             try
             {
-                //todo add logic to this method
-                return null;
+                return await _directoryLogic.GetFileNamesInDirectory(path);
             }
-            catch (UnprocessableException)
+            catch (KeyNotFoundException)
             {
-                return StatusCode(StatusCodes.Status422UnprocessableEntity);
+                return NotFound();
             }
             catch (Exception e)
             {
@@ -47,12 +46,13 @@ namespace File_Service.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateFolder([FromForm] FolderUpload folder)
+        [HttpPost("{path}")]
+        public async Task<ActionResult> CreateFolder(string path)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _directoryLogic.CreateDirectory(path, requestingUser.Uuid);
                 return Ok();
             }
             catch (DuplicateNameException)
@@ -76,7 +76,7 @@ namespace File_Service.Controllers
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                //todo add logic to this method
+                await _directoryLogic.Delete(path, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using File_Service.Dal;
+using File_Service.Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace File_Service
@@ -70,6 +71,8 @@ namespace File_Service
             services.AddScoped<FileHelper>();
             services.AddScoped<DeleteUserFilesConsumer>();
             services.AddScoped<ControllerHelper>();
+            services.AddScoped<IFileDal, FileDal>();
+            services.AddScoped<IDirectoryDal, DirectoryDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +114,17 @@ namespace File_Service
             SystemHelper.ExecuteOsCommand("python3 -m pip install --upgrade pip");
             SystemHelper.ExecuteOsCommand("python3 -m pip install --upgrade Pillow");
             Console.WriteLine("Finished installing required packages");
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+            context.Database.Migrate();
         }
     }
 }

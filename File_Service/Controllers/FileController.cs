@@ -28,10 +28,10 @@ namespace File_Service.Controllers
             _controllerHelper = controllerHelper;
         }
 
+        [HttpGet("{uuid}")]
         public async Task<FileContentResult> GetFileByUuidAsync(Guid uuid)
         {
-            //todo add logic to this method
-            return null;
+            return await _fileLogic.Find(uuid);
         }
 
         [HttpPost]

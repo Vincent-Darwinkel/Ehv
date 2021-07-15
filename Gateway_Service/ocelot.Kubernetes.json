@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/authenticate/refresh",
-      "UpstreamHttpMethod": ["POST"],
+      "UpstreamHttpMethod": [ "POST" ],
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -29,7 +29,7 @@
         }
       ],
       "UpstreamPathTemplate": "/authenticate",
-      "UpstreamHttpMethod": ["POST"],
+      "UpstreamHttpMethod": [ "POST" ],
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -48,7 +48,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -63,7 +63,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": ["Post"]
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/user/by-list",
@@ -75,7 +75,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user/by-list",
-      "UpstreamHttpMethod": ["GET"],
+      "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -90,7 +90,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user/disabled",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -105,7 +105,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user/activate",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"]
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ]
     },
     {
       "DownstreamPathTemplate": "/hobby",
@@ -117,7 +117,7 @@
         }
       ],
       "UpstreamPathTemplate": "/hobby",
-      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -132,7 +132,7 @@
         }
       ],
       "UpstreamPathTemplate": "/hobby",
-      "UpstreamHttpMethod": ["GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/favorite-artist",
@@ -144,7 +144,7 @@
         }
       ],
       "UpstreamPathTemplate": "/favorite-artist",
-      "UpstreamHttpMethod": ["POST", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "POST", "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -159,7 +159,7 @@
         }
       ],
       "UpstreamPathTemplate": "/favorite-artist",
-      "UpstreamHttpMethod": ["GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/datepicker",
@@ -171,7 +171,7 @@
         }
       ],
       "UpstreamPathTemplate": "/datepicker",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -186,7 +186,7 @@
         }
       ],
       "UpstreamPathTemplate": "/datepicker/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -201,7 +201,7 @@
         }
       ],
       "UpstreamPathTemplate": "/log/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -216,7 +216,7 @@
         }
       ],
       "UpstreamPathTemplate": "/log",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -231,7 +231,7 @@
         }
       ],
       "UpstreamPathTemplate": "/event/{everything}",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
@@ -253,7 +253,7 @@
         }
       ],
       "UpstreamPathTemplate": "/event",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
@@ -275,7 +275,7 @@
         }
       ],
       "UpstreamPathTemplate": "/directory",
-      "UpstreamHttpMethod": ["GET", "PUT", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -290,7 +290,7 @@
         }
       ],
       "UpstreamPathTemplate": "/directory/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "DELETE"],
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -305,6 +305,21 @@
         }
       ],
       "UpstreamPathTemplate": "/file",
+      "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/file/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ehv-file_service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/file/{everything}",
       "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
