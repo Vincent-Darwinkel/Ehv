@@ -69,14 +69,14 @@ namespace File_Service.Logic
             var filesToAdd = new List<FileDto>();
             foreach (var video in videoCollection)
             {
-                bool success = await CompressAndSaveVideo(video, fullPath);
+                var fileUuid = Guid.NewGuid();
+                bool success = await CompressAndSaveVideo(video, fullPath, fileUuid);
                 if (success)
                 {
-                    var fileUuid = Guid.NewGuid();
                     filesToAdd.Add(new FileDto
                     {
                         Uuid = fileUuid,
-                        FullPath = fullPath + fileUuid + ".mp4",
+                        FullPath = $"{fullPath}/{fileUuid}.mp4",
                         FileType = FileType.Video,
                         OwnerUuid = requestingUserUuid,
                         ParentDirectoryUuid = parentDirectory.Uuid
@@ -86,14 +86,14 @@ namespace File_Service.Logic
 
             foreach (var image in imageCollection)
             {
-                bool success = await CompressAndSaveImage(image, fullPath);
+                var fileUuid = Guid.NewGuid();
+                bool success = await CompressAndSaveImage(image, fullPath, fileUuid);
                 if (success)
                 {
-                    var fileUuid = Guid.NewGuid();
                     filesToAdd.Add(new FileDto
                     {
-                        Uuid = Guid.NewGuid(),
-                        FullPath = fullPath + fileUuid + ".webp",
+                        Uuid = fileUuid,
+                        FullPath = $"{fullPath}/{fileUuid}.webp",
                         FileType = FileType.Image,
                         OwnerUuid = requestingUserUuid,
                         ParentDirectoryUuid = parentDirectory.Uuid
@@ -107,6 +107,11 @@ namespace File_Service.Logic
         public async Task<FileContentResult> Find(Guid uuid)
         {
             FileDto file = await _fileDal.Find(uuid);
+            if (file == null)
+            {
+                return null;
+            }
+
             byte[] fileBytes = await File.ReadAllBytesAsync(file.FullPath);
             return new FileContentResult(fileBytes, file.FileType == FileType.Image ? "image/webp" : "video/mp4");
         }
@@ -117,10 +122,10 @@ namespace File_Service.Logic
         /// <param name="image">The image to compress</param>
         /// <param name="path">The path to save the image to</param>
         /// <returns>The path of the compressed image</returns>
-        private static async Task<bool> CompressAndSaveImage(IFormFile image, string path)
+        private static async Task<bool> CompressAndSaveImage(IFormFile image, string path, Guid fileUuid)
         {
             string fileExtension = image.ContentType.Replace("image/", ".");
-            var newFileName = Guid.NewGuid().ToString();
+            var newFileName = fileUuid.ToString();
             var tempPath = $"{Environment.CurrentDirectory}/Media/TempFiles/{Guid.NewGuid()}/";
 
             try
@@ -151,11 +156,11 @@ namespace File_Service.Logic
         /// <param name="video">The video to compress</param>
         /// <param name="path">The path to save the video to</param>
         /// <returns>The path of the compressed video</returns>
-        private static async Task<bool> CompressAndSaveVideo(IFormFile video, string path)
+        private static async Task<bool> CompressAndSaveVideo(IFormFile video, string path, Guid fileUuid)
         {
             string fileExtension = video.ContentType.Replace("video/", ".");
             var tempFileName = Guid.NewGuid().ToString();
-            var newFileName = Guid.NewGuid().ToString();
+            var newFileName = fileUuid.ToString();
             var tempPath = $"{Environment.CurrentDirectory}/Media/TempFiles/";
 
             try

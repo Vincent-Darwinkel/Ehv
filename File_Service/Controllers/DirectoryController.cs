@@ -1,7 +1,6 @@
 ﻿using File_Service.CustomExceptions;
 using File_Service.Enums;
 using File_Service.Logic;
-using File_Service.Models.FromFrontend;
 using File_Service.Models.HelperFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +38,10 @@ namespace File_Service.Controllers
             {
                 return NotFound();
             }
+            catch (UnprocessableException)
+            {
+                return UnprocessableEntity();
+            }
             catch (Exception e)
             {
                 _logLogic.Log(e);
@@ -46,7 +49,7 @@ namespace File_Service.Controllers
             }
         }
 
-        [HttpPost("{path}")]
+        [HttpPost]
         public async Task<ActionResult> CreateFolder(string path)
         {
             try

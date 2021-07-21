@@ -375,3 +375,5 @@ Kubernetes.yaml
 Kubernetes.yaml
 Authentication_Service/appsettings.Kubernetes.json
 Authentication_Service/appsettings.Kubernetes.json
+*.webp
+*.mp4

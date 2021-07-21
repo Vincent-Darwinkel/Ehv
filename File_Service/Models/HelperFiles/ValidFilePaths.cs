@@ -21,7 +21,7 @@ namespace File_Service.Models.HelperFiles
             return ValidPaths
                 .Any(vfp => path.StartsWith(vfp, StringComparison.Ordinal)) &&
                 !path.Contains(".") &&
-                path.EndsWith("/");
+                !path.EndsWith("/");
         }
     }
 }

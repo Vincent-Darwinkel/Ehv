@@ -38,10 +38,6 @@ namespace File_Service.Logic
             {
                 throw new DuplicateNameException();
             }
-            if (userSpecifiedPath.EndsWith("/"))
-            {
-                userSpecifiedPath = userSpecifiedPath.Substring(0, userSpecifiedPath.Length - 1);
-            }
 
             int index = userSpecifiedPath.LastIndexOf("/", StringComparison.Ordinal) + 1;
             string directoryName = userSpecifiedPath.Substring(index, userSpecifiedPath.Length - index);
@@ -63,6 +59,11 @@ namespace File_Service.Logic
 
         public async Task<List<Guid>> GetFileNamesInDirectory(string path)
         {
+            if (!ValidFilePaths.FilePathIsValid(path))
+            {
+                throw new UnprocessableException();
+            }
+
             DirectoryDto directory = await _directoryDal.Find(path);
             if (directory == null)
             {
