@@ -43,9 +43,9 @@ namespace File_Service.Dal
                 .ToListAsync();
         }
 
-        public async Task Delete(List<FileDto> files)
+        public async Task Delete(FileDto file)
         {
-            _context.File.RemoveRange(files);
+            _context.File.Remove(file);
             await _context.SaveChangesAsync();
         }
     }

@@ -20,7 +20,24 @@ namespace File_Service.Dal
         public async Task<DirectoryDto> Find(string path)
         {
             return await _context.Directory
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(d => d.Path == path);
+        }
+
+        public async Task<DirectoryDto> Find(Guid uuid)
+        {
+            return await _context.Directory
+                .FirstOrDefaultAsync(d => d.Uuid == uuid);
+        }
+
+        public async Task<List<DirectoryDto>> FindAll(string path)
+        {
+            List<DirectoryDto> directories = await _context.Directory.ToListAsync();
+            return directories.FindAll(d =>
+            {
+                int index = d.Path.LastIndexOf("/", StringComparison.Ordinal);
+                string parentDirectory = d.Path.Substring(0, index);
+                return path == parentDirectory;
+            });
         }
 
         public async Task<bool> Exists(string path)

@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using File_Service.Models;
+using File_Service.Models.ToFrontend;
 
 namespace File_Service.Controllers
 {
@@ -28,11 +30,31 @@ namespace File_Service.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Guid>>> GetItemsInFolder(string path)
+        public async Task<ActionResult<List<FileInfo>>> GetItemsInFolder(string path)
         {
+            UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
             try
             {
-                return await _directoryLogic.GetFileNamesInDirectory(path);
+                List<FileDto> fileUuidCollection = await _directoryLogic.GetFileNamesInDirectory(path);
+                List<DirectoryDto> directoryUuidCollection = await _directoryLogic.GetFoldersInDirectory(path);
+
+                var items = new List<FileInfo>();
+                fileUuidCollection.ForEach(f => items.Add(new FileInfo
+                {
+                    Uuid = f.Uuid,
+                    RequestingUserIsOwner = f.OwnerUuid == requestingUser.Uuid,
+                    FileType = f.FileType.ToString()
+                }));
+
+                directoryUuidCollection.ForEach(d => items.Add(new FileInfo
+                {
+                    Uuid = d.Uuid,
+                    RequestingUserIsOwner = d.OwnerUuid == requestingUser.Uuid,
+                    IsDirectory = true,
+                    Name = d.Name
+                }));
+
+                return items;
             }
             catch (KeyNotFoundException)
             {
@@ -73,13 +95,13 @@ namespace File_Service.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> RemoveDirectory(string path)
+        [HttpDelete("{uuid}")]
+        public async Task<ActionResult> RemoveDirectory(Guid uuid)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _directoryLogic.Delete(path, requestingUser);
+                await _directoryLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

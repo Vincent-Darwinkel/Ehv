@@ -170,7 +170,7 @@ namespace File_Service.Logic
                     await video.CopyToAsync(fileStream);
                 }
 
-                SystemHelper.ExecuteOsCommand($"ffmpeg -i {tempPath + tempFileName + fileExtension} -b:a 300k -vcodec libx265 -crf 26 -filter:v fps=24 {path}/{newFileName}.mp4");
+                SystemHelper.ExecuteOsCommand($"ffmpeg -i {tempPath + tempFileName + fileExtension} -b:a 300k -vcodec libx264 -crf 26 -filter:v fps=24 {path}/{newFileName}.mp4");
                 File.Delete(tempPath + tempFileName + fileExtension);
                 return true;
             }
@@ -185,22 +185,18 @@ namespace File_Service.Logic
         /// <summary>
         /// Removes a file by uuid if the user is owner and the file exists
         /// </summary>
-        /// <param name="fileUuidCollection">The uuid of the file to remove</param>
+        /// <param name="uuid">The uuid of the file to remove</param>
         /// <param name="requestingUser">The user that made the request</param>
-        public async Task Delete(List<Guid> fileUuidCollection, UserHelper requestingUser)
+        public async Task Delete(Guid uuid, UserHelper requestingUser)
         {
-            if (fileUuidCollection.Any(fu => fu == Guid.Empty))
+            if (uuid == Guid.Empty)
             {
                 throw new UnprocessableException();
             }
 
-            List<FileDto> filesToDelete = await _fileDal.Find(fileUuidCollection);
-            foreach (var file in filesToDelete)
-            {
-                File.Delete(file.FullPath);
-            }
-
-            await _fileDal.Delete(filesToDelete);
+            FileDto fileToDelete = await _fileDal.Find(uuid);
+            File.Delete(fileToDelete.FullPath);
+            await _fileDal.Delete(fileToDelete);
         }
     }
 }

@@ -57,7 +57,23 @@ namespace File_Service.Logic
             return await _directoryDal.Find(path);
         }
 
-        public async Task<List<Guid>> GetFileNamesInDirectory(string path)
+        public async Task<List<DirectoryDto>> GetFoldersInDirectory(string path)
+        {
+            if (!ValidFilePaths.FilePathIsValid(path))
+            {
+                throw new UnprocessableException();
+            }
+
+            List<DirectoryDto> directories = await _directoryDal.FindAll(path);
+            if (!directories.Any())
+            {
+                return new List<DirectoryDto>();
+            }
+
+            return directories;
+        }
+
+        public async Task<List<FileDto>> GetFileNamesInDirectory(string path)
         {
             if (!ValidFilePaths.FilePathIsValid(path))
             {
@@ -67,23 +83,21 @@ namespace File_Service.Logic
             DirectoryDto directory = await _directoryDal.Find(path);
             if (directory == null)
             {
-                throw new KeyNotFoundException();
+                return new List<FileDto>();
             }
 
-            List<FileDto> files = await _fileDal.FindInDirectory(directory.Uuid);
-            return files.Select(file => file.Uuid)
-                .ToList();
+            return await _fileDal.FindInDirectory(directory.Uuid);
         }
 
-        public async Task Delete(string path, UserHelper requestingUser)
+        public async Task Delete(Guid uuid, UserHelper requestingUser)
         {
-            DirectoryDto directory = await _directoryDal.Find(path);
+            DirectoryDto directory = await _directoryDal.Find(uuid);
             if (directory.OwnerUuid != requestingUser.Uuid && requestingUser.AccountRole == AccountRole.User)
             {
                 throw new UnauthorizedAccessException();
             }
 
-            string fullPath = Environment.CurrentDirectory + path;
+            string fullPath = Environment.CurrentDirectory + directory.Path;
             DirectoryHelper.DeleteDirectory(fullPath);
             await _directoryDal.Delete(directory);
         }

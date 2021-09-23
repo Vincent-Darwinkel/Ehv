@@ -58,13 +58,13 @@ namespace File_Service.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> Delete(List<Guid> uuidCollection)
+        [HttpDelete("{uuid}")]
+        public async Task<ActionResult> Delete(Guid uuid)
         {
             try
             {
                 UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
-                await _fileLogic.Delete(uuidCollection, requestingUser);
+                await _fileLogic.Delete(uuid, requestingUser);
                 return Ok();
             }
             catch (UnprocessableException)

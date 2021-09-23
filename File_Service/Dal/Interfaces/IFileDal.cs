@@ -35,9 +35,9 @@ namespace File_Service.Dal.Interfaces
         Task<List<FileDto>> FindInDirectory(Guid directoryUuid);
 
         /// <summary>
-        /// Deletes the specified files
+        /// Deletes the specified file
         /// </summary>
-        /// <param name="files">The files to delete</param
-        Task Delete(List<FileDto> files);
+        /// <param name="file">The file to delete</param
+        Task Delete(FileDto file);
     }
 }

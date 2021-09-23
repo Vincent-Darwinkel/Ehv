@@ -6,9 +6,9 @@ namespace File_Service.Models.HelperFiles
 {
     public static class ValidFilePaths
     {
-        private static readonly List<string> ValidPaths = new List<string>
+        private static readonly List<string> ValidPaths = new()
         {
-            "/Media/Public/Gallery/"
+            "/Media/Public/Gallery"
         };
 
         /// <summary>
@@ -18,6 +18,11 @@ namespace File_Service.Models.HelperFiles
         /// <returns></returns>
         public static bool FilePathIsValid(string path)
         {
+            if (ValidPaths.Any(path.Equals))
+            {
+                return true;
+            }
+
             return ValidPaths
                 .Any(vfp => path.StartsWith(vfp, StringComparison.Ordinal)) &&
                 !path.Contains(".") &&
