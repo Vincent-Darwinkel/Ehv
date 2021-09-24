@@ -95,6 +95,29 @@ namespace File_Service.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<ActionResult> RenameDirectory(Guid uuid, string name)
+        {
+            try
+            {
+                UserHelper requestingUser = _controllerHelper.GetRequestingUser(this);
+                await _directoryLogic.RenameDirectory(uuid, requestingUser, name);
+                return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (DuplicateNameException)
+            {
+                return Conflict();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{uuid}")]
         public async Task<ActionResult> RemoveDirectory(Guid uuid)
         {

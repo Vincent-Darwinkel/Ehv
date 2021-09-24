@@ -43,6 +43,12 @@ namespace File_Service.Dal
                 .ToListAsync();
         }
 
+        public async Task Update(List<FileDto> files)
+        {
+            _context.File.UpdateRange(files);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task Delete(FileDto file)
         {
             _context.File.Remove(file);

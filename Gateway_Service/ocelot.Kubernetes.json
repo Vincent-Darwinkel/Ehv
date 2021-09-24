@@ -16,7 +16,7 @@
         "EnableRateLimiting": true,
         "Period": "1s",
         "PeriodTimespan": 10,
-        "Limit": 1
+        "Limit": 10
       }
     },
     {
@@ -304,6 +304,9 @@
           "Port": 80
         }
       ],
+      "QoSOptions": {
+        "TimeoutValue": 360000
+      },
       "UpstreamPathTemplate": "/file",
       "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {
@@ -319,6 +322,9 @@
           "Port": 80
         }
       ],
+      "QoSOptions": {
+        "TimeoutValue": 360000
+      },
       "UpstreamPathTemplate": "/file/{everything}",
       "UpstreamHttpMethod": [ "GET", "PUT", "POST", "DELETE" ],
       "AuthenticationOptions": {

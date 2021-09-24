@@ -57,6 +57,35 @@ namespace File_Service.Logic
             });
         }
 
+        public async Task RenameDirectory(Guid uuid, UserHelper requestingUser, string name)
+        {
+            DirectoryDto directory = await _directoryDal.Find(uuid);
+            if (requestingUser.Uuid != directory.OwnerUuid)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            int index = directory.Path.LastIndexOf("/", StringComparison.CurrentCulture);
+            string newPath = directory.Path.Substring(0, index + 1) + name;
+            string oldPath = directory.Path;
+            string newFullPath = Environment.CurrentDirectory + newPath;
+            string oldFullPath = Environment.CurrentDirectory + directory.Path;
+            if (Directory.Exists(newFullPath))
+            {
+                throw new DuplicateNameException();
+            }
+
+            Directory.Move(oldFullPath, newFullPath);
+
+            directory.Path = newPath;
+            directory.Name = name;
+            await _directoryDal.Update(directory);
+            List<FileDto> filesToUpdate = await _fileDal.FindInDirectory(directory.Uuid);
+            filesToUpdate.ForEach(file =>
+                    file.FullPath = file.FullPath.Replace(oldPath, newPath));
+            await _fileDal.Update(filesToUpdate);
+        }
+
         public async Task<DirectoryDto> Find(string path)
         {
             return await _directoryDal.Find(path);

@@ -35,6 +35,12 @@ namespace File_Service.Dal.Interfaces
         Task<List<FileDto>> FindInDirectory(Guid directoryUuid);
 
         /// <summary>
+        /// Updates the files in the database
+        /// </summary>
+        /// <param name="files">The updated files</param>
+        Task Update(List<FileDto> files);
+
+        /// <summary>
         /// Deletes the specified file
         /// </summary>
         /// <param name="file">The file to delete</param>
