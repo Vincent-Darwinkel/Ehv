@@ -60,7 +60,12 @@ namespace File_Service.Dal
 
         public async Task Delete(DirectoryDto directory)
         {
-            _context.Directory.Remove(directory);
+            List<DirectoryDto> directoriesToRemove = await _context.Directory
+                .Where(d => d.Path
+                    .StartsWith(directory.Path))
+                .ToListAsync();
+
+            _context.Directory.RemoveRange(directoriesToRemove);
             await _context.SaveChangesAsync();
         }
     }

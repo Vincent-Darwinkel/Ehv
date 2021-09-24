@@ -42,6 +42,11 @@ namespace File_Service.Logic
             int index = userSpecifiedPath.LastIndexOf("/", StringComparison.Ordinal) + 1;
             string directoryName = userSpecifiedPath.Substring(index, userSpecifiedPath.Length - index);
             string fullPath = $"{Environment.CurrentDirectory}{userSpecifiedPath}";
+            if (DirectoryHelper.GetFilesInDirectory(fullPath).Any())
+            {
+                throw new UnprocessableException();
+            }
+
             Directory.CreateDirectory(fullPath);
             await _directoryDal.Add(new DirectoryDto
             {
@@ -97,6 +102,7 @@ namespace File_Service.Logic
                 throw new UnauthorizedAccessException();
             }
 
+            await _fileDal.Delete(directory.Uuid);
             string fullPath = Environment.CurrentDirectory + directory.Path;
             DirectoryHelper.DeleteDirectory(fullPath);
             await _directoryDal.Delete(directory);

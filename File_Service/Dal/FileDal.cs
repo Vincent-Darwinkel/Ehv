@@ -48,5 +48,14 @@ namespace File_Service.Dal
             _context.File.Remove(file);
             await _context.SaveChangesAsync();
         }
+
+        public async Task Delete(Guid parentDirectoryUuid)
+        {
+            List<FileDto> filesToRemove = await _context.File
+                .Where(f => f.ParentDirectoryUuid == parentDirectoryUuid)
+                .ToListAsync();
+            _context.File.RemoveRange(filesToRemove);
+            await _context.SaveChangesAsync();
+        }
     }
 }

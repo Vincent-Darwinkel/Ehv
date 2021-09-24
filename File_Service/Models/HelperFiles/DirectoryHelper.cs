@@ -25,7 +25,7 @@ namespace File_Service.Models.HelperFiles
         private static List<string> FilterFiles(List<string> files)
         {
             string[] allowedFileTypes = { ".webp", ".mp4", ".png", ".jpg", ".jpeg" };
-            return files.FindAll(file => allowedFileTypes
+            return files?.FindAll(file => allowedFileTypes
                 .Any(file.EndsWith));
         }
 
@@ -36,6 +36,11 @@ namespace File_Service.Models.HelperFiles
         /// <returns></returns>
         public static List<string> GetFilesInDirectory(string fullPath)
         {
+            if (!Directory.Exists(fullPath))
+            {
+                return new List<string>();
+            }
+
             var directoryInfo = new DirectoryInfo(fullPath);
             List<string> foundFiles = directoryInfo.GetFiles().Select(file => file.Name)
                 .ToList();

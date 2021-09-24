@@ -37,7 +37,13 @@ namespace File_Service.Dal.Interfaces
         /// <summary>
         /// Deletes the specified file
         /// </summary>
-        /// <param name="file">The file to delete</param
+        /// <param name="file">The file to delete</param>
         Task Delete(FileDto file);
+
+        /// <summary>
+        /// Deletes all files which matches the parent uuid
+        /// </summary>
+        /// <param name="parentDirectoryUuid">The uuid of the directory</param>
+        Task Delete(Guid parentDirectoryUuid);
     }
 }
